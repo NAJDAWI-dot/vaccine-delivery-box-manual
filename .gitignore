@@ -1,0 +1,8 @@
+# Local-only artifacts — not part of the published site
+manual_preview.pdf
+manual.backup.html
+.claude/
+
+# OS / editor cruft
+Thumbs.db
+.DS_Store
