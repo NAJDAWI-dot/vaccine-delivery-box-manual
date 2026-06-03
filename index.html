@@ -370,6 +370,30 @@ body.ar #live-btn{right:auto;left:24px}
 .live-updated{font-size:12px;color:var(--faint);margin-top:12px}
 body.ar .live-statusrow,body.ar .live-flags{flex-direction:row-reverse}
 
+/* auth gate */
+#live-gate{padding:4px 0 2px}
+.live-gate-intro{font-size:14px;color:var(--muted);margin-bottom:18px}
+.live-auth-block label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:7px}
+.live-serial-row{display:flex;gap:8px}
+#live-serial{flex:1;min-width:0;min-height:46px;padding:0 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-family:var(--font-body);font-size:15px}
+#live-serial::placeholder{color:var(--faint)}
+#live-serial-btn,#live-nfc-btn{min-height:46px;border-radius:10px;cursor:pointer;font-family:var(--font-head);font-weight:600;font-size:14px;transition:background .2s}
+#live-serial-btn{padding:0 22px;background:var(--primary);color:#fff;border:none;flex:none}
+#live-serial-btn:hover{background:var(--primary-ink)}
+#live-nfc-btn{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 18px;background:var(--surface-3);color:var(--text);border:1px solid var(--border)}
+#live-nfc-btn:hover{background:var(--border-2)}
+#live-nfc-btn svg{width:18px;height:18px;color:var(--primary)}
+#live-nfc-btn[disabled]{opacity:.55;cursor:not-allowed}
+#live-nfc-btn.scanning{border-color:var(--primary);color:var(--primary)}
+@media (prefers-reduced-motion:no-preference){#live-nfc-btn.scanning svg{animation:livePulse 1.4s ease-out infinite}}
+.live-or{display:flex;align-items:center;gap:12px;color:var(--faint);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin:18px 0}
+.live-or::before,.live-or::after{content:"";flex:1;height:1px;background:var(--border-2)}
+.live-hint{font-size:12px;color:var(--faint);margin-top:9px}
+.live-gate-msg{font-size:13px;font-weight:600;margin-top:16px;min-height:1.2em}
+.live-gate-msg.warn{color:var(--red)}
+.live-gate-msg.ok{color:var(--green)}
+body.ar .live-serial-row{flex-direction:row-reverse}
+
 /* ── MOBILE TOGGLE ── */
 #menu-toggle{display:none;position:fixed;top:14px;left:14px;z-index:300;background:var(--brand);border:none;color:#fff;width:48px;height:48px;border-radius:10px;cursor:pointer;align-items:center;justify-content:center;box-shadow:var(--shadow-md)}
 #menu-toggle svg{width:22px;height:22px}
@@ -557,11 +581,33 @@ body.ar .sec-dot::after{right:auto;left:18px}
       <h2 id="live-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z"/></svg><span data-i18n="live-title">Live Temperature Monitoring</span></h2>
       <button id="live-close" onclick="closeLiveMonitor()" aria-label="Close live monitoring" title="Close">&times;</button>
     </div>
-    <div class="live-statusrow"><span id="live-status">connecting…</span><span class="live-sub" data-i18n="live-sub">Vaccine box · live feed</span></div>
-    <div class="live-temp" id="live-temp">--.- °C</div>
-    <div class="live-flags" id="live-flags"></div>
-    <div class="live-chartwrap"><canvas id="live-chart"></canvas></div>
-    <div class="live-updated" id="live-updated"></div>
+
+    <!-- AUTH GATE — shown until access is verified -->
+    <div id="live-gate">
+      <p class="live-gate-intro" data-i18n="live-gate-intro">Access to live monitoring is restricted. Verify your access to continue.</p>
+      <div class="live-auth-block">
+        <label for="live-serial" data-i18n="live-serial-label">Device serial number</label>
+        <div class="live-serial-row">
+          <input id="live-serial" type="text" inputmode="numeric" autocomplete="off" placeholder="Enter serial number…" aria-label="Device serial number">
+          <button id="live-serial-btn" onclick="liveUnlockSerial()" data-i18n="live-unlock">Unlock</button>
+        </div>
+      </div>
+      <div class="live-or" data-i18n="live-or">or</div>
+      <div class="live-auth-block">
+        <button id="live-nfc-btn" onclick="liveUnlockNfc()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9a9 9 0 0 1 0 6"/><path d="M9 6a14 14 0 0 1 0 12"/><path d="M13 4a19 19 0 0 1 0 16"/><path d="M17 3a24 24 0 0 1 0 18"/></svg><span data-i18n="live-nfc">Tap NFC card</span></button>
+        <p id="live-nfc-hint" class="live-hint"></p>
+      </div>
+      <p id="live-gate-msg" class="live-gate-msg" role="alert" aria-live="assertive"></p>
+    </div>
+
+    <!-- MONITOR — revealed after successful authentication -->
+    <div id="live-content" hidden>
+      <div class="live-statusrow"><span id="live-status">connecting…</span><span class="live-sub" data-i18n="live-sub">Vaccine box · live feed</span></div>
+      <div class="live-temp" id="live-temp">--.- °C</div>
+      <div class="live-flags" id="live-flags"></div>
+      <div class="live-chartwrap"><canvas id="live-chart"></canvas></div>
+      <div class="live-updated" id="live-updated"></div>
+    </div>
   </div>
 </div>
 
@@ -1883,7 +1929,8 @@ const translations={
     'pcm_label':'PCM Pre-conditioning Countdown','timer-start':'▶ Start 12h Timer','timer-stop':'⏹ Stop','timer-ready':'PCM Ready!',
     'calc_title':'Battery Runtime Estimator','calc_charge':'Battery charge:','calc_ambient':'Ambient temperature:','calc_pwm':'Peltier PWM duty:',
     'wiz-back':'← Back','wiz-reset':'Start over','wiz-solution-label':'SOLUTION','wiz-table-show':'Show full table ▼','wiz-table-hide':'Hide full table ▲',
-    'live-btn':'Live Monitoring','live-title':'Live Temperature Monitoring','live-sub':'Vaccine box · live feed'
+    'live-btn':'Live Monitoring','live-title':'Live Temperature Monitoring','live-sub':'Vaccine box · live feed',
+    'live-gate-intro':'Access to live monitoring is restricted. Verify your access to continue.','live-serial-label':'Device serial number','live-unlock':'Unlock','live-or':'or','live-nfc':'Tap NFC card'
   },
   ar:{
     'nav-cover':'الغلاف','nav-s1':'١. مقدمة','nav-s2':'٢. تحذيرات السلامة','nav-s3':'٣. نظرة عامة','nav-s4':'٤. البدء','nav-s5':'٥. إجراءات التشغيل','nav-s6':'٦. نظام التبريد','nav-s7':'٧. قفل RFID','nav-s8':'٨. إجراءات الطوارئ','nav-s9':'٩. الصيانة','nav-s10':'١٠. تسجيل البيانات','nav-s11':'١١. استكشاف الأعطال','nav-s12':'١٢. المواصفات','nav-s13':'١٣. الامتثال التنظيمي','nav-s14':'١٤. المرجع السريع','nav-appA':'أ. سجل الرحلة','nav-appB':'ب. قائمة المواد','nav-appC':'ج. المسرد',
@@ -1895,7 +1942,8 @@ const translations={
     'pcm_label':'مؤقت تحضير PCM','timer-start':'▶ ابدأ مؤقت 12 ساعة','timer-stop':'⏹ إيقاف','timer-ready':'PCM جاهز!',
     'calc_title':'حاسبة وقت تشغيل البطارية','calc_charge':'شحن البطارية:','calc_ambient':'درجة الحرارة المحيطة:','calc_pwm':'دورة عمل Peltier:',
     'wiz-back':'رجوع ←','wiz-reset':'ابدأ من جديد','wiz-solution-label':'الحل','wiz-table-show':'عرض الجدول الكامل ▼','wiz-table-hide':'إخفاء الجدول ▲',
-    'live-btn':'المراقبة المباشرة','live-title':'مراقبة درجة الحرارة المباشرة','live-sub':'صندوق اللقاح · بث مباشر'
+    'live-btn':'المراقبة المباشرة','live-title':'مراقبة درجة الحرارة المباشرة','live-sub':'صندوق اللقاح · بث مباشر',
+    'live-gate-intro':'الوصول إلى المراقبة المباشرة مقيّد. تحقق من صلاحيتك للمتابعة.','live-serial-label':'الرقم التسلسلي للجهاز','live-unlock':'فتح','live-or':'أو','live-nfc':'مسح بطاقة NFC'
   }
 };
 
@@ -2942,6 +2990,15 @@ document.addEventListener('DOMContentLoaded',function(){
 
   let started = false, chart = null, lastFocus = null;
 
+  /* ── access control (client-side gate) ── */
+  const VALID_SERIALS = ['1'];                  // accepted device serial number(s)
+  const NFC_UID = [0xF6, 0x84, 0x43, 0x06];     // authorised NFC card UID
+  let authed = false;
+  const normHex = (s) => (s || '').toLowerCase().replace(/[^0-9a-f]/g, '');
+  const uidFwd = NFC_UID.map(b => b.toString(16).padStart(2, '0')).join('');                 // "f6844306"
+  const uidRev = NFC_UID.slice().reverse().map(b => b.toString(16).padStart(2, '0')).join(''); // "064384f6"
+  const uidMatch = (s) => { const h = normHex(s); return h === uidFwd || h === uidRev; };
+
   /* Chart.js is a classic (non-module) script — inject + await it on first open */
   function loadChart(){
     return new Promise((res, rej) => {
@@ -3011,16 +3068,83 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   }
 
-  window.openLiveMonitor = async function(){
-    const m = $('live-modal'); if (!m) return;
-    lastFocus = document.activeElement;
-    m.classList.add('open'); m.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    const c = $('live-close'); if (c) c.focus();
+  /* ── auth gate ── */
+  function setGateMsg(text, kind){
+    const el = $('live-gate-msg'); if (!el) return;
+    el.textContent = text || '';
+    el.className = 'live-gate-msg' + (kind ? ' ' + kind : '');
+  }
+
+  function showGate(){
+    authed = false;
+    $('live-gate').hidden = false;
+    $('live-content').hidden = true;
+    setGateMsg('', '');
+    const inp = $('live-serial');
+    if (inp){ inp.value = ''; inp.placeholder = T('Enter serial number…', 'أدخل الرقم التسلسلي…'); }
+    const nfcBtn = $('live-nfc-btn'), hint = $('live-nfc-hint');
+    if (!('NDEFReader' in window)){
+      if (nfcBtn) nfcBtn.disabled = true;
+      if (hint) hint.textContent = T('NFC requires a phone with Android Chrome.', 'تتطلب NFC هاتفًا يعمل بـ Chrome على أندرويد.');
+    } else {
+      if (nfcBtn) nfcBtn.disabled = false;
+      if (hint) hint.textContent = T('Tap, then hold your card flat against the phone.', 'اضغط ثم ضع البطاقة مسطّحة على الهاتف.');
+    }
+    if (inp) inp.focus();
+  }
+
+  async function grantAccess(){
+    authed = true;
+    setGateMsg(T('Access granted', 'تم منح الوصول'), 'ok');
+    $('live-gate').hidden = true;
+    $('live-content').hidden = false;
     try { await start(); }
     catch (e) {
       const st = $('live-status');
       if (st) { st.textContent = T('Failed to load live feed — check your connection', 'تعذّر تحميل البث المباشر — تحقق من اتصالك'); st.style.color = 'var(--red)'; }
+    }
+  }
+
+  window.liveUnlockSerial = function(){
+    const inp = $('live-serial'); const val = (inp ? inp.value : '').trim();
+    if (!val){ setGateMsg(T('Enter a serial number.', 'أدخل رقمًا تسلسليًا.'), 'warn'); return; }
+    if (VALID_SERIALS.includes(val)) grantAccess();
+    else setGateMsg(T('Serial number not recognised. Access denied.', 'الرقم التسلسلي غير معروف. تم رفض الوصول.'), 'warn');
+  };
+
+  window.liveUnlockNfc = async function(){
+    if (!('NDEFReader' in window)){
+      setGateMsg(T('NFC is not supported here. Use the serial number instead.', 'NFC غير مدعوم هنا. استخدم الرقم التسلسلي بدلاً من ذلك.'), 'warn');
+      return;
+    }
+    const nfcBtn = $('live-nfc-btn');
+    try {
+      const reader = new NDEFReader();
+      await reader.scan();
+      if (nfcBtn) nfcBtn.classList.add('scanning');
+      setGateMsg(T('Hold your NFC card near the phone…', 'قرّب بطاقة NFC من الهاتف…'), '');
+      reader.onreadingerror = () => setGateMsg(T('Could not read the card. Try again.', 'تعذّرت قراءة البطاقة. حاول مجددًا.'), 'warn');
+      reader.onreading = (e) => {
+        if (nfcBtn) nfcBtn.classList.remove('scanning');
+        if (uidMatch(e.serialNumber)) grantAccess();
+        else setGateMsg(T('Unrecognised card. Access denied.', 'بطاقة غير معروفة. تم رفض الوصول.'), 'warn');
+      };
+    } catch (err) {
+      if (nfcBtn) nfcBtn.classList.remove('scanning');
+      setGateMsg(T('NFC scan was blocked or failed. Grant permission and try again.', 'تم حظر مسح NFC أو فشل. امنح الإذن وحاول مجددًا.'), 'warn');
+    }
+  };
+
+  window.openLiveMonitor = function(){
+    const m = $('live-modal'); if (!m) return;
+    lastFocus = document.activeElement;
+    m.classList.add('open'); m.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    if (authed){
+      $('live-gate').hidden = true; $('live-content').hidden = false;
+      const c = $('live-close'); if (c) c.focus();
+    } else {
+      showGate();
     }
   };
   window.closeLiveMonitor = function(){
@@ -3033,6 +3157,9 @@ document.addEventListener('DOMContentLoaded',function(){
     if (e.key === 'Escape') {
       const m = $('live-modal');
       if (m && m.classList.contains('open')) window.closeLiveMonitor();
+    }
+    if (e.key === 'Enter' && e.target && e.target.id === 'live-serial') {
+      e.preventDefault(); window.liveUnlockSerial();
     }
   });
 </script>
