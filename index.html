@@ -338,6 +338,38 @@ tbody td:first-child{font-weight:600;color:var(--text)}
 .print-btn:hover{background:var(--primary-ink)}
 @media (prefers-reduced-motion:reduce){.print-btn{transition:none}}
 
+/* ── LIVE MONITORING (button + modal) ── */
+#live-btn{position:fixed;top:14px;right:24px;z-index:300;display:inline-flex;align-items:center;gap:9px;background:var(--brand);color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:50px;padding:0 18px;min-height:44px;font-family:var(--font-head);font-size:14px;font-weight:600;cursor:pointer;box-shadow:var(--shadow-md);transition:background .2s,transform .15s}
+#live-btn:hover{background:var(--brand-2)}
+#live-btn:active{transform:scale(.97)}
+#live-btn .live-dot{width:10px;height:10px;border-radius:50%;background:#22C55E;flex:none}
+@media (prefers-reduced-motion:no-preference){#live-btn .live-dot{animation:livePulse 1.8s ease-out infinite}}
+@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 9px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+body.ar #live-btn{right:auto;left:24px}
+@media print{#live-btn{display:none!important}}
+@media (max-width:640px){#live-btn{top:10px;right:14px;padding:0 13px;font-size:12.5px;min-height:38px}body.ar #live-btn{right:auto;left:14px}}
+
+#live-modal{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,15,28,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+#live-modal.open{display:flex}
+@media (prefers-reduced-motion:no-preference){#live-modal.open .live-card{animation:livePop .22s ease-out}}
+@keyframes livePop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.live-card{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);width:100%;max-width:600px;max-height:92vh;overflow:auto;padding:22px 24px}
+.live-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
+.live-head h2{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:9px}
+.live-head h2 svg{width:22px;height:22px;color:var(--primary)}
+#live-close{background:var(--surface-3);border:1px solid var(--border-2);color:var(--text);width:40px;height:40px;min-width:40px;border-radius:10px;cursor:pointer;font-size:22px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+#live-close:hover{background:var(--border-2)}
+.live-statusrow{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--faint);margin-bottom:16px}
+.live-statusrow .live-sub{font-weight:400}
+.live-temp{font-family:var(--font-head);font-size:64px;font-weight:700;line-height:1;color:var(--primary);letter-spacing:-1px}
+.live-flags{font-size:14px;color:var(--muted);min-height:1.3em;margin:10px 0 2px;display:flex;flex-wrap:wrap;gap:6px 16px}
+.live-flag{display:inline-flex;align-items:center;gap:6px}
+.live-flag.warn{color:var(--red);font-weight:700}
+.live-flag.ok{color:var(--green);font-weight:700}
+.live-chartwrap{position:relative;height:220px;margin-top:14px;border-top:1px solid var(--border-2);padding-top:16px}
+.live-updated{font-size:12px;color:var(--faint);margin-top:12px}
+body.ar .live-statusrow,body.ar .live-flags{flex-direction:row-reverse}
+
 /* ── MOBILE TOGGLE ── */
 #menu-toggle{display:none;position:fixed;top:14px;left:14px;z-index:300;background:var(--brand);border:none;color:#fff;width:48px;height:48px;border-radius:10px;cursor:pointer;align-items:center;justify-content:center;box-shadow:var(--shadow-md)}
 #menu-toggle svg{width:22px;height:22px}
@@ -515,6 +547,23 @@ body.ar .sec-dot::after{right:auto;left:18px}
 <div id="resume-banner"></div>
 <div id="offline-banner" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg><span>Offline — manual available from cache</span></div>
 <button id="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Open navigation menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+
+<!-- ══════════════════ LIVE MONITORING ══════════════════ -->
+<button id="live-btn" onclick="openLiveMonitor()" aria-haspopup="dialog" aria-controls="live-modal" aria-label="Open live temperature monitoring"><span class="live-dot" aria-hidden="true"></span><span data-i18n="live-btn">Live Monitoring</span></button>
+
+<div id="live-modal" role="dialog" aria-modal="true" aria-labelledby="live-title" aria-hidden="true" onclick="if(event.target===this)closeLiveMonitor()">
+  <div class="live-card">
+    <div class="live-head">
+      <h2 id="live-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z"/></svg><span data-i18n="live-title">Live Temperature Monitoring</span></h2>
+      <button id="live-close" onclick="closeLiveMonitor()" aria-label="Close live monitoring" title="Close">&times;</button>
+    </div>
+    <div class="live-statusrow"><span id="live-status">connecting…</span><span class="live-sub" data-i18n="live-sub">Vaccine box · live feed</span></div>
+    <div class="live-temp" id="live-temp">--.- °C</div>
+    <div class="live-flags" id="live-flags"></div>
+    <div class="live-chartwrap"><canvas id="live-chart"></canvas></div>
+    <div class="live-updated" id="live-updated"></div>
+  </div>
+</div>
 
 <!-- ══════════════════ SIDEBAR ══════════════════ -->
 <nav id="sidebar">
@@ -1833,7 +1882,8 @@ const translations={
     'print-btn':'Print / Save as PDF','sb-badge':'User Manual v1.0','lang-btn':'AR',
     'pcm_label':'PCM Pre-conditioning Countdown','timer-start':'▶ Start 12h Timer','timer-stop':'⏹ Stop','timer-ready':'PCM Ready!',
     'calc_title':'Battery Runtime Estimator','calc_charge':'Battery charge:','calc_ambient':'Ambient temperature:','calc_pwm':'Peltier PWM duty:',
-    'wiz-back':'← Back','wiz-reset':'Start over','wiz-solution-label':'SOLUTION','wiz-table-show':'Show full table ▼','wiz-table-hide':'Hide full table ▲'
+    'wiz-back':'← Back','wiz-reset':'Start over','wiz-solution-label':'SOLUTION','wiz-table-show':'Show full table ▼','wiz-table-hide':'Hide full table ▲',
+    'live-btn':'Live Monitoring','live-title':'Live Temperature Monitoring','live-sub':'Vaccine box · live feed'
   },
   ar:{
     'nav-cover':'الغلاف','nav-s1':'١. مقدمة','nav-s2':'٢. تحذيرات السلامة','nav-s3':'٣. نظرة عامة','nav-s4':'٤. البدء','nav-s5':'٥. إجراءات التشغيل','nav-s6':'٦. نظام التبريد','nav-s7':'٧. قفل RFID','nav-s8':'٨. إجراءات الطوارئ','nav-s9':'٩. الصيانة','nav-s10':'١٠. تسجيل البيانات','nav-s11':'١١. استكشاف الأعطال','nav-s12':'١٢. المواصفات','nav-s13':'١٣. الامتثال التنظيمي','nav-s14':'١٤. المرجع السريع','nav-appA':'أ. سجل الرحلة','nav-appB':'ب. قائمة المواد','nav-appC':'ج. المسرد',
@@ -1844,7 +1894,8 @@ const translations={
     'print-btn':'طباعة / PDF','sb-badge':'دليل المستخدم v1.0','lang-btn':'EN',
     'pcm_label':'مؤقت تحضير PCM','timer-start':'▶ ابدأ مؤقت 12 ساعة','timer-stop':'⏹ إيقاف','timer-ready':'PCM جاهز!',
     'calc_title':'حاسبة وقت تشغيل البطارية','calc_charge':'شحن البطارية:','calc_ambient':'درجة الحرارة المحيطة:','calc_pwm':'دورة عمل Peltier:',
-    'wiz-back':'رجوع ←','wiz-reset':'ابدأ من جديد','wiz-solution-label':'الحل','wiz-table-show':'عرض الجدول الكامل ▼','wiz-table-hide':'إخفاء الجدول ▲'
+    'wiz-back':'رجوع ←','wiz-reset':'ابدأ من جديد','wiz-solution-label':'الحل','wiz-table-show':'عرض الجدول الكامل ▼','wiz-table-hide':'إخفاء الجدول ▲',
+    'live-btn':'المراقبة المباشرة','live-title':'مراقبة درجة الحرارة المباشرة','live-sub':'صندوق اللقاح · بث مباشر'
   }
 };
 
@@ -2872,6 +2923,118 @@ document.addEventListener('DOMContentLoaded',function(){
   /* patch the existing draw loop: store stars ref globally for the canvas IIFE to use */
   window._bgStars=stars;
 })();
+</script>
+
+<!-- ══════════════════ LIVE MONITORING — Firebase feed (lazy-loaded) ══════════════════ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue, query, orderByKey, limitToLast }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  /* ▼▼▼ ONLY EDIT THIS LINE — your Firebase Realtime DB (public reads) ▼▼▼ */
+  const DB_URL = "vaccine-box-4ef00-default-rtdb.europe-west1.firebasedatabase.app";
+  /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
+
+  const $ = (id) => document.getElementById(id);
+  const isAr = () => document.documentElement.lang === 'ar';
+  const T = (en, ar) => isAr() ? ar : en;
+  const fmtTime = (ts) => ts ? new Date(ts * 1000).toLocaleString(isAr() ? 'ar' : undefined) : '—';
+
+  let started = false, chart = null, lastFocus = null;
+
+  /* Chart.js is a classic (non-module) script — inject + await it on first open */
+  function loadChart(){
+    return new Promise((res, rej) => {
+      if (window.Chart) return res();
+      const s = document.createElement('script');
+      s.src = "https://cdn.jsdelivr.net/npm/chart.js@4";
+      s.onload = () => res(); s.onerror = () => rej(new Error('chart'));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function start(){
+    if (started) return; started = true;
+    await loadChart();
+    const css = getComputedStyle(document.body);
+    const accent = css.getPropertyValue('--primary').trim() || '#0E7490';
+    const grid   = css.getPropertyValue('--border-2').trim() || '#e2e8f0';
+
+    const db = getDatabase(initializeApp({ databaseURL: DB_URL }));
+
+    /* ── live current reading ── */
+    onValue(ref(db, "box/latest"), (snap) => {
+      const d = snap.val(), st = $('live-status');
+      if (!d) { st.textContent = T('No data yet', 'لا توجد بيانات بعد'); st.style.color = 'var(--faint)'; return; }
+
+      $('live-temp').textContent = d.valid ? d.temp.toFixed(1) + ' °C' : T('ERROR', 'خطأ');
+
+      const ageSec = d.ts ? (Date.now() / 1000 - d.ts) : Infinity;   // we push every 30s
+      const online = ageSec < 90;
+      st.textContent = online ? '● ' + T('Online', 'متصل') : '○ ' + T('Offline', 'غير متصل');
+      st.style.color = online ? 'var(--green)' : 'var(--red)';
+
+      const flags = [];
+      if (d.corrupted) flags.push(['warn', '⚠ ' + T('Vaccines may be corrupted', 'قد تكون اللقاحات تالفة')]);
+      else if (d.ready) flags.push(['ok', T('Cold-chain reached', 'تم بلوغ سلسلة التبريد')]);
+      if (typeof d.maxTemp === 'number')
+        flags.push(['', T('Max since cold: ', 'أقصى درجة منذ التبريد: ') + d.maxTemp.toFixed(1) + ' °C']);
+      $('live-flags').innerHTML = flags.map(f => '<span class="live-flag ' + f[0] + '">' + f[1] + '</span>').join('');
+
+      $('live-updated').textContent = T('Last update: ', 'آخر تحديث: ') + fmtTime(d.ts);
+    });
+
+    /* ── history graph (last 120 points ≈ 1 hour at 30s) ── */
+    chart = new window.Chart($('live-chart'), {
+      type: 'line',
+      data: { labels: [], datasets: [{
+        data: [], borderColor: accent, backgroundColor: 'rgba(8,145,178,.10)',
+        borderWidth: 2, pointRadius: 0, tension: .25, fill: true
+      }]},
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { maxTicksLimit: 6, font: { size: 10 } }, grid: { color: grid } },
+          y: { title: { display: true, text: '°C' }, grid: { color: grid } }
+        }
+      }
+    });
+
+    onValue(query(ref(db, "box/history"), orderByKey(), limitToLast(120)), (snap) => {
+      const pts = [];
+      snap.forEach((c) => { const v = c.val(); pts.push({ t: v.ts, y: v.t }); });
+      chart.data.labels = pts.map(p => new Date(p.t * 1000)
+        .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      chart.data.datasets[0].data = pts.map(p => p.y);
+      chart.update();
+    });
+  }
+
+  window.openLiveMonitor = async function(){
+    const m = $('live-modal'); if (!m) return;
+    lastFocus = document.activeElement;
+    m.classList.add('open'); m.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    const c = $('live-close'); if (c) c.focus();
+    try { await start(); }
+    catch (e) {
+      const st = $('live-status');
+      if (st) { st.textContent = T('Failed to load live feed — check your connection', 'تعذّر تحميل البث المباشر — تحقق من اتصالك'); st.style.color = 'var(--red)'; }
+    }
+  };
+  window.closeLiveMonitor = function(){
+    const m = $('live-modal'); if (!m) return;
+    m.classList.remove('open'); m.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  };
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const m = $('live-modal');
+      if (m && m.classList.contains('open')) window.closeLiveMonitor();
+    }
+  });
 </script>
 </body>
 </html>
