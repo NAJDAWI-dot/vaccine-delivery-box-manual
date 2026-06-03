@@ -2991,13 +2991,17 @@ document.addEventListener('DOMContentLoaded',function(){
   let started = false, chart = null, lastFocus = null;
 
   /* ── access control (client-side gate) ── */
-  const VALID_SERIALS = ['1'];                  // accepted device serial number(s)
-  const NFC_UID = [0xF6, 0x84, 0x43, 0x06];     // authorised NFC card UID
+  const VALID_SERIALS = ['1'];                    // accepted device serial number(s)
+  const NFC_UIDS = [                              // authorised NFC card UIDs
+    [0xF6, 0x84, 0x43, 0x06],                     // card 1 — Android in-page scan
+    [0x04, 0x8A, 0x80, 0xAA, 0x36, 0x67, 0x81]    // card 2 — Android scan + iPhone URL tag
+  ];
   let authed = false;
   const normHex = (s) => (s || '').toLowerCase().replace(/[^0-9a-f]/g, '');
-  const uidFwd = NFC_UID.map(b => b.toString(16).padStart(2, '0')).join('');                 // "f6844306"
-  const uidRev = NFC_UID.slice().reverse().map(b => b.toString(16).padStart(2, '0')).join(''); // "064384f6"
-  const uidMatch = (s) => { const h = normHex(s); return h === uidFwd || h === uidRev; };
+  const toHex = (arr) => arr.map(b => b.toString(16).padStart(2, '0')).join('');
+  const UID_SET = new Set();
+  NFC_UIDS.forEach(u => { UID_SET.add(toHex(u)); UID_SET.add(toHex(u.slice().reverse())); });
+  const uidMatch = (s) => UID_SET.has(normHex(s));
 
   /* Chart.js is a classic (non-module) script — inject + await it on first open */
   function loadChart(){
@@ -3085,7 +3089,7 @@ document.addEventListener('DOMContentLoaded',function(){
     const nfcBtn = $('live-nfc-btn'), hint = $('live-nfc-hint');
     if (!('NDEFReader' in window)){
       if (nfcBtn) nfcBtn.disabled = true;
-      if (hint) hint.textContent = T('NFC requires a phone with Android Chrome.', 'تتطلب NFC هاتفًا يعمل بـ Chrome على أندرويد.');
+      if (hint) hint.textContent = T('On iPhone, tap your NFC tag to open this page — it unlocks automatically. In-page scanning needs Android Chrome.', 'على آيفون، قرّب بطاقة NFC لفتح هذه الصفحة لتُفتح تلقائيًا. المسح داخل الصفحة يتطلب Chrome على أندرويد.');
     } else {
       if (nfcBtn) nfcBtn.disabled = false;
       if (hint) hint.textContent = T('Tap, then hold your card flat against the phone.', 'اضغط ثم ضع البطاقة مسطّحة على الهاتف.');
@@ -3143,10 +3147,27 @@ document.addEventListener('DOMContentLoaded',function(){
     if (authed){
       $('live-gate').hidden = true; $('live-content').hidden = false;
       const c = $('live-close'); if (c) c.focus();
+      start().catch(() => {});
     } else {
       showGate();
     }
   };
+
+  /* ── universal / iPhone NFC: a tag programmed with a URL record carrying
+        ?nfc=<uid> opens this page already authenticated ── */
+  function checkUrlNfc(){
+    try {
+      const p = new URLSearchParams(location.search);
+      let v = p.get('nfc');
+      if (!v && location.hash.length > 1) v = new URLSearchParams(location.hash.slice(1)).get('nfc');
+      if (v && uidMatch(v)){
+        authed = true;
+        window.openLiveMonitor();
+        try { history.replaceState(null, '', location.pathname); } catch (e) {}   // strip token from URL
+      }
+    } catch (e) {}
+  }
+  checkUrlNfc();
   window.closeLiveMonitor = function(){
     const m = $('live-modal'); if (!m) return;
     m.classList.remove('open'); m.setAttribute('aria-hidden', 'true');
