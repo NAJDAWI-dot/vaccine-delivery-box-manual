@@ -11,6 +11,9 @@ Once GitHub Pages is enabled, the manual is available at:
 
 ## Features
 
+- **Three tabs** — **User Manual** (the full document with sidebar navigation and search),
+  **The Device** (description, diagrams, specs, and a photo gallery), and
+  **Live Monitoring** (the serial/NFC-unlocked real-time temperature dashboard).
 - **Single-file app** — `index.html` is fully self-contained (inline CSS + JS); no build step.
 - **Bilingual** — English and Arabic with true `dir="rtl"` right-to-left support,
   including translated table content.
@@ -26,8 +29,9 @@ Once GitHub Pages is enabled, the manual is available at:
 
 | File            | Purpose                                            |
 | --------------- | -------------------------------------------------- |
-| `index.html`    | The complete user manual (the deployed site)       |
+| `index.html`    | The complete site — manual, device, live tabs      |
 | `manifest.json` | PWA manifest (name, icons, theme, start URL)       |
+| `photos/`       | Optional device photos (`device-01.jpg` … `device-06.jpg`) shown in The Device tab; the gallery hides itself while the folder is empty |
 
 ## Local preview
 

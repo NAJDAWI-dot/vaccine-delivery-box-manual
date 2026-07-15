@@ -28,6 +28,10 @@ Clinical field-document register with editorial serif headings. Light by default
 - Radii: `--r-sm 6`, `--r-md 10`, `--r-lg 14`, `--r-pill`.
 - Z-index scale: `--z-nav 100 → --z-chrome 200 → --z-banner 300 → --z-modal 900`.
 
+## Shell
+
+Fixed 56px navy topbar with three tabs (`role=tablist`): **User Manual** (`#main` + sidebar), **The Device** (`#view-device`), **Live Monitoring** (`#view-live`). `switchView()` sets `body[data-view]`; CSS shows/hides the views, manual-only chrome (sidebar, print button, reading progress, resume banner) hides on the other tabs. Active tab persists in `sessionStorage`. The Device tab's photo gallery reads `photos/device-0N.jpg` and hides itself while empty.
+
 ## Components
 
 - **Callouts:** full 1px status border + tinted bg + SVG icon + uppercase label. No side-stripe accents anywhere (banned).

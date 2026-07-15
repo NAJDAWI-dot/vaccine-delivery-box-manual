@@ -141,9 +141,67 @@ p{text-wrap:pretty}
 :focus-visible{outline:3px solid var(--ring);outline-offset:2px;border-radius:4px}
 a,button,input,[tabindex]{outline-color:var(--ring)}
 
+/* ── TOP BAR + TABS ── */
+#topbar{
+  position:fixed;top:0;inset-inline:0;height:56px;z-index:calc(var(--z-banner) + 40);
+  background:var(--brand);border-bottom:1px solid var(--on-brand-border);
+  display:flex;align-items:stretch;gap:var(--sp-4);padding:0 var(--sp-4)
+}
+.tb-brand{display:flex;align-items:center;gap:10px;color:#fff;font-family:var(--font-display);font-weight:600;font-size:1.0625rem;white-space:nowrap;min-width:0}
+.tb-brand img{height:26px;filter:brightness(0) invert(1);flex:none}
+#tabs{display:flex;gap:2px;margin-inline-start:auto;overflow-x:auto;scrollbar-width:none}
+#tabs::-webkit-scrollbar{display:none}
+.tab{
+  appearance:none;background:none;border:none;border-bottom:3px solid transparent;
+  color:var(--on-brand-muted);font-family:var(--font-body);font-weight:600;font-size:var(--fs-md);
+  padding:0 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  transition:color .15s,border-color .15s
+}
+.tab:hover{color:#fff}
+.tab[aria-selected="true"]{color:#fff;border-bottom-color:var(--brand-accent)}
+.tab .live-dot{width:9px;height:9px;border-radius:50%;background:#22C55E;flex:none}
+@media (prefers-reduced-motion:no-preference){.tab .live-dot{animation:livePulse 1.8s ease-out infinite}}
+@media (prefers-reduced-motion:reduce){.tab{transition:none}}
+
+/* ── VIEWS ── */
+#view-device,#view-live{display:none;max-width:var(--maxw);margin:0 auto;padding:calc(56px + var(--sp-7)) 56px var(--sp-8)}
+body[data-view="device"] #view-device,
+body[data-view="live"] #view-live{display:block}
+body:not([data-view="manual"]) #sidebar,
+body:not([data-view="manual"]) #main,
+body:not([data-view="manual"]) .print-btn,
+body:not([data-view="manual"]) #menu-toggle,
+body:not([data-view="manual"]) #reading-progress,
+body:not([data-view="manual"]) #resume-banner{display:none!important}
+.view-head{margin-bottom:var(--sp-6);padding-bottom:var(--sp-4);border-bottom:2px solid var(--brand)}
+html[data-theme="dark"] .view-head{border-bottom-color:var(--border)}
+.view-head h2{font-family:var(--font-display);font-size:var(--fs-3xl);font-weight:700;color:var(--brand);line-height:1.12;margin-bottom:var(--sp-2)}
+html[data-theme="dark"] .view-head h2{color:var(--text)}
+.view-head p{font-size:var(--fs-base);color:var(--muted);max-width:72ch}
+#view-device h3{font-size:var(--fs-lg);font-weight:700;color:var(--text);margin:var(--sp-6) 0 var(--sp-3)}
+#view-device p{font-size:var(--fs-base);color:var(--muted);line-height:1.75;max-width:72ch;margin-bottom:var(--sp-4)}
+
+/* device photo gallery */
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--sp-4);margin:var(--sp-4) 0}
+.gallery figure{margin:0;border:1px solid var(--border-2);border-radius:var(--r-md);overflow:hidden;background:var(--surface)}
+.gallery img{width:100%;height:200px;object-fit:cover;display:block}
+.gallery figcaption{padding:10px 14px;font-size:var(--fs-sm);color:var(--muted)}
+
+/* device feature grid (borderless definition grid) */
+.dv-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--sp-4) var(--sp-6);margin:var(--sp-4) 0 var(--sp-5)}
+.dv-feature h4{font-size:var(--fs-base);font-weight:700;color:var(--text);margin-bottom:4px}
+.dv-feature h4::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--primary-2);margin-inline-end:10px;vertical-align:2px}
+.dv-feature p{font-size:var(--fs-md);color:var(--muted);margin:0;line-height:1.6}
+.dv-cta{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;border:none;border-radius:var(--r-sm);padding:12px 20px;font-family:var(--font-body);font-size:var(--fs-md);font-weight:600;cursor:pointer;margin-top:var(--sp-4);transition:background .2s}
+.dv-cta:hover{background:var(--primary-ink)}
+html[data-theme="dark"] .dv-cta:hover{background:var(--primary-2);color:#04222B}
+
+/* live view panel */
+#view-live .live-card{max-width:620px;margin-inline:auto}
+
 /* ── SIDEBAR (brand navy) ── */
 #sidebar{
-  width:var(--sidebar-w);height:100vh;position:fixed;top:0;inset-inline-start:0;z-index:var(--z-nav);
+  width:var(--sidebar-w);height:calc(100vh - 56px);position:fixed;top:56px;inset-inline-start:0;z-index:var(--z-nav);
   background:var(--brand);color:var(--on-brand);display:flex;flex-direction:column;overflow:hidden;
   border-inline-end:1px solid var(--on-brand-border);transition:transform .3s
 }
@@ -199,10 +257,10 @@ html[data-theme="dark"] .sb-badge{color:#04222B}
 .sb-foot{padding:14px 18px;border-top:1px solid var(--on-brand-border);font-size:var(--fs-xs);color:var(--on-brand-muted);line-height:1.6}
 
 /* ── MAIN ── */
-#main{margin-inline-start:var(--sidebar-w);position:relative;z-index:1}
+#main{margin-inline-start:var(--sidebar-w);margin-top:56px;position:relative;z-index:1}
 
 /* ── READING PROGRESS ── */
-#reading-progress{position:fixed;top:0;inset-inline-start:0;height:3px;background:var(--primary-2);width:0%;z-index:calc(var(--z-modal) + 50);pointer-events:none}
+#reading-progress{position:fixed;top:56px;inset-inline-start:0;height:3px;background:var(--primary-2);width:0%;z-index:calc(var(--z-modal) + 50);pointer-events:none}
 
 /* ── COVER / MASTHEAD ── */
 #cover{
@@ -424,26 +482,9 @@ html[data-theme="dark"] .calc-val{color:var(--text)}
 html[data-theme="dark"] .print-btn:hover{background:var(--primary-2);color:#04222B}
 @media (prefers-reduced-motion:reduce){.print-btn{transition:none}}
 
-/* ── LIVE MONITORING (button + modal) ── */
-#live-btn{position:fixed;top:14px;inset-inline-end:24px;z-index:var(--z-banner);display:inline-flex;align-items:center;gap:9px;background:var(--brand);color:#fff;border:1px solid var(--on-brand-border);border-radius:var(--r-pill);padding:0 18px;min-height:44px;font-family:var(--font-body);font-size:var(--fs-md);font-weight:600;cursor:pointer;box-shadow:var(--shadow-md);transition:background .2s,transform .15s}
-#live-btn:hover{background:var(--brand-2)}
-#live-btn:active{transform:scale(.97)}
-#live-btn .live-dot{width:10px;height:10px;border-radius:50%;background:#22C55E;flex:none}
-@media (prefers-reduced-motion:no-preference){#live-btn .live-dot{animation:livePulse 1.8s ease-out infinite}}
+/* ── LIVE MONITORING (tab panel) ── */
 @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 9px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
-@media print{#live-btn{display:none!important}}
-@media (max-width:640px){#live-btn{top:10px;inset-inline-end:14px;padding:0 13px;font-size:var(--fs-xs);min-height:38px}}
-
-#live-modal{position:fixed;inset:0;z-index:var(--z-modal);display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,15,28,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
-#live-modal.open{display:flex}
-@media (prefers-reduced-motion:no-preference){#live-modal.open .live-card{animation:livePop .22s ease-out}}
-@keyframes livePop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
-.live-card{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);width:100%;max-width:600px;max-height:92vh;overflow:auto;padding:22px 24px}
-.live-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);margin-bottom:4px}
-.live-head h2{font-family:var(--font-display);font-size:var(--fs-xl);font-weight:600;color:var(--text);display:flex;align-items:center;gap:9px}
-.live-head h2 svg{width:22px;height:22px;color:var(--primary-2)}
-#live-close{background:var(--surface-3);border:1px solid var(--border-2);color:var(--text);width:40px;height:40px;min-width:40px;border-radius:var(--r-md);cursor:pointer;font-size:22px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
-#live-close:hover{background:var(--border-2)}
+.live-card{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);width:100%;padding:22px 24px}
 .live-statusrow{display:flex;align-items:center;gap:10px;font-size:var(--fs-sm);font-weight:600;color:var(--faint);margin-bottom:var(--sp-4)}
 .live-statusrow .live-sub{font-weight:400}
 .live-temp{font-family:var(--font-display);font-size:4rem;font-weight:700;line-height:1;color:var(--primary-ink);letter-spacing:-.01em}
@@ -479,7 +520,7 @@ html[data-theme="dark"] #live-serial-btn:hover{background:var(--primary-2);color
 .live-gate-msg.ok{color:var(--green)}
 
 /* ── MOBILE TOGGLE ── */
-#menu-toggle{display:none;position:fixed;top:14px;inset-inline-start:14px;z-index:var(--z-banner);background:var(--brand);border:1px solid var(--on-brand-border);color:#fff;width:48px;height:48px;border-radius:var(--r-md);cursor:pointer;align-items:center;justify-content:center;box-shadow:var(--shadow-md)}
+#menu-toggle{display:none;position:fixed;top:66px;inset-inline-start:14px;z-index:var(--z-banner);background:var(--brand);border:1px solid var(--on-brand-border);color:#fff;width:48px;height:48px;border-radius:var(--r-md);cursor:pointer;align-items:center;justify-content:center;box-shadow:var(--shadow-md)}
 #menu-toggle svg{width:22px;height:22px}
 
 /* ── FOOTER ── */
@@ -487,7 +528,7 @@ html[data-theme="dark"] #live-serial-btn:hover{background:var(--primary-2);color
 #page-footer strong{color:#fff}
 
 /* ── RESUME / OFFLINE BANNERS ── */
-#resume-banner{position:fixed;top:3px;inset-inline-start:var(--sidebar-w);inset-inline-end:0;background:var(--primary);color:#fff;padding:9px 20px;font-size:var(--fs-md);display:none;align-items:center;justify-content:space-between;z-index:var(--z-banner);font-family:var(--font-body);gap:10px}
+#resume-banner{position:fixed;top:59px;inset-inline-start:var(--sidebar-w);inset-inline-end:0;background:var(--primary);color:#fff;padding:9px 20px;font-size:var(--fs-md);display:none;align-items:center;justify-content:space-between;z-index:var(--z-banner);font-family:var(--font-body);gap:10px}
 .rb-btn{background:rgba(255,255,255,.22);border:none;color:#fff;padding:7px 14px;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-body);font-size:var(--fs-sm);min-height:36px}
 .rb-btn:hover{background:rgba(255,255,255,.34)}
 .rb-close{background:none;border:none;color:rgba(255,255,255,.85);cursor:pointer;font-size:20px;padding:0 6px;line-height:1;min-width:32px;min-height:32px}
@@ -525,6 +566,9 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
   #main{margin-inline-start:0}
   #menu-toggle{display:inline-flex}
   #resume-banner{inset-inline:0}
+  .tb-brand span{display:none}
+  .tab{padding:0 10px;font-size:var(--fs-sm)}
+  #view-device,#view-live{padding:calc(56px + var(--sp-5)) 20px var(--sp-7)}
   .content-section,#cover{padding:40px 20px 32px}
   .sec-div{padding:0 20px}
   .cover-top{flex-direction:column-reverse;gap:18px}
@@ -537,7 +581,8 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 
 /* ── PRINT ── */
 @media print{
-  #sidebar,.print-btn,#menu-toggle,#reading-progress,#resume-banner,#offline-banner,#live-modal{display:none!important}
+  #sidebar,.print-btn,#menu-toggle,#reading-progress,#resume-banner,#offline-banner,#topbar{display:none!important}
+  #main{margin-top:0!important}
   #main{margin:0!important}
   body{background:#fff;color:#000}
   .content-section{page-break-inside:avoid}
@@ -549,25 +594,124 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 ::-webkit-scrollbar-thumb:hover{background:var(--faint)}
 </style>
 </head>
-<body>
+<body data-view="manual">
 <a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ══════════════════ TOP BAR + TABS ══════════════════ -->
+<header id="topbar">
+  <div class="tb-brand">
+    <img src="https://htu.edu.jo/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHTU%20White%20Logo.8126eecd.svg&w=384&q=75" alt="HTU" onerror="this.style.display='none'">
+    <span data-i18n="tb-title">Vaccine Delivery Box</span>
+  </div>
+  <nav id="tabs" role="tablist" aria-label="Site sections">
+    <button class="tab" id="tab-manual" role="tab" aria-selected="true" aria-controls="main" onclick="switchView('manual')" data-i18n="tab-manual">User Manual</button>
+    <button class="tab" id="tab-device" role="tab" aria-selected="false" aria-controls="view-device" onclick="switchView('device')" data-i18n="tab-device">The Device</button>
+    <button class="tab" id="tab-live" role="tab" aria-selected="false" aria-controls="view-live" onclick="switchView('live')"><span class="live-dot" aria-hidden="true"></span><span data-i18n="live-btn">Live Monitoring</span></button>
+  </nav>
+</header>
 
 <div id="reading-progress"></div>
 <div id="resume-banner"></div>
 <div id="offline-banner" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg><span>Offline — manual available from cache</span></div>
 <button id="menu-toggle" onclick="this.setAttribute('aria-expanded',document.getElementById('sidebar').classList.toggle('open'))" aria-expanded="false" aria-controls="sidebar" aria-label="Open navigation menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
 
-<!-- ══════════════════ LIVE MONITORING ══════════════════ -->
-<button id="live-btn" onclick="openLiveMonitor()" aria-haspopup="dialog" aria-controls="live-modal" aria-label="Open live temperature monitoring"><span class="live-dot" aria-hidden="true"></span><span data-i18n="live-btn">Live Monitoring</span></button>
+<!-- ══════════════════ VIEW: THE DEVICE ══════════════════ -->
+<section id="view-device" role="tabpanel" aria-labelledby="tab-device">
+  <div class="view-head">
+    <h2 data-i18n="dv-title">The Device</h2>
+    <p data-i18n="dv-intro">A smart, field-serviceable cold box built by HTU engineering students to carry vaccines safely through the last mile of Jordan's healthcare cold chain.</p>
+  </div>
 
-<div id="live-modal" role="dialog" aria-modal="true" aria-labelledby="live-title" aria-hidden="true" onclick="if(event.target===this)closeLiveMonitor()">
-  <div class="live-card">
-    <div class="live-head">
-      <h2 id="live-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z"/></svg><span data-i18n="live-title">Live Temperature Monitoring</span></h2>
-      <button id="live-close" onclick="closeLiveMonitor()" aria-label="Close live monitoring" title="Close">&times;</button>
+  <p data-i18n="dv-desc">The box pairs an HDPE shell and polyurethane insulation with two layers of cooling — dual Peltier modules feeding a copper heat-pipe loop, buffered by phase-change coolant packs — and adds an RFID lock, a three-LED status panel, and continuous temperature logging. A supercapacitor keeps the electronics alive if the battery fails mid-trip.</p>
+
+  <div class="illus-panel light">
+    <div class="illus-content">
+      <h4 data-i18n="dv-arch">Device Architecture</h4>
+      <p data-i18n="dv-arch-p">All key components in a single integrated enclosure — LED panel, RFID reader, PCM lid pockets, TEC cooling wall, battery and supercapacitor bay.</p>
     </div>
+    <div class="illus-svg">
+      <svg width="280" height="160" viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="60" y="50" width="160" height="100" rx="10" fill="#E0F2FE" stroke="#1A5C9A" stroke-width="2"/>
+        <rect x="60" y="30" width="160" height="24" rx="6" fill="#BAE6FD" stroke="#1A5C9A" stroke-width="2"/>
+        <line x1="60" y1="50" x2="220" y2="50" stroke="#1A5C9A" stroke-width="1" stroke-dasharray="4 3"/>
+        <circle cx="90" cy="70" r="5" fill="#22C55E"/>
+        <circle cx="106" cy="70" r="5" fill="#F59E0B"/>
+        <circle cx="122" cy="70" r="5" fill="#EF4444"/>
+        <text x="82" y="83" fill="#1A5C9A" font-size="7" font-family="Noto Sans Mono,monospace">LEDs</text>
+        <rect x="145" y="62" width="28" height="18" rx="3" fill="none" stroke="#1A5C9A" stroke-width="1.5"/>
+        <text x="148" y="73" fill="#1A5C9A" font-size="6.5" font-family="Noto Sans Mono,monospace">RFID</text>
+        <line x1="220" y1="75" x2="226" y2="75" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
+        <line x1="220" y1="82" x2="226" y2="82" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
+        <line x1="220" y1="89" x2="226" y2="89" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
+        <line x1="220" y1="96" x2="226" y2="96" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
+        <rect x="75" y="98" width="130" height="42" rx="5" fill="rgba(14,165,233,0.1)" stroke="rgba(14,165,233,0.3)" stroke-width="1" stroke-dasharray="3 2"/>
+        <rect x="88" y="105" width="10" height="28" rx="3" fill="#0EA5E9" opacity="0.7"/>
+        <rect x="103" y="105" width="10" height="28" rx="3" fill="#0EA5E9" opacity="0.7"/>
+        <rect x="118" y="105" width="10" height="28" rx="3" fill="#0EA5E9" opacity="0.7"/>
+        <rect x="133" y="105" width="10" height="28" rx="3" fill="#0EA5E9" opacity="0.5"/>
+        <rect x="148" y="105" width="10" height="28" rx="3" fill="#0EA5E9" opacity="0.5"/>
+        <rect x="75" y="33" width="55" height="16" rx="4" fill="#BAE6FD" stroke="#0EA5E9" stroke-width="1"/>
+        <text x="102" y="44" fill="#1A5C9A" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">PCM</text>
+        <rect x="138" y="33" width="55" height="16" rx="4" fill="#BAE6FD" stroke="#0EA5E9" stroke-width="1"/>
+        <text x="165" y="44" fill="#1A5C9A" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">PCM</text>
+        <rect x="30" y="85" width="24" height="40" rx="4" fill="#E0F2FE" stroke="#1A5C9A" stroke-width="1.5"/>
+        <rect x="36" y="81" width="12" height="6" rx="2" fill="#1A5C9A"/>
+        <text x="42" y="116" fill="#1A5C9A" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="middle">BATT</text>
+        <rect x="30" y="55" width="24" height="22" rx="4" fill="#EDE9FE" stroke="#5B21B6" stroke-width="1.5"/>
+        <text x="42" y="69" fill="#5B21B6" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="middle">SCAP</text>
+        <rect x="62" y="56" width="6" height="88" rx="2" fill="rgba(186,230,253,0.88)" stroke="#0EA5E9" stroke-width="1"/>
+        <rect x="52" y="62" width="8" height="60" rx="2" fill="rgba(14,165,233,0.45)" stroke="#0EA5E9" stroke-width="1"/>
+      </svg>
+    </div>
+  </div>
 
-    <!-- AUTH GATE — shown until access is verified -->
+  <div id="dv-gallery-sec">
+    <h3 data-i18n="dv-gallery">Photo Gallery</h3>
+    <div class="gallery" id="dv-gallery">
+      <!-- Drop photos into a photos/ folder next to index.html; missing files hide themselves. -->
+      <figure><img src="photos/device-01.jpg" alt="Vaccine delivery box — exterior" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph1">Exterior — HDPE shell and lid</figcaption></figure>
+      <figure><img src="photos/device-02.jpg" alt="Interior foam compartment with vaccine slots" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph2">Interior — foam vaccine slots</figcaption></figure>
+      <figure><img src="photos/device-03.jpg" alt="LED status panel and RFID reader" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph3">LED panel and RFID reader</figcaption></figure>
+      <figure><img src="photos/device-04.jpg" alt="Cooling assembly — Peltier modules and heat sinks" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph4">Cooling assembly</figcaption></figure>
+      <figure><img src="photos/device-05.jpg" alt="Electronics bay — microcontroller and power management" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph5">Electronics and power bay</figcaption></figure>
+      <figure><img src="photos/device-06.jpg" alt="Box in the field during a delivery trip" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph6">In the field</figcaption></figure>
+    </div>
+  </div>
+
+  <h3 data-i18n="dv-how">How It Keeps Vaccines Safe</h3>
+  <div class="dv-features">
+    <div class="dv-feature"><h4 data-i18n="dv-f1">Dual Peltier active cooling</h4><p data-i18n="dv-f1p">Two TEC1-12706 thermoelectric modules, PWM-regulated and wired in parallel for redundancy.</p></div>
+    <div class="dv-feature"><h4 data-i18n="dv-f2">Copper heat-pipe distribution</h4><p data-i18n="dv-f2p">A passive two-phase loop spreads cooling across the whole compartment — no pump, no moving parts.</p></div>
+    <div class="dv-feature"><h4 data-i18n="dv-f3">PCM thermal buffer</h4><p data-i18n="dv-f3p">Lid-mounted phase-change packs absorb heat spikes and keep the box cold through power loss.</p></div>
+    <div class="dv-feature"><h4 data-i18n="dv-f4">Supercapacitor backup</h4><p data-i18n="dv-f4p">15–30 minutes of emergency power switches in automatically if the battery fails.</p></div>
+    <div class="dv-feature"><h4 data-i18n="dv-f5">RFID smart lock</h4><p data-i18n="dv-f5p">Dual latches open only for registered cards and stay locked after a temperature excursion.</p></div>
+    <div class="dv-feature"><h4 data-i18n="dv-f6">Continuous logging</h4><p data-i18n="dv-f6p">Temperature, battery voltage, and access events recorded every 5 minutes for 30 days.</p></div>
+  </div>
+
+  <h3 data-i18n="dv-specs">Key Specifications</h3>
+  <div class="specs-grid">
+    <div class="spec-item"><div class="spec-label">Target Internal Temperature</div><div class="spec-val">2°C – 8°C</div></div>
+    <div class="spec-item"><div class="spec-label">Operating Ambient Range</div><div class="spec-val">−10°C to +50°C</div></div>
+    <div class="spec-item"><div class="spec-label">Primary Cooling</div><div class="spec-val">2× TEC1-12706 + copper heat pipe loop (passive two-phase)</div></div>
+    <div class="spec-item"><div class="spec-label">Emergency Backup</div><div class="spec-val">Supercapacitor — 15–30 min runtime</div></div>
+    <div class="spec-item"><div class="spec-label">RFID Module</div><div class="spec-val">RC522 — 13.56 MHz, ISO 14443A</div></div>
+    <div class="spec-item"><div class="spec-label">Log Interval</div><div class="spec-val">5 minutes (continuous)</div></div>
+    <div class="spec-item"><div class="spec-label">Outer Shell</div><div class="spec-val">High-Density Polyethylene (HDPE)</div></div>
+    <div class="spec-item"><div class="spec-label">Materials Cost</div><div class="spec-val">117.60 JOD (full BOM)</div></div>
+  </div>
+
+  <button class="dv-cta" onclick="switchView('manual')" data-i18n="dv-cta">Read the full user manual →</button>
+</section>
+
+<!-- ══════════════════ VIEW: LIVE MONITORING ══════════════════ -->
+<section id="view-live" role="tabpanel" aria-labelledby="tab-live">
+  <div class="view-head">
+    <h2 data-i18n="live-title">Live Temperature Monitoring</h2>
+    <p data-i18n="live-sub2">Real-time readings streamed from the box every 30 seconds.</p>
+  </div>
+  <div class="live-card">
+
+    <!-- UNLOCK GATE — shown until access is verified -->
     <div id="live-gate">
       <p class="live-gate-intro" data-i18n="live-gate-intro">Unlock the live dashboard with your box's serial number or its NFC card.</p>
       <div class="live-auth-block">
@@ -594,7 +738,7 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
       <div class="live-updated" id="live-updated"></div>
     </div>
   </div>
-</div>
+</section>
 
 <!-- ══════════════════ SIDEBAR ══════════════════ -->
 <nav id="sidebar">
@@ -1836,6 +1980,28 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 <button class="print-btn" onclick="window.print()" aria-label="Print or save as PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span data-i18n="print-btn">Print / Save as PDF</span></button>
 
 <script>
+/* ── VIEWS (tabs) ── */
+function switchView(v){
+  if(v!=='device'&&v!=='live')v='manual';
+  document.body.dataset.view=v;
+  ['manual','device','live'].forEach(function(k){
+    const t=document.getElementById('tab-'+k);
+    if(t)t.setAttribute('aria-selected',k===v?'true':'false');
+  });
+  try{sessionStorage.setItem('view',v);}catch(e){}
+  window.scrollTo(0,0);
+  if(v==='live'&&window.liveViewOpened)window.liveViewOpened();
+}
+/* hide the gallery section entirely when no photos exist yet */
+function dvGalleryCheck(){
+  const g=document.getElementById('dv-gallery');
+  if(!g)return;
+  const figs=g.querySelectorAll('figure');
+  let allHidden=true;
+  figs.forEach(function(f){if(!f.hidden)allHidden=false;});
+  if(allHidden)document.getElementById('dv-gallery-sec').hidden=true;
+}
+
 /* ── CHECKLIST ── */
 function toggleCheck(el){
   const on=el.classList.toggle('checked');
@@ -1879,7 +2045,25 @@ const translations={
     'calc_title':'Battery Runtime Estimator','calc_charge':'Battery charge:','calc_ambient':'Ambient temperature:','calc_pwm':'Cooler power level (PWM):',
     'wiz-back':'← Back','wiz-reset':'Start over','wiz-solution-label':'SOLUTION','wiz-table-show':'Show full table ▼','wiz-table-hide':'Hide full table ▲',
     'live-btn':'Live Monitoring','live-title':'Live Temperature Monitoring','live-sub':'Vaccine box · live feed',
-    'live-gate-intro':'Unlock the live dashboard with your box\'s serial number or its NFC card.','live-serial-label':'Device serial number','live-unlock':'Unlock','live-or':'or','live-nfc':'Tap NFC card'
+    'live-gate-intro':'Unlock the live dashboard with your box\'s serial number or its NFC card.','live-serial-label':'Device serial number','live-unlock':'Unlock','live-or':'or','live-nfc':'Tap NFC card',
+    'tb-title':'Vaccine Delivery Box','tab-manual':'User Manual','tab-device':'The Device',
+    'live-sub2':'Real-time readings streamed from the box every 30 seconds.',
+    'dv-title':'The Device',
+    'dv-intro':'A smart, field-serviceable cold box built by HTU engineering students to carry vaccines safely through the last mile of Jordan\'s healthcare cold chain.',
+    'dv-desc':'The box pairs an HDPE shell and polyurethane insulation with two layers of cooling — dual Peltier modules feeding a copper heat-pipe loop, buffered by phase-change coolant packs — and adds an RFID lock, a three-LED status panel, and continuous temperature logging. A supercapacitor keeps the electronics alive if the battery fails mid-trip.',
+    'dv-arch':'Device Architecture',
+    'dv-arch-p':'All key components in a single integrated enclosure — LED panel, RFID reader, PCM lid pockets, TEC cooling wall, battery and supercapacitor bay.',
+    'dv-gallery':'Photo Gallery',
+    'dv-ph1':'Exterior — HDPE shell and lid','dv-ph2':'Interior — foam vaccine slots','dv-ph3':'LED panel and RFID reader','dv-ph4':'Cooling assembly','dv-ph5':'Electronics and power bay','dv-ph6':'In the field',
+    'dv-how':'How It Keeps Vaccines Safe',
+    'dv-f1':'Dual Peltier active cooling','dv-f1p':'Two TEC1-12706 thermoelectric modules, PWM-regulated and wired in parallel for redundancy.',
+    'dv-f2':'Copper heat-pipe distribution','dv-f2p':'A passive two-phase loop spreads cooling across the whole compartment — no pump, no moving parts.',
+    'dv-f3':'PCM thermal buffer','dv-f3p':'Lid-mounted phase-change packs absorb heat spikes and keep the box cold through power loss.',
+    'dv-f4':'Supercapacitor backup','dv-f4p':'15–30 minutes of emergency power switches in automatically if the battery fails.',
+    'dv-f5':'RFID smart lock','dv-f5p':'Dual latches open only for registered cards and stay locked after a temperature excursion.',
+    'dv-f6':'Continuous logging','dv-f6p':'Temperature, battery voltage, and access events recorded every 5 minutes for 30 days.',
+    'dv-specs':'Key Specifications',
+    'dv-cta':'Read the full user manual →'
   },
   ar:{
     'nav-cover':'الغلاف','nav-s1':'١. مقدمة','nav-s2':'٢. تحذيرات السلامة','nav-s3':'٣. نظرة عامة','nav-s4':'٤. البدء','nav-s5':'٥. إجراءات التشغيل','nav-s6':'٦. نظام التبريد','nav-s7':'٧. قفل RFID','nav-s8':'٨. إجراءات الطوارئ','nav-s9':'٩. الصيانة','nav-s10':'١٠. تسجيل البيانات','nav-s11':'١١. استكشاف الأعطال','nav-s12':'١٢. المواصفات','nav-s13':'١٣. الامتثال التنظيمي','nav-s14':'١٤. المرجع السريع','nav-appA':'أ. سجل الرحلة','nav-appB':'ب. قائمة المواد','nav-appC':'ج. المسرد',
@@ -1893,7 +2077,25 @@ const translations={
     'calc_title':'حاسبة وقت تشغيل البطارية','calc_charge':'شحن البطارية:','calc_ambient':'درجة الحرارة المحيطة:','calc_pwm':'مستوى طاقة التبريد (PWM):',
     'wiz-back':'رجوع ←','wiz-reset':'ابدأ من جديد','wiz-solution-label':'الحل','wiz-table-show':'عرض الجدول الكامل ▼','wiz-table-hide':'إخفاء الجدول ▲',
     'live-btn':'المراقبة المباشرة','live-title':'مراقبة درجة الحرارة المباشرة','live-sub':'صندوق اللقاح · بث مباشر',
-    'live-gate-intro':'افتح لوحة المراقبة المباشرة بالرقم التسلسلي لصندوقك أو ببطاقة NFC الخاصة به.','live-serial-label':'الرقم التسلسلي للجهاز','live-unlock':'فتح','live-or':'أو','live-nfc':'مسح بطاقة NFC'
+    'live-gate-intro':'افتح لوحة المراقبة المباشرة بالرقم التسلسلي لصندوقك أو ببطاقة NFC الخاصة به.','live-serial-label':'الرقم التسلسلي للجهاز','live-unlock':'فتح','live-or':'أو','live-nfc':'مسح بطاقة NFC',
+    'tb-title':'صندوق توصيل اللقاحات','tab-manual':'دليل المستخدم','tab-device':'الجهاز',
+    'live-sub2':'قراءات فورية تُبث من الصندوق كل 30 ثانية.',
+    'dv-title':'الجهاز',
+    'dv-intro':'صندوق بارد ذكي قابل للصيانة الميدانية، صممه طلاب الهندسة في جامعة الحسين التقنية لنقل اللقاحات بأمان عبر المرحلة الأخيرة من السلسلة الباردة الصحية في الأردن.',
+    'dv-desc':'يجمع الصندوق بين هيكل HDPE وعزل البولي يوريثان وطبقتين من التبريد — وحدتا Peltier تغذيان حلقة أنابيب حرارية نحاسية، بدعم من حزم مبرِّد متغير الطور — ويضيف قفل RFID ولوحة مؤشرات ثلاثية وتسجيلاً متواصلاً لدرجة الحرارة. ويُبقي مكثف فائق الإلكترونيات عاملة إذا تعطلت البطارية أثناء الرحلة.',
+    'dv-arch':'بنية الجهاز',
+    'dv-arch-p':'جميع المكونات الرئيسية في هيكل واحد متكامل — لوحة LED وقارئ RFID وجيوب PCM في الغطاء وجدار التبريد وحجرة البطارية والمكثف الفائق.',
+    'dv-gallery':'معرض الصور',
+    'dv-ph1':'الهيكل الخارجي — HDPE والغطاء','dv-ph2':'الداخل — فتحات الرغوة للقاحات','dv-ph3':'لوحة LED وقارئ RFID','dv-ph4':'مجموعة التبريد','dv-ph5':'حجرة الإلكترونيات والطاقة','dv-ph6':'في الميدان',
+    'dv-how':'كيف يحمي اللقاحات',
+    'dv-f1':'تبريد Peltier مزدوج نشط','dv-f1p':'وحدتا TEC1-12706 ثرموكهربائيتان بتنظيم PWM وتوصيل متوازٍ للتكرار الاحتياطي.',
+    'dv-f2':'توزيع بأنابيب حرارية نحاسية','dv-f2p':'حلقة سلبية ثنائية الطور توزع البرودة على الحجرة كلها — بلا مضخة وبلا أجزاء متحركة.',
+    'dv-f3':'عازل PCM الحراري','dv-f3p':'حزم متغيرة الطور في الغطاء تمتص ارتفاعات الحرارة وتحفظ البرودة عند انقطاع الطاقة.',
+    'dv-f4':'احتياط المكثف الفائق','dv-f4p':'15–30 دقيقة من الطاقة الطارئة تعمل تلقائياً إذا تعطلت البطارية.',
+    'dv-f5':'قفل RFID ذكي','dv-f5p':'مزلاجان لا يُفتحان إلا للبطاقات المسجلة ويبقيان مقفلين بعد أي انحراف حراري.',
+    'dv-f6':'تسجيل متواصل','dv-f6p':'تُسجَّل درجة الحرارة وجهد البطارية وأحداث الوصول كل 5 دقائق لمدة 30 يوماً.',
+    'dv-specs':'أبرز المواصفات',
+    'dv-cta':'اقرأ دليل المستخدم الكامل ←'
   }
 };
 
@@ -2485,7 +2687,7 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   }
   document.addEventListener('keydown',function(e){
-    if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();const i=document.getElementById('search-input');if(i)i.focus();}
+    if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();switchView('manual');const i=document.getElementById('search-input');if(i)i.focus();}
   });
 });
 
@@ -2671,6 +2873,9 @@ document.addEventListener('DOMContentLoaded',function(){
   applyLang(currentLang);
   renderWizard();
   updateCalc();
+  let savedView=null;
+  try{savedView=sessionStorage.getItem('view');}catch(e){}
+  if(savedView&&savedView!=='manual')switchView(savedView);
 });
 
 
@@ -2847,14 +3052,10 @@ document.addEventListener('DOMContentLoaded',function(){
     }
   };
 
-  window.openLiveMonitor = function(){
-    const m = $('live-modal'); if (!m) return;
-    lastFocus = document.activeElement;
-    m.classList.add('open'); m.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+  /* called by switchView('live') from the main script */
+  window.liveViewOpened = function(){
     if (authed){
       $('live-gate').hidden = true; $('live-content').hidden = false;
-      const c = $('live-close'); if (c) c.focus();
       start().catch(() => {});
     } else {
       showGate();
@@ -2870,23 +3071,13 @@ document.addEventListener('DOMContentLoaded',function(){
       if (!v && location.hash.length > 1) v = new URLSearchParams(location.hash.slice(1)).get('nfc');
       if (v && uidMatch(v)){
         authed = true;
-        window.openLiveMonitor();
+        window.switchView('live');
         try { history.replaceState(null, '', location.pathname); } catch (e) {}   // strip token from URL
       }
     } catch (e) {}
   }
   checkUrlNfc();
-  window.closeLiveMonitor = function(){
-    const m = $('live-modal'); if (!m) return;
-    m.classList.remove('open'); m.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    if (lastFocus && lastFocus.focus) lastFocus.focus();
-  };
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      const m = $('live-modal');
-      if (m && m.classList.contains('open')) window.closeLiveMonitor();
-    }
     if (e.key === 'Enter' && e.target && e.target.id === 'live-serial') {
       e.preventDefault(); window.liveUnlockSerial();
     }
