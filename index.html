@@ -164,7 +164,10 @@ a,button,input,[tabindex]{outline-color:var(--ring)}
 @media (prefers-reduced-motion:reduce){.tab{transition:none}}
 
 /* ── VIEWS ── */
-#view-device,#view-live{display:none;max-width:var(--maxw);margin:0 auto;padding:calc(56px + var(--sp-7)) 56px var(--sp-8)}
+#view-device,#view-live{display:none}
+#view-live{max-width:var(--maxw);margin:0 auto;padding:calc(56px + var(--sp-7)) 56px var(--sp-8)}
+#view-device #cover{margin-top:56px}
+#view-device .view-inner{max-width:var(--maxw);margin:0 auto;padding:var(--sp-7) 56px var(--sp-8)}
 body[data-view="device"] #view-device,
 body[data-view="live"] #view-live{display:block}
 body:not([data-view="manual"]) #sidebar,
@@ -568,7 +571,8 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
   #resume-banner{inset-inline:0}
   .tb-brand span{display:none}
   .tab{padding:0 10px;font-size:var(--fs-sm)}
-  #view-device,#view-live{padding:calc(56px + var(--sp-5)) 20px var(--sp-7)}
+  #view-live{padding:calc(56px + var(--sp-5)) 20px var(--sp-7)}
+  #view-device .view-inner{padding:var(--sp-5) 20px var(--sp-7)}
   .content-section,#cover{padding:40px 20px 32px}
   .sec-div{padding:0 20px}
   .cover-top{flex-direction:column-reverse;gap:18px}
@@ -594,7 +598,7 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 ::-webkit-scrollbar-thumb:hover{background:var(--faint)}
 </style>
 </head>
-<body data-view="manual">
+<body data-view="device">
 <a class="skip-link" href="#main">Skip to content</a>
 
 <!-- ══════════════════ TOP BAR + TABS ══════════════════ -->
@@ -604,8 +608,8 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
     <span data-i18n="tb-title">Vaccine Delivery Box</span>
   </div>
   <nav id="tabs" role="tablist" aria-label="Site sections">
-    <button class="tab" id="tab-manual" role="tab" aria-selected="true" aria-controls="main" onclick="switchView('manual')" data-i18n="tab-manual">User Manual</button>
-    <button class="tab" id="tab-device" role="tab" aria-selected="false" aria-controls="view-device" onclick="switchView('device')" data-i18n="tab-device">The Device</button>
+    <button class="tab" id="tab-device" role="tab" aria-selected="true" aria-controls="view-device" onclick="switchView('device')" data-i18n="tab-device">The Device</button>
+    <button class="tab" id="tab-manual" role="tab" aria-selected="false" aria-controls="main" onclick="switchView('manual')" data-i18n="tab-manual">User Manual</button>
     <button class="tab" id="tab-live" role="tab" aria-selected="false" aria-controls="view-live" onclick="switchView('live')"><span class="live-dot" aria-hidden="true"></span><span data-i18n="live-btn">Live Monitoring</span></button>
   </nav>
 </header>
@@ -617,10 +621,30 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 
 <!-- ══════════════════ VIEW: THE DEVICE ══════════════════ -->
 <section id="view-device" role="tabpanel" aria-labelledby="tab-device">
-  <div class="view-head">
-    <h2 data-i18n="dv-title">The Device</h2>
-    <p data-i18n="dv-intro">A smart, field-serviceable cold box built by HTU engineering students to carry vaccines safely through the last mile of Jordan's healthcare cold chain.</p>
+<!-- ─── COVER ─── -->
+<section id="cover">
+  <div class="cover-top">
+    <div class="cover-text">
+      <div class="doc-id"><div class="dot-pulse" aria-hidden="true"></div><span data-i18n="doc-id">User Manual · Version 1.0 · May 2026</span></div>
+      <h1 id="cover-h1">Enhanced Reliability<br><em>Vaccine Delivery Box</em></h1>
+      <p class="sub">Smart Dual-Thermoelectric Cold Box with RFID Locking, Real-Time Temperature Monitoring, and Emergency Supercapacitor Backup — Designed for Jordan's Healthcare Cold Chain</p>
+    </div>
+    <div class="cover-htu">
+      <img src="https://htu.edu.jo/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHTU%20White%20Logo.8126eecd.svg&w=384&q=75" alt="HTU Logo" onerror="this.style.display='none'">
+      <span>Al Hussein Technical University</span>
+    </div>
   </div>
+  <div class="cover-meta">
+    <div class="meta-card"><div class="ml">Project</div><div class="mv">MPEP — Engineering Project Management</div></div>
+    <div class="meta-card"><div class="ml">Team</div><div class="mv">Hashem Najdawi · Ibrahim Hosban · Jood Alabbadi · Yasmina Marwan</div></div>
+    <div class="meta-card"><div class="ml">Instructors</div><div class="mv">Eng. Leen Sarhan · Eng. Malak Alghadi</div></div>
+    <div class="meta-card"><div class="ml">Institution</div><div class="mv">Hussein Technical University — HTU</div></div>
+    <div class="meta-card"><div class="ml">Version</div><div class="mv">1.0 — May 2026</div></div>
+    <div class="meta-card"><div class="ml">Audience</div><div class="mv">Healthcare Staff & Authorized Operators</div></div>
+  </div>
+</section>
+<div class="view-inner">
+  <p data-i18n="dv-intro">A smart, field-serviceable cold box built by HTU engineering students to carry vaccines safely through the last mile of Jordan's healthcare cold chain.</p>
 
   <p data-i18n="dv-desc">The box pairs an HDPE shell and polyurethane insulation with two layers of cooling — dual Peltier modules feeding a copper heat-pipe loop, buffered by phase-change coolant packs — and adds an RFID lock, a three-LED status panel, and continuous temperature logging. A supercapacitor keeps the electronics alive if the battery fails mid-trip.</p>
 
@@ -701,6 +725,7 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
   </div>
 
   <button class="dv-cta" onclick="switchView('manual')" data-i18n="dv-cta">Read the full user manual →</button>
+</div>
 </section>
 
 <!-- ══════════════════ VIEW: LIVE MONITORING ══════════════════ -->
@@ -766,7 +791,6 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
   <div class="sidebar-scroll">
   <div class="nav-group">
     <div class="nav-label" data-i18n="grp-overview">Overview</div>
-    <a href="#cover" class="nav-item" data-i18n="nav-cover">Cover Page</a>
     <a href="#s1" class="nav-item" data-i18n="nav-s1">1. Introduction</a>
   </div>
   <div class="nav-group">
@@ -806,29 +830,6 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 
 <!-- ══════════════════ MAIN ══════════════════ -->
 <main id="main">
-
-<!-- ─── COVER ─── -->
-<section id="cover">
-  <div class="cover-top">
-    <div class="cover-text">
-      <div class="doc-id"><div class="dot-pulse" aria-hidden="true"></div><span data-i18n="doc-id">User Manual · Version 1.0 · May 2026</span></div>
-      <h1 id="cover-h1">Enhanced Reliability<br><em>Vaccine Delivery Box</em></h1>
-      <p class="sub">Smart Dual-Thermoelectric Cold Box with RFID Locking, Real-Time Temperature Monitoring, and Emergency Supercapacitor Backup — Designed for Jordan's Healthcare Cold Chain</p>
-    </div>
-    <div class="cover-htu">
-      <img src="https://htu.edu.jo/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHTU%20White%20Logo.8126eecd.svg&w=384&q=75" alt="HTU Logo" onerror="this.style.display='none'">
-      <span>Al Hussein Technical University</span>
-    </div>
-  </div>
-  <div class="cover-meta">
-    <div class="meta-card"><div class="ml">Project</div><div class="mv">MPEP — Engineering Project Management</div></div>
-    <div class="meta-card"><div class="ml">Team</div><div class="mv">Hashem Najdawi · Ibrahim Hosban · Jood Alabbadi · Yasmina Marwan</div></div>
-    <div class="meta-card"><div class="ml">Instructors</div><div class="mv">Eng. Leen Sarhan · Eng. Malak Alghadi</div></div>
-    <div class="meta-card"><div class="ml">Institution</div><div class="mv">Hussein Technical University — HTU</div></div>
-    <div class="meta-card"><div class="ml">Version</div><div class="mv">1.0 — May 2026</div></div>
-    <div class="meta-card"><div class="ml">Audience</div><div class="mv">Healthcare Staff & Authorized Operators</div></div>
-  </div>
-</section>
 
 <!-- ─── S1: INTRODUCTION ─── -->
 <section id="s1" class="content-section reveal">
@@ -1989,6 +1990,8 @@ function switchView(v){
     if(t)t.setAttribute('aria-selected',k===v?'true':'false');
   });
   try{sessionStorage.setItem('view',v);}catch(e){}
+  const sk=document.querySelector('.skip-link');
+  if(sk)sk.href=v==='manual'?'#main':'#view-'+v;
   window.scrollTo(0,0);
   if(v==='live'&&window.liveViewOpened)window.liveViewOpened();
 }
@@ -2020,7 +2023,7 @@ const navObs=new IntersectionObserver(entries=>entries.forEach(e=>{
     if(e.target.id!=='cover')localStorage.setItem('lastSection',e.target.id);
   }
 }),{threshold:.2,rootMargin:'-60px 0px -60% 0px'});
-document.querySelectorAll('section[id]').forEach(s=>navObs.observe(s));
+document.querySelectorAll('#main section[id]').forEach(s=>navObs.observe(s));
 document.querySelectorAll('.nav-item').forEach(l=>l.addEventListener('click',()=>document.getElementById('sidebar').classList.remove('open')));
 
 /* ── READING PROGRESS ── */
@@ -2875,7 +2878,7 @@ document.addEventListener('DOMContentLoaded',function(){
   updateCalc();
   let savedView=null;
   try{savedView=sessionStorage.getItem('view');}catch(e){}
-  if(savedView&&savedView!=='manual')switchView(savedView);
+  if(savedView&&savedView!=='device')switchView(savedView);
 });
 
 
