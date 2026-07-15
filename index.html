@@ -156,7 +156,7 @@ a,button,input,[tabindex]{outline-color:var(--ring)}
   background:var(--brand);border-bottom:1px solid var(--on-brand-border);
   display:flex;align-items:stretch;gap:var(--sp-4);padding:0 var(--sp-4)
 }
-.tb-brand{display:flex;align-items:center;gap:10px;color:#fff;font-family:var(--font-display);font-weight:600;font-size:1.0625rem;white-space:nowrap;min-width:0}
+.tb-brand{appearance:none;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:10px;color:#fff;font-family:var(--font-display);font-weight:600;font-size:1.0625rem;white-space:nowrap;min-width:0;padding:0}
 .tb-brand img{height:26px;filter:brightness(0) invert(1);flex:none}
 #tabs{display:flex;gap:2px;margin-inline-start:auto;overflow-x:auto;scrollbar-width:none}
 #tabs::-webkit-scrollbar{display:none}
@@ -179,7 +179,7 @@ a,button,input,[tabindex]{outline-color:var(--ring)}
 #view-device,#view-live{display:none}
 #view-live{max-width:var(--maxw);margin:0 auto;padding:calc(56px + var(--sp-7)) 56px var(--sp-8)}
 #view-device #cover{margin-top:56px}
-#view-device .view-inner{max-width:var(--maxw);margin:0 auto;padding:var(--sp-7) 56px var(--sp-8)}
+#view-device .view-inner{max-width:1080px;margin:0 auto;padding:var(--sp-7) 56px var(--sp-8)}
 body[data-view="device"] #view-device,
 body[data-view="live"] #view-live{display:block}
 body:not([data-view="manual"]) #sidebar,
@@ -233,6 +233,66 @@ html[data-theme="dark"] .dv-cta:hover{background:var(--primary-2);color:#04222B}
 @media (prefers-reduced-motion:reduce){.b3-chip{transition:none}}
 @media (max-width:768px){#box3d-wrap{min-height:360px}.b3-info{max-width:100%;margin-inline-start:0}}
 
+/* ── MAIN MENU VIEW ── */
+#view-menu{display:none;position:relative;min-height:100vh;overflow:hidden;background:radial-gradient(120% 90% at 20% 10%,#123055 0%,#0F2A4A 45%,#081426 100%)}
+body[data-view="menu"] #view-menu{display:flex;align-items:center;justify-content:center}
+body[data-view="menu"] #topbar{display:none}
+.menu-aurora{position:absolute;inset:-20%;pointer-events:none;filter:blur(70px);opacity:.55}
+.menu-aurora::before,.menu-aurora::after{content:'';position:absolute;width:55%;height:55%;border-radius:50%}
+.menu-aurora::before{background:radial-gradient(circle,rgba(14,116,144,.6),transparent 65%);top:8%;left:6%}
+.menu-aurora::after{background:radial-gradient(circle,rgba(123,227,240,.3),transparent 65%);bottom:4%;right:8%}
+.menu-inner{position:relative;z-index:1;text-align:center;padding:64px 24px;max-width:1000px;width:100%}
+.menu-logo{height:60px;filter:brightness(0) invert(1);margin-bottom:18px}
+.menu-kicker{font-family:var(--font-mono);font-size:var(--fs-xs);letter-spacing:3px;text-transform:uppercase;color:var(--brand-accent);margin-bottom:14px}
+.menu-inner h1{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,3.8rem);color:#fff;font-weight:700;line-height:1.08;margin-bottom:12px}
+.menu-inner h1 em{font-style:italic;color:var(--brand-accent)}
+.menu-sub{color:var(--on-brand-muted);font-size:var(--fs-base);max-width:56ch;margin:0 auto 40px}
+.menu-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;text-align:start}
+.menu-card{appearance:none;cursor:pointer;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:var(--r-lg);padding:24px 22px;color:#fff;font-family:var(--font-body);text-align:start;position:relative}
+.menu-card svg{width:26px;height:26px;color:var(--brand-accent);margin-bottom:12px}
+.menu-card h3{font-family:var(--font-display);font-size:var(--fs-lg);font-weight:600;margin-bottom:6px}
+.menu-card p{font-size:var(--fs-sm);color:var(--on-brand-muted);line-height:1.55;margin:0}
+.menu-card .mc-go{position:absolute;top:20px;inset-inline-end:18px;color:var(--brand-accent);font-size:18px;opacity:0}
+.menu-card:focus-visible .mc-go{opacity:1}
+.menu-foot{margin-top:44px;color:var(--on-brand-faint);font-size:var(--fs-xs);font-family:var(--font-mono);letter-spacing:1px}
+
+/* ── LIVE DASHBOARD ── */
+#view-live{max-width:1100px}
+.ld-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--sp-4);margin-bottom:var(--sp-4)}
+.ld-tile{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);padding:16px 18px;box-shadow:var(--shadow-sm)}
+.lt-label{font-size:var(--fs-xs);font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+.lt-value{font-family:var(--font-display);font-size:1.9rem;font-weight:700;color:var(--text);line-height:1.1}
+#lt-temp-val{color:var(--primary-ink);font-size:2.5rem}
+.lt-sub{font-size:var(--fs-xs);color:var(--faint);margin-top:5px;min-height:1.2em}
+.state-pill{display:inline-flex;align-items:center;gap:8px;border-radius:var(--r-pill);padding:7px 14px;font-size:var(--fs-sm);font-weight:700;border:1px solid;line-height:1}
+.state-pill.ok{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
+.state-pill.warn{background:var(--amber-bg);border-color:var(--amber-bd);color:var(--amber)}
+.state-pill.bad{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
+.state-pill.idle{background:var(--surface-3);border-color:var(--border-2);color:var(--faint)}
+.ld-main{display:grid;grid-template-columns:1fr;gap:var(--sp-4)}
+@media(min-width:980px){.ld-main{grid-template-columns:2fr 1fr}}
+.ld-chartcard,.ld-events{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);padding:18px;box-shadow:var(--shadow-sm)}
+.ld-chead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.ld-chead h4,.ld-events h4{font-size:var(--fs-base);font-weight:700;color:var(--text)}
+.range-chips{display:flex;gap:6px;margin-inline-start:auto}
+.range-chip{appearance:none;background:var(--surface-3);border:1px solid var(--border-2);border-radius:var(--r-pill);min-height:34px;padding:0 14px;font-family:var(--font-body);font-size:var(--fs-sm);font-weight:600;color:var(--muted);cursor:pointer;transition:background .18s,color .18s,border-color .18s}
+.range-chip:hover{border-color:var(--primary-2)}
+.range-chip.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.ld-chartwrap2{position:relative;height:280px}
+.ld-cfoot{display:flex;gap:6px 16px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:var(--fs-sm);color:var(--muted)}
+.ld-cfoot b{color:var(--text);font-family:var(--font-mono);font-weight:600}
+.ld-export{margin-inline-start:auto;appearance:none;background:var(--surface-3);border:1px solid var(--border);border-radius:var(--r-sm);min-height:34px;padding:0 12px;font-family:var(--font-body);font-size:var(--fs-sm);font-weight:600;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s}
+.ld-export:hover{border-color:var(--primary-2);color:var(--primary-ink)}
+.ev-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.ev-item{display:flex;gap:10px;align-items:flex-start;font-size:var(--fs-sm);color:var(--muted);border-bottom:1px solid var(--border-2);padding-bottom:10px}
+.ev-item:last-child{border-bottom:none}
+.ev-dot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:5px}
+.ev-item.high .ev-dot{background:var(--red)}
+.ev-item.low .ev-dot{background:var(--primary-2)}
+.ev-item b{color:var(--text)}
+.ev-empty{display:flex;gap:8px;align-items:center;color:var(--green);font-size:var(--fs-sm);font-weight:600;margin-top:12px}
+@media(max-width:768px){.ld-chartwrap2{height:220px}}
+
 /* ── MOTION PACK (all gated) ── */
 .rv{opacity:0;transform:translateY(18px);transition:opacity .55s cubic-bezier(.16,1,.3,1),transform .55s cubic-bezier(.16,1,.3,1)}
 .rv.rv-in{opacity:1;transform:none}
@@ -264,7 +324,34 @@ html[data-theme="dark"] .dv-cta:hover{background:var(--primary-2);color:#04222B}
   .dv-cta:active,.timer-start:active,#live-serial-btn:active,.print-btn:active{transform:scale(.97)}
   .nav-item{transition:background .15s,color .15s,padding-inline-start .2s cubic-bezier(.16,1,.3,1)}
   .nav-item:hover{padding-inline-start:22px}
-  .live-temp{transition:color .3s}
+  /* main menu */
+  .menu-aurora::before{animation:aur1 16s ease-in-out infinite alternate}
+  .menu-aurora::after{animation:aur2 20s ease-in-out infinite alternate}
+  @keyframes aur1{from{transform:translate(0,0) scale(1)}to{transform:translate(14%,10%) scale(1.15)}}
+  @keyframes aur2{from{transform:translate(0,0) scale(1.1)}to{transform:translate(-12%,-8%) scale(.95)}}
+  .menu-logo{animation:riseIn .7s cubic-bezier(.16,1,.3,1) backwards}
+  .menu-kicker{animation:riseIn .7s .05s cubic-bezier(.16,1,.3,1) backwards}
+  .menu-inner h1{animation:riseIn .8s .12s cubic-bezier(.16,1,.3,1) backwards}
+  .menu-sub{animation:riseIn .8s .2s cubic-bezier(.16,1,.3,1) backwards}
+  .menu-cards .menu-card{animation:riseIn .7s cubic-bezier(.16,1,.3,1) backwards}
+  .menu-cards .menu-card:nth-child(1){animation-delay:.32s}
+  .menu-cards .menu-card:nth-child(2){animation-delay:.42s}
+  .menu-cards .menu-card:nth-child(3){animation-delay:.52s}
+  .menu-foot{animation:riseIn .8s .64s cubic-bezier(.16,1,.3,1) backwards}
+  .menu-card{transition:transform .25s cubic-bezier(.16,1,.3,1),background .2s,border-color .2s,box-shadow .25s}
+  .menu-card:hover{transform:translateY(-5px);background:rgba(255,255,255,.1);border-color:var(--brand-accent);box-shadow:0 18px 50px rgba(0,0,0,.35)}
+  .menu-card .mc-go{transition:opacity .2s,transform .25s cubic-bezier(.16,1,.3,1);transform:translateX(-6px)}
+  [dir="rtl"] .menu-card .mc-go{transform:translateX(6px)}
+  .menu-card:hover .mc-go{opacity:1;transform:none}
+  /* live dashboard */
+  .lt-value.pop{animation:vpop .35s cubic-bezier(.16,1,.3,1)}
+  @keyframes vpop{0%{transform:scale(.92)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+  .ev-item{animation:riseIn .4s cubic-bezier(.16,1,.3,1) backwards}
+  .ev-item:nth-child(2){animation-delay:.06s}
+  .ev-item:nth-child(3){animation-delay:.12s}
+  .ev-item:nth-child(4){animation-delay:.18s}
+  .ld-tile{transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s}
+  .ld-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
 }
 
 /* live view panel */
@@ -350,8 +437,8 @@ html[data-theme="dark"] .sb-badge{color:#04222B}
   padding-bottom:var(--sp-3);margin-bottom:var(--sp-5);display:flex;align-items:center;gap:10px;flex-wrap:wrap
 }
 .doc-id .dot-pulse{width:7px;height:7px;border-radius:50%;background:var(--brand-accent);flex:none}
-#cover h1{font-family:var(--font-display);font-size:clamp(2.125rem,4.5vw,3.5rem);color:#fff;line-height:1.08;margin-bottom:var(--sp-4);font-weight:700;letter-spacing:-.01em}
-#cover h1 em{font-style:italic;color:var(--brand-accent)}
+.cover-title{font-family:var(--font-display);font-size:clamp(2.125rem,4.5vw,3.5rem);color:#fff;line-height:1.08;margin-bottom:var(--sp-4);font-weight:700;letter-spacing:-.01em}
+.cover-title em{font-style:italic;color:var(--brand-accent)}
 #cover .sub{font-size:var(--fs-base);color:var(--on-brand-muted);max-width:58ch;margin-bottom:0;line-height:1.65}
 .cover-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:var(--sp-3);max-width:760px}
 .meta-card{border-inline-start:1px solid var(--on-brand-border);padding:var(--sp-1) var(--sp-4)}
@@ -556,15 +643,6 @@ html[data-theme="dark"] .print-btn:hover{background:var(--primary-2);color:#0422
 /* ── LIVE MONITORING (tab panel) ── */
 @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 9px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
 .live-card{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);width:100%;padding:22px 24px}
-.live-statusrow{display:flex;align-items:center;gap:10px;font-size:var(--fs-sm);font-weight:600;color:var(--faint);margin-bottom:var(--sp-4)}
-.live-statusrow .live-sub{font-weight:400}
-.live-temp{font-family:var(--font-display);font-size:4rem;font-weight:700;line-height:1;color:var(--primary-ink);letter-spacing:-.01em}
-.live-flags{font-size:var(--fs-md);color:var(--muted);min-height:1.3em;margin:10px 0 2px;display:flex;flex-wrap:wrap;gap:6px 16px}
-.live-flag{display:inline-flex;align-items:center;gap:6px}
-.live-flag.warn{color:var(--red);font-weight:700}
-.live-flag.ok{color:var(--green);font-weight:700}
-.live-chartwrap{position:relative;height:220px;margin-top:14px;border-top:1px solid var(--border-2);padding-top:var(--sp-4)}
-.live-updated{font-size:var(--fs-xs);color:var(--faint);margin-top:var(--sp-3)}
 
 /* unlock gate */
 #live-gate{padding:4px 0 2px}
@@ -666,15 +744,15 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 ::-webkit-scrollbar-thumb:hover{background:var(--faint)}
 </style>
 </head>
-<body data-view="device">
+<body data-view="menu">
 <a class="skip-link" href="#main">Skip to content</a>
 
 <!-- ══════════════════ TOP BAR + TABS ══════════════════ -->
 <header id="topbar">
-  <div class="tb-brand">
+  <button class="tb-brand" onclick="switchView('menu')" aria-label="Back to main menu">
     <img src="https://htu.edu.jo/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHTU%20White%20Logo.8126eecd.svg&w=384&q=75" alt="HTU" onerror="this.style.display='none'">
     <span data-i18n="tb-title">Vaccine Delivery Box</span>
-  </div>
+  </button>
   <nav id="tabs" role="tablist" aria-label="Site sections">
     <button class="tab" id="tab-device" role="tab" aria-selected="true" aria-controls="view-device" onclick="switchView('device')" data-i18n="tab-device">The Device</button>
     <button class="tab" id="tab-manual" role="tab" aria-selected="false" aria-controls="main" onclick="switchView('manual')" data-i18n="tab-manual">User Manual</button>
@@ -687,6 +765,38 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 <div id="offline-banner" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg><span>Offline — manual available from cache</span></div>
 <button id="menu-toggle" onclick="this.setAttribute('aria-expanded',document.getElementById('sidebar').classList.toggle('open'))" aria-expanded="false" aria-controls="sidebar" aria-label="Open navigation menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
 
+<!-- ══════════════════ VIEW: MAIN MENU ══════════════════ -->
+<section id="view-menu" aria-label="Main menu">
+  <div class="menu-aurora" aria-hidden="true"></div>
+  <div class="menu-inner">
+    <img class="menu-logo" src="https://htu.edu.jo/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHTU%20White%20Logo.8126eecd.svg&w=384&q=75" alt="HTU" onerror="this.style.display='none'">
+    <div class="menu-kicker" data-i18n="menu-kicker">HTU · MPEP 2026</div>
+    <h1 id="menu-h1">Enhanced Reliability<br><em>Vaccine Delivery Box</em></h1>
+    <p class="menu-sub" data-i18n="menu-sub">A smart cold box for Jordan's healthcare cold chain — explore the device, read the manual, or watch its temperature live.</p>
+    <div class="menu-cards">
+      <button class="menu-card" onclick="switchView('device')">
+        <span class="mc-go" aria-hidden="true">→</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <h3 data-i18n="tab-device">The Device</h3>
+        <p data-i18n="menu-c1">Interactive 3D model, photos, and how the box keeps vaccines safe.</p>
+      </button>
+      <button class="menu-card" onclick="switchView('manual')">
+        <span class="mc-go" aria-hidden="true">→</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <h3 data-i18n="tab-manual">User Manual</h3>
+        <p data-i18n="menu-c2">Setup, operating procedures, emergencies, troubleshooting — bilingual.</p>
+      </button>
+      <button class="menu-card" onclick="switchView('live')">
+        <span class="mc-go" aria-hidden="true">→</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <h3 data-i18n="live-btn">Live Monitoring</h3>
+        <p data-i18n="menu-c3">Real-time temperature dashboard — unlock with serial or NFC card.</p>
+      </button>
+    </div>
+    <div class="menu-foot" data-i18n="menu-foot">User Manual v1.0 · May 2026 · Al Hussein Technical University</div>
+  </div>
+</section>
+
 <!-- ══════════════════ VIEW: THE DEVICE ══════════════════ -->
 <section id="view-device" role="tabpanel" aria-labelledby="tab-device">
 <!-- ─── COVER ─── -->
@@ -694,7 +804,7 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
   <div class="cover-top">
     <div class="cover-text">
       <div class="doc-id"><div class="dot-pulse" aria-hidden="true"></div><span data-i18n="doc-id">User Manual · Version 1.0 · May 2026</span></div>
-      <h1 id="cover-h1">Enhanced Reliability<br><em>Vaccine Delivery Box</em></h1>
+      <h2 class="cover-title" id="cover-h1">Enhanced Reliability<br><em>Vaccine Delivery Box</em></h2>
       <p class="sub">Smart Dual-Thermoelectric Cold Box with RFID Locking, Real-Time Temperature Monitoring, and Emergency Supercapacitor Backup — Designed for Jordan's Healthcare Cold Chain</p>
     </div>
     <div class="cover-htu">
@@ -811,7 +921,7 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
     <h2 data-i18n="live-title">Live Temperature Monitoring</h2>
     <p data-i18n="live-sub2">Real-time readings streamed from the box every 30 seconds.</p>
   </div>
-  <div class="live-card">
+  <div class="live-card" id="live-gate-card">
 
     <!-- UNLOCK GATE — shown until access is verified -->
     <div id="live-gate">
@@ -831,13 +941,38 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
       <p id="live-gate-msg" class="live-gate-msg" role="alert" aria-live="assertive"></p>
     </div>
 
-    <!-- MONITOR — revealed after successful authentication -->
-    <div id="live-content" hidden>
-      <div class="live-statusrow"><span id="live-status">connecting…</span><span class="live-sub" data-i18n="live-sub">Vaccine box · live feed</span></div>
-      <div class="live-temp" id="live-temp">--.- °C</div>
-      <div class="live-flags" id="live-flags"></div>
-      <div class="live-chartwrap"><canvas id="live-chart"></canvas></div>
-      <div class="live-updated" id="live-updated"></div>
+  </div>
+
+  <!-- DASHBOARD — revealed after successful authentication -->
+  <div id="live-content" hidden>
+    <div class="ld-tiles">
+      <div class="ld-tile"><div class="lt-label" data-i18n="lt-temp">Current temperature</div><div class="lt-value" id="lt-temp-val">--.-°C</div><div class="lt-sub" id="lt-conn">—</div></div>
+      <div class="ld-tile"><div class="lt-label" data-i18n="lt-state">Cold-chain state</div><div id="lt-state"><span class="state-pill idle">—</span></div><div class="lt-sub" id="lt-state-sub"></div></div>
+      <div class="ld-tile"><div class="lt-label" data-i18n="lt-max">Max since cold</div><div class="lt-value" id="lt-max">—</div><div class="lt-sub" data-i18n="lt-max-sub">highest reading since cold-chain start</div></div>
+      <div class="ld-tile"><div class="lt-label" data-i18n="lt-upd">Last update</div><div class="lt-value" id="lt-upd">—</div><div class="lt-sub" id="lt-upd-abs"></div></div>
+    </div>
+    <div class="ld-main">
+      <div class="ld-chartcard">
+        <div class="ld-chead">
+          <h4 data-i18n="lt-chart">Temperature — live history</h4>
+          <div class="range-chips" role="group" aria-label="Time range">
+            <button class="range-chip on" data-range="120">1h</button>
+            <button class="range-chip" data-range="720">6h</button>
+            <button class="range-chip" data-range="2880">24h</button>
+          </div>
+        </div>
+        <div class="ld-chartwrap2"><canvas id="live-chart" aria-label="Temperature history chart" role="img"></canvas></div>
+        <div class="ld-cfoot">
+          <span data-i18n="lt-min">Min</span> <b id="lt-min">—</b>
+          <span data-i18n="lt-avg">Avg</span> <b id="lt-avg">—</b>
+          <span data-i18n="lt-maxw">Max</span> <b id="lt-maxw">—</b>
+          <button class="ld-export" id="ld-export" data-i18n="lt-csv">Download CSV</button>
+        </div>
+      </div>
+      <div class="ld-events">
+        <h4 data-i18n="lt-events">Excursion events</h4>
+        <div id="ev-out"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -2060,7 +2195,7 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 <script>
 /* ── VIEWS (tabs) ── */
 function switchView(v){
-  if(v!=='device'&&v!=='live')v='manual';
+  if(v!=='device'&&v!=='live'&&v!=='menu')v='manual';
   document.body.dataset.view=v;
   ['manual','device','live'].forEach(function(k){
     const t=document.getElementById('tab-'+k);
@@ -2105,7 +2240,7 @@ document.querySelectorAll('#main section[id]').forEach(s=>navObs.observe(s));
 
 /* ── SCROLL REVEALS (motion-gated; content fully visible without JS) ── */
 if(matchMedia('(prefers-reduced-motion: no-preference)').matches){
-  const rEls=document.querySelectorAll('.illus-panel,.led-card,.callout,.spec-item,.gallery figure,.dv-feature,.table-wrap,.qr-panel,.timer-widget,.calc-widget,.wizard-card');
+  const rEls=document.querySelectorAll('.illus-panel,.led-card,.callout,.spec-item,.gallery figure,.dv-feature,.table-wrap,.qr-panel,.timer-widget,.calc-widget,.wizard-card,.ld-tile,.ld-chartcard,.ld-events');
   const rObs=new IntersectionObserver(es=>es.forEach(e=>{
     if(e.isIntersecting){e.target.classList.add('rv-in');rObs.unobserve(e.target);}
   }),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
@@ -2158,7 +2293,17 @@ const translations={
     'dv-f6':'Continuous logging','dv-f6p':'Temperature, battery voltage, and access events recorded every 5 minutes for 30 days.',
     'dv-specs':'Key Specifications',
     'dv-3d':'Explore the Box in 3D','dv-3d-hint':'drag · zoom · click a part',
-    'dv-cta':'Read the full user manual →'
+    'dv-cta':'Read the full user manual →',
+    'menu-kicker':'HTU · MPEP 2026',
+    'menu-sub':'A smart cold box for Jordan\'s healthcare cold chain — explore the device, read the manual, or watch its temperature live.',
+    'menu-c1':'Interactive 3D model, photos, and how the box keeps vaccines safe.',
+    'menu-c2':'Setup, operating procedures, emergencies, troubleshooting — bilingual.',
+    'menu-c3':'Real-time temperature dashboard — unlock with serial or NFC card.',
+    'menu-foot':'User Manual v1.0 · May 2026 · Al Hussein Technical University',
+    'lt-temp':'Current temperature','lt-state':'Cold-chain state','lt-max':'Max since cold',
+    'lt-max-sub':'highest reading since cold-chain start','lt-upd':'Last update',
+    'lt-chart':'Temperature — live history','lt-min':'Min','lt-avg':'Avg','lt-maxw':'Max',
+    'lt-csv':'Download CSV','lt-events':'Excursion events'
   },
   ar:{
     'nav-cover':'الغلاف','nav-s1':'١. مقدمة','nav-s2':'٢. تحذيرات السلامة','nav-s3':'٣. نظرة عامة','nav-s4':'٤. البدء','nav-s5':'٥. إجراءات التشغيل','nav-s6':'٦. نظام التبريد','nav-s7':'٧. قفل RFID','nav-s8':'٨. إجراءات الطوارئ','nav-s9':'٩. الصيانة','nav-s10':'١٠. تسجيل البيانات','nav-s11':'١١. استكشاف الأعطال','nav-s12':'١٢. المواصفات','nav-s13':'١٣. الامتثال التنظيمي','nav-s14':'١٤. المرجع السريع','nav-appA':'أ. سجل الرحلة','nav-appB':'ب. قائمة المواد','nav-appC':'ج. المسرد',
@@ -2191,7 +2336,17 @@ const translations={
     'dv-f6':'تسجيل متواصل','dv-f6p':'تُسجَّل درجة الحرارة وجهد البطارية وأحداث الوصول كل 5 دقائق لمدة 30 يوماً.',
     'dv-specs':'أبرز المواصفات',
     'dv-3d':'استكشف الصندوق ثلاثي الأبعاد','dv-3d-hint':'اسحب · قرّب · انقر على جزء',
-    'dv-cta':'اقرأ دليل المستخدم الكامل ←'
+    'dv-cta':'اقرأ دليل المستخدم الكامل ←',
+    'menu-kicker':'جامعة الحسين التقنية · MPEP 2026',
+    'menu-sub':'صندوق بارد ذكي للسلسلة الباردة الصحية في الأردن — استكشف الجهاز أو اقرأ الدليل أو راقب درجة حرارته مباشرة.',
+    'menu-c1':'نموذج ثلاثي الأبعاد تفاعلي وصور وكيف يحمي الصندوق اللقاحات.',
+    'menu-c2':'الإعداد وإجراءات التشغيل والطوارئ واستكشاف الأعطال — بلغتين.',
+    'menu-c3':'لوحة درجة حرارة فورية — تُفتح بالرقم التسلسلي أو بطاقة NFC.',
+    'menu-foot':'دليل المستخدم v1.0 · مايو 2026 · جامعة الحسين التقنية',
+    'lt-temp':'درجة الحرارة الحالية','lt-state':'حالة السلسلة الباردة','lt-max':'الأقصى منذ التبريد',
+    'lt-max-sub':'أعلى قراءة منذ بدء السلسلة الباردة','lt-upd':'آخر تحديث',
+    'lt-chart':'درجة الحرارة — السجل المباشر','lt-min':'الأدنى','lt-avg':'المتوسط','lt-maxw':'الأقصى',
+    'lt-csv':'تنزيل CSV','lt-events':'أحداث الانحراف'
   }
 };
 
@@ -2669,10 +2824,14 @@ function applyLang(lang){
     if(t&&t[k]!==undefined)el.textContent=t[k];
   });
   applyTextTranslations(lang);
-  const h1=document.getElementById('cover-h1');
-  if(h1)h1.innerHTML=lang==='ar'
+  const titleHtml=lang==='ar'
     ?'صندوق توصيل اللقاحات<br><em>المحسَّن الموثوقية</em>'
     :'Enhanced Reliability<br><em>Vaccine Delivery Box</em>';
+  const h1=document.getElementById('cover-h1');
+  if(h1)h1.innerHTML=titleHtml;
+  const mh=document.getElementById('menu-h1');
+  if(mh)mh.innerHTML=titleHtml;
+  if(window.liveLangRefresh)window.liveLangRefresh();
   document.documentElement.lang=lang;
   document.documentElement.dir=lang==='ar'?'rtl':'ltr';
   document.body.classList.toggle('ar',lang==='ar');
@@ -2701,7 +2860,7 @@ function applyDark(){
     btn.classList.toggle('active',darkMode);
   }
 }
-function toggleDark(){darkMode=!darkMode;localStorage.setItem('theme',darkMode?'dark':'light');applyDark();}
+function toggleDark(){darkMode=!darkMode;localStorage.setItem('theme',darkMode?'dark':'light');applyDark();if(window.liveThemeRefresh)window.liveThemeRefresh();}
 
 /* ── FONT SIZE (root font-size; content sizes are rem-based) ── */
 const fontSizes=[14,16,18];
@@ -2972,7 +3131,7 @@ document.addEventListener('DOMContentLoaded',function(){
   updateCalc();
   let savedView=null;
   try{savedView=sessionStorage.getItem('view');}catch(e){}
-  if(savedView&&savedView!=='device')switchView(savedView);
+  if(savedView&&savedView!=='menu')switchView(savedView);
 });
 
 
@@ -3292,7 +3451,10 @@ else window.addEventListener('load', b3boot);
   const T = (en, ar) => isAr() ? ar : en;
   const fmtTime = (ts) => ts ? new Date(ts * 1000).toLocaleString(isAr() ? 'ar' : undefined) : '—';
 
-  let started = false, chart = null, lastFocus = null;
+  const reduceM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let started = false, chart = null;
+  let fb = null, db = null, unsubHist = null, latest = null, pts = [], updTimer = null;
+  const SAFE_LO = 2, SAFE_HI = 8;
 
   /* ── access control (client-side gate) ── */
   const VALID_SERIALS = ['1'];                    // accepted device serial number(s)
@@ -3318,67 +3480,183 @@ else window.addEventListener('load', b3boot);
     });
   }
 
+  function tokens(){
+    const cs = getComputedStyle(document.body);
+    const g = (n, f) => cs.getPropertyValue(n).trim() || f;
+    return {accent:g('--primary-2','#0891B2'), grid:g('--border-2','#e2e8f0'),
+            ink:g('--faint','#4E6B7A'), green:g('--green','#166534')};
+  }
+
   async function start(){
     if (started) return; started = true;
-    const [{ initializeApp }, { getDatabase, ref, onValue, query, orderByKey, limitToLast }] = await Promise.all([
+    const [{ initializeApp }, fbdb] = await Promise.all([
       import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"),
       import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"),
       loadChart()
     ]);
-    const css = getComputedStyle(document.body);
-    const accent = css.getPropertyValue('--primary-2').trim() || '#0891B2';
-    const grid   = css.getPropertyValue('--border-2').trim() || '#e2e8f0';
+    fb = fbdb;
+    db = fb.getDatabase(initializeApp({ databaseURL: DB_URL }));
 
-    const db = getDatabase(initializeApp({ databaseURL: DB_URL }));
+    buildChart();
+    fb.onValue(fb.ref(db, "box/latest"), (snap) => { latest = snap.val(); renderLatest(); });
+    setRange(120);
 
-    /* ── live current reading ── */
-    onValue(ref(db, "box/latest"), (snap) => {
-      const d = snap.val(), st = $('live-status');
-      if (!d) { st.textContent = T('No data yet', 'لا توجد بيانات بعد'); st.style.color = 'var(--faint)'; return; }
+    document.querySelectorAll('.range-chip').forEach(c => c.addEventListener('click', () => {
+      document.querySelectorAll('.range-chip').forEach(x => x.classList.remove('on'));
+      c.classList.add('on');
+      setRange(+c.dataset.range);
+    }));
+    const ex = $('ld-export'); if (ex) ex.addEventListener('click', exportCsv);
+    if (!updTimer) updTimer = setInterval(renderUpdated, 5000);
+  }
 
-      $('live-temp').textContent = d.valid ? d.temp.toFixed(1) + ' °C' : T('ERROR', 'خطأ');
-
-      const ageSec = d.ts ? (Date.now() / 1000 - d.ts) : Infinity;   // we push every 30s
-      const online = ageSec < 90;
-      st.textContent = online ? '● ' + T('Online', 'متصل') : '○ ' + T('Offline', 'غير متصل');
-      st.style.color = online ? 'var(--green)' : 'var(--red)';
-
-      const flags = [];
-      if (d.corrupted) flags.push(['warn', '⚠ ' + T('Vaccines may be corrupted', 'قد تكون اللقاحات تالفة')]);
-      else if (d.ready) flags.push(['ok', T('Safe temperature reached', 'تم بلوغ درجة الحرارة الآمنة')]);
-      if (typeof d.maxTemp === 'number')
-        flags.push(['', T('Max since cold: ', 'أقصى درجة منذ التبريد: ') + d.maxTemp.toFixed(1) + ' °C']);
-      $('live-flags').innerHTML = flags.map(f => '<span class="live-flag ' + f[0] + '">' + f[1] + '</span>').join('');
-
-      $('live-updated').textContent = T('Last update: ', 'آخر تحديث: ') + fmtTime(d.ts);
-    });
-
-    /* ── history graph (last 120 points ≈ 1 hour at 30s) ── */
+  /* ── chart: single temp series + a 2–8°C safe band (fill between two guide lines) ── */
+  function buildChart(){
+    const tk = tokens();
     chart = new window.Chart($('live-chart'), {
       type: 'line',
-      data: { labels: [], datasets: [{
-        data: [], borderColor: accent, backgroundColor: 'rgba(8,145,178,.10)',
-        borderWidth: 2, pointRadius: 0, tension: .25, fill: true
-      }]},
+      data: { labels: [], datasets: [
+        { data: [], borderColor: tk.accent, backgroundColor: 'rgba(8,145,178,.08)',
+          borderWidth: 2, pointRadius: 0, pointHitRadius: 12, tension: .25, fill: true },
+        { data: [], borderColor: 'transparent', pointRadius: 0, fill: false },              // 8°C guide
+        { data: [], borderColor: 'transparent', pointRadius: 0, fill: '-1',
+          backgroundColor: 'rgba(34,197,94,.10)' }                                          // fill down to 2°C
+      ]},
       options: {
-        responsive: true, maintainAspectRatio: false, animation: false,
-        plugins: { legend: { display: false } },
+        responsive: true, maintainAspectRatio: false,
+        animation: reduceM ? false : {duration: 500, easing: 'easeOutQuart'},
+        interaction: {mode: 'index', intersect: false},
+        plugins: { legend: { display: false },
+          tooltip: { displayColors: false,
+            callbacks: { label: (c) => c.datasetIndex === 0 ? c.parsed.y.toFixed(2) + ' °C' : undefined } } },
         scales: {
-          x: { ticks: { maxTicksLimit: 6, font: { size: 10 } }, grid: { color: grid } },
-          y: { title: { display: true, text: '°C' }, grid: { color: grid } }
+          x: { ticks: { maxTicksLimit: 7, font: { size: 10 } }, grid: { color: tk.grid } },
+          y: { title: { display: true, text: '°C' }, suggestedMin: 0, suggestedMax: 10, grid: { color: tk.grid } }
         }
       }
     });
+  }
 
-    onValue(query(ref(db, "box/history"), orderByKey(), limitToLast(120)), (snap) => {
-      const pts = [];
+  function setRange(n){
+    if (!fb) return;
+    if (unsubHist) unsubHist();
+    unsubHist = fb.onValue(fb.query(fb.ref(db, "box/history"), fb.orderByKey(), fb.limitToLast(n)), (snap) => {
+      pts = [];
       snap.forEach((c) => { const v = c.val(); pts.push({ t: v.ts, y: v.t }); });
-      chart.data.labels = pts.map(p => new Date(p.t * 1000)
-        .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-      chart.data.datasets[0].data = pts.map(p => p.y);
-      chart.update();
+      pts.sort((a, b) => a.t - b.t);
+      renderHistory(n);
     });
   }
+
+  function renderHistory(n){
+    if (!chart) return;
+    const long = n > 300;
+    chart.data.labels = pts.map(p => new Date(p.t * 1000)
+      .toLocaleTimeString([], long ? {hour:'2-digit', minute:'2-digit'} : {hour:'2-digit', minute:'2-digit'}));
+    chart.data.datasets[0].data = pts.map(p => p.y);
+    chart.data.datasets[1].data = pts.map(() => SAFE_HI);
+    chart.data.datasets[2].data = pts.map(() => SAFE_LO);
+    chart.update();
+    /* min / avg / max over the window */
+    const ys = pts.map(p => p.y).filter(y => typeof y === 'number');
+    const put = (id, v) => { const el = $(id); if (el) el.textContent = v; };
+    if (ys.length){
+      put('lt-min', Math.min(...ys).toFixed(1) + '°C');
+      put('lt-maxw', Math.max(...ys).toFixed(1) + '°C');
+      put('lt-avg', (ys.reduce((a,b) => a+b, 0) / ys.length).toFixed(1) + '°C');
+    } else { put('lt-min','—'); put('lt-avg','—'); put('lt-maxw','—'); }
+    renderEvents();
+  }
+
+  /* ── excursion events derived from the loaded window ── */
+  function renderEvents(){
+    const out = $('ev-out'); if (!out) return;
+    const evs = [];
+    let cur = null, prevT = null;
+    pts.forEach(p => {
+      const bad = p.y < SAFE_LO || p.y > SAFE_HI;
+      /* a >10 min hole in the data ends any open segment — never bridge logging gaps */
+      if (cur && prevT !== null && p.t - prevT > 600){ evs.push(cur); cur = null; }
+      if (bad && !cur) cur = {start: p.t, end: p.t, peak: p.y};
+      else if (bad && cur){ cur.end = p.t; if (Math.abs(p.y - 5) > Math.abs(cur.peak - 5)) cur.peak = p.y; }
+      else if (!bad && cur){ evs.push(cur); cur = null; }
+      prevT = p.t;
+    });
+    if (cur) evs.push(cur);
+    if (!evs.length){
+      out.innerHTML = '<div class="ev-empty">✓ ' + T('No excursions in this window', 'لا انحرافات في هذه الفترة') + '</div>';
+      return;
+    }
+    const fmt = (ts) => new Date(ts * 1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    const mins = (e) => Math.max(1, Math.round((e.end - e.start) / 60));
+    out.innerHTML = '<ul class="ev-list">' + evs.slice(-6).reverse().map(e => {
+      const type = e.peak > SAFE_HI ? 'high' : 'low';
+      const word = type === 'high' ? T('Above 8°C', 'فوق 8°C') : T('Below 2°C', 'تحت 2°C');
+      return '<li class="ev-item ' + type + '"><span class="ev-dot"></span><span><b>' + word + '</b> · ' +
+        T('peak ', 'ذروة ') + e.peak.toFixed(1) + '°C · ~' + mins(e) + T(' min', ' دقيقة') +
+        '<br>' + fmt(e.start) + ' – ' + fmt(e.end) + '</span></li>';
+    }).join('') + '</ul>';
+  }
+
+  /* ── stat tiles ── */
+  function pop(el){ if (reduceM || !el) return; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+  function renderLatest(){
+    const tv = $('lt-temp-val'), conn = $('lt-conn'), stateEl = $('lt-state'),
+          stateSub = $('lt-state-sub'), maxEl = $('lt-max');
+    if (!tv) return;
+    if (!latest){ tv.textContent = '--.-°C'; if (conn) conn.textContent = T('No data yet', 'لا توجد بيانات بعد'); return; }
+    const d = latest;
+    const newTxt = d.valid ? d.temp.toFixed(1) + '°C' : T('ERROR', 'خطأ');
+    if (tv.textContent !== newTxt){ tv.textContent = newTxt; pop(tv); }
+    const ageSec = d.ts ? (Date.now()/1000 - d.ts) : Infinity;      // pushed every ~30s
+    const online = ageSec < 90;
+    if (conn){
+      conn.textContent = online ? '● ' + T('Online', 'متصل') : '○ ' + T('Offline — showing last reading', 'غير متصل — تُعرض آخر قراءة');
+      conn.style.color = online ? 'var(--green)' : 'var(--red)';
+    }
+    /* cold-chain state pill: reserved status colors + icon + label */
+    let cls = 'idle', icon = '…', label = T('Cooling down', 'قيد التبريد'), sub = '';
+    const inBand = d.valid && d.temp >= SAFE_LO && d.temp <= SAFE_HI;
+    if (d.corrupted){ cls = 'bad'; icon = '⚠'; label = T('Possible spoilage', 'احتمال تلف'); sub = T('Excursion recorded — do not deliver until cleared.', 'سُجّل انحراف — لا تُسلِّم قبل الموافقة.'); }
+    else if (d.valid && !inBand){ cls = 'warn'; icon = '!'; label = T('Out of range', 'خارج النطاق'); sub = T('Temperature outside 2–8°C right now.', 'الحرارة خارج 2–8°C الآن.'); }
+    else if (d.ready && inBand){ cls = 'ok'; icon = '✓'; label = T('Safe range', 'نطاق آمن'); sub = T('Holding 2–8°C.', 'ثابتة ضمن 2–8°C.'); }
+    if (stateEl) stateEl.innerHTML = '<span class="state-pill ' + cls + '">' + icon + ' ' + label + '</span>';
+    if (stateSub) stateSub.textContent = sub;
+    if (maxEl){
+      const mt = (typeof d.maxTemp === 'number') ? d.maxTemp.toFixed(1) + '°C' : '—';
+      if (maxEl.textContent !== mt){ maxEl.textContent = mt; pop(maxEl); }
+    }
+    renderUpdated();
+  }
+  function renderUpdated(){
+    const el = $('lt-upd'), abs = $('lt-upd-abs');
+    if (!el || !latest || !latest.ts) return;
+    const s = Math.max(0, Math.round(Date.now()/1000 - latest.ts));
+    el.textContent = s < 60 ? s + T('s ago', ' ث') : Math.round(s/60) + T('m ago', ' د');
+    el.style.color = s > 120 ? 'var(--red)' : '';
+    if (abs) abs.textContent = fmtTime(latest.ts);
+  }
+
+  /* ── CSV export of the loaded window ── */
+  function exportCsv(){
+    if (!pts.length) return;
+    const rows = ['timestamp,iso_time,temp_c'].concat(pts.map(p => p.t + ',' + new Date(p.t*1000).toISOString() + ',' + p.y));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([rows.join('\n')], {type:'text/csv'}));
+    a.download = 'vdb-temperature-log.csv';
+    a.click(); URL.revokeObjectURL(a.href);
+  }
+
+  /* re-theme the chart when dark mode toggles; re-render texts on language switch */
+  window.liveThemeRefresh = function(){
+    if (!chart) return;
+    const tk = tokens();
+    chart.data.datasets[0].borderColor = tk.accent;
+    chart.options.scales.x.grid.color = tk.grid;
+    chart.options.scales.y.grid.color = tk.grid;
+    chart.update('none');
+  };
+  window.liveLangRefresh = function(){ renderLatest(); if (pts.length) renderEvents(); };
 
   /* ── auth gate ── */
   function setGateMsg(text, kind){
@@ -3390,6 +3668,7 @@ else window.addEventListener('load', b3boot);
   function showGate(){
     authed = false;
     $('live-gate').hidden = false;
+    const gc = $('live-gate-card'); if (gc) gc.hidden = false;
     $('live-content').hidden = true;
     setGateMsg('', '');
     const inp = $('live-serial');
@@ -3409,10 +3688,12 @@ else window.addEventListener('load', b3boot);
     authed = true;
     setGateMsg(T('Access granted', 'تم منح الوصول'), 'ok');
     $('live-gate').hidden = true;
+    const gc = $('live-gate-card'); if (gc) gc.hidden = true;
     $('live-content').hidden = false;
     try { await start(); }
     catch (e) {
-      const st = $('live-status');
+      started = false;
+      const st = $('lt-conn');
       if (st) { st.textContent = T('Failed to load live feed — check your connection', 'تعذّر تحميل البث المباشر — تحقق من اتصالك'); st.style.color = 'var(--red)'; }
     }
   }
@@ -3450,7 +3731,9 @@ else window.addEventListener('load', b3boot);
   /* called by switchView('live') from the main script */
   window.liveViewOpened = function(){
     if (authed){
-      $('live-gate').hidden = true; $('live-content').hidden = false;
+      $('live-gate').hidden = true;
+      const gc = $('live-gate-card'); if (gc) gc.hidden = true;
+      $('live-content').hidden = false;
       start().catch(() => {});
     } else {
       showGate();

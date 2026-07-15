@@ -11,10 +11,15 @@ Once GitHub Pages is enabled, the manual is available at:
 
 ## Features
 
-- **Three tabs** — **The Device** (landing page: cover, interactive 3D model, description,
+- **Animated main menu** — the site opens on a centered, fully animated menu
+  (aurora background, staggered entrance) with three doors: The Device, User
+  Manual, and Live Monitoring. The topbar brand button returns to it.
+- **Three sections** — **The Device** (cover, interactive 3D model, description,
   diagrams, specs, photo gallery), **User Manual** (the full document with sidebar
-  navigation and search), and **Live Monitoring** (the serial/NFC-unlocked real-time
-  temperature dashboard).
+  navigation and search), and **Live Monitoring** — a full dashboard behind the
+  serial/NFC gate: stat tiles (current temp, cold-chain state, max since cold,
+  last update), a temperature chart with a 2–8°C safe band and 1h/6h/24h ranges,
+  min/avg/max, an excursion-event log, and CSV export.
 - **Interactive 3D model** — a Three.js scene of the box (drag/zoom, open lid, exploded
   view, X-ray, click-a-part inspector) with a React control bar. It renders a built-in
   procedural model; drop a real scan/CAD export at `models/box.glb` and it loads instead.
