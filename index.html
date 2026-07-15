@@ -21,6 +21,15 @@
   if((localStorage.getItem('lang')||'en')==='ar')document.documentElement.dir='rtl';
 })();
 </script>
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+  "react":"https://esm.sh/react@18.3.1",
+  "react-dom/client":"https://esm.sh/react-dom@18.3.1/client",
+  "htm":"https://esm.sh/htm@3.1.1"
+}}
+</script>
 <style>
 /* ╔═══════════════════════════════════════════════════════════════╗
    ║  VDB User Manual — design system v2                             ║
@@ -152,13 +161,16 @@ a,button,input,[tabindex]{outline-color:var(--ring)}
 #tabs{display:flex;gap:2px;margin-inline-start:auto;overflow-x:auto;scrollbar-width:none}
 #tabs::-webkit-scrollbar{display:none}
 .tab{
-  appearance:none;background:none;border:none;border-bottom:3px solid transparent;
+  appearance:none;background:none;border:none;position:relative;
   color:var(--on-brand-muted);font-family:var(--font-body);font-weight:600;font-size:var(--fs-md);
   padding:0 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
-  transition:color .15s,border-color .15s
+  transition:color .15s
 }
+.tab::after{content:'';position:absolute;bottom:0;left:12px;right:12px;height:3px;border-radius:2px 2px 0 0;background:var(--brand-accent);transform:scaleY(0);transform-origin:bottom}
+@media (prefers-reduced-motion:no-preference){.tab::after{transition:transform .25s cubic-bezier(.16,1,.3,1)}}
 .tab:hover{color:#fff}
-.tab[aria-selected="true"]{color:#fff;border-bottom-color:var(--brand-accent)}
+.tab[aria-selected="true"]{color:#fff}
+.tab[aria-selected="true"]::after{transform:scaleY(1)}
 .tab .live-dot{width:9px;height:9px;border-radius:50%;background:#22C55E;flex:none}
 @media (prefers-reduced-motion:no-preference){.tab .live-dot{animation:livePulse 1.8s ease-out infinite}}
 @media (prefers-reduced-motion:reduce){.tab{transition:none}}
@@ -198,6 +210,62 @@ html[data-theme="dark"] .view-head h2{color:var(--text)}
 .dv-cta{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;border:none;border-radius:var(--r-sm);padding:12px 20px;font-family:var(--font-body);font-size:var(--fs-md);font-weight:600;cursor:pointer;margin-top:var(--sp-4);transition:background .2s}
 .dv-cta:hover{background:var(--primary-ink)}
 html[data-theme="dark"] .dv-cta:hover{background:var(--primary-2);color:#04222B}
+
+/* ── 3D VIEWER ── */
+#box3d-wrap{position:relative;border-radius:var(--r-lg);overflow:hidden;margin:var(--sp-5) 0 var(--sp-6);background:radial-gradient(120% 120% at 50% 0%,#123055 0%,#0C1F3A 55%,#081426 100%);border:1px solid var(--on-brand-border);min-height:440px}
+#box3d{position:absolute;inset:0;cursor:grab;touch-action:none}
+#box3d:active{cursor:grabbing}
+#box3d canvas{display:block}
+.b3-head{position:absolute;top:0;inset-inline:0;padding:16px 20px;pointer-events:none;z-index:2;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.b3-head h3{font-family:var(--font-display);font-size:var(--fs-lg);font-weight:600;color:#fff;margin:0}
+.b3-head span{font-size:var(--fs-xs);color:rgba(255,255,255,.62);font-family:var(--font-mono);letter-spacing:.4px}
+#box3d-ui{position:absolute;bottom:0;inset-inline:0;z-index:2;padding:14px 16px}
+.b3-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.b3-chip{appearance:none;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.24);color:#fff;border-radius:var(--r-pill);min-height:38px;padding:0 14px;font-family:var(--font-body);font-size:var(--fs-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .18s,border-color .18s,transform .18s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.b3-chip:hover{background:rgba(255,255,255,.2)}
+.b3-chip:active{transform:scale(.96)}
+.b3-chip.on{background:rgba(123,227,240,.24);border-color:var(--brand-accent);color:var(--brand-accent)}
+.b3-info{margin-inline-start:auto;max-width:300px;background:rgba(8,20,38,.72);border:1px solid rgba(255,255,255,.16);border-radius:var(--r-md);padding:10px 14px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.b3-info h5{font-size:var(--fs-sm);font-weight:700;color:var(--brand-accent);margin:0 0 2px}
+.b3-info p{font-size:var(--fs-xs);color:rgba(255,255,255,.82);margin:0;line-height:1.5}
+.b3-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.72);font-family:var(--font-mono);font-size:var(--fs-sm);letter-spacing:1px;z-index:1}
+@media (prefers-reduced-motion:no-preference){.b3-loading::after{content:'';width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:var(--brand-accent);border-radius:50%;margin-inline-start:10px;animation:b3spin .8s linear infinite}@keyframes b3spin{to{transform:rotate(360deg)}}}
+@media (prefers-reduced-motion:reduce){.b3-chip{transition:none}}
+@media (max-width:768px){#box3d-wrap{min-height:360px}.b3-info{max-width:100%;margin-inline-start:0}}
+
+/* ── MOTION PACK (all gated) ── */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .55s cubic-bezier(.16,1,.3,1),transform .55s cubic-bezier(.16,1,.3,1)}
+.rv.rv-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:no-preference){
+  /* view enter transition (runs whenever a view becomes displayed) */
+  #main,#view-device,#view-live{animation:viewIn .5s cubic-bezier(.16,1,.3,1)}
+  @keyframes viewIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  /* cover masthead entrance */
+  #cover .doc-id{animation:riseIn .6s cubic-bezier(.16,1,.3,1) backwards}
+  #cover h1{animation:riseIn .7s cubic-bezier(.16,1,.3,1) .07s backwards}
+  #cover .sub{animation:riseIn .7s cubic-bezier(.16,1,.3,1) .14s backwards}
+  #cover .cover-htu{animation:riseIn .8s cubic-bezier(.16,1,.3,1) .1s backwards}
+  .cover-meta .meta-card{animation:riseIn .6s cubic-bezier(.16,1,.3,1) backwards}
+  .cover-meta .meta-card:nth-child(1){animation-delay:.2s}
+  .cover-meta .meta-card:nth-child(2){animation-delay:.26s}
+  .cover-meta .meta-card:nth-child(3){animation-delay:.32s}
+  .cover-meta .meta-card:nth-child(4){animation-delay:.38s}
+  .cover-meta .meta-card:nth-child(5){animation-delay:.44s}
+  .cover-meta .meta-card:nth-child(6){animation-delay:.5s}
+  @keyframes riseIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  /* hover micro-interactions */
+  .spec-item,.dv-feature,.led-card,.qr-panel,.gallery figure{transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s cubic-bezier(.16,1,.3,1)}
+  .spec-item:hover,.led-card:hover,.qr-panel:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+  .gallery figure{overflow:hidden}
+  .gallery figure:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+  .gallery img{transition:transform .45s cubic-bezier(.16,1,.3,1)}
+  .gallery figure:hover img{transform:scale(1.05)}
+  .dv-cta,.timer-start,#live-serial-btn,.print-btn{transition:background .2s,transform .18s}
+  .dv-cta:active,.timer-start:active,#live-serial-btn:active,.print-btn:active{transform:scale(.97)}
+  .nav-item{transition:background .15s,color .15s,padding-inline-start .2s cubic-bezier(.16,1,.3,1)}
+  .nav-item:hover{padding-inline-start:22px}
+  .live-temp{transition:color .3s}
+}
 
 /* live view panel */
 #view-live .live-card{max-width:620px;margin-inline:auto}
@@ -644,6 +712,15 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
   </div>
 </section>
 <div class="view-inner">
+
+  <!-- 3D MODEL VIEWER — procedural box; drop models/box.glb next to index.html to show a real model instead -->
+  <div id="box3d-wrap">
+    <div class="b3-head"><h3 data-i18n="dv-3d">Explore the Box in 3D</h3><span data-i18n="dv-3d-hint">drag · zoom · click a part</span></div>
+    <div id="box3d" aria-label="Interactive 3D model of the vaccine delivery box" role="img"></div>
+    <div class="b3-loading" id="box3d-loading">LOADING 3D</div>
+    <div id="box3d-ui"></div>
+  </div>
+
   <p data-i18n="dv-intro">A smart, field-serviceable cold box built by HTU engineering students to carry vaccines safely through the last mile of Jordan's healthcare cold chain.</p>
 
   <p data-i18n="dv-desc">The box pairs an HDPE shell and polyurethane insulation with two layers of cooling — dual Peltier modules feeding a copper heat-pipe loop, buffered by phase-change coolant packs — and adds an RFID lock, a three-LED status panel, and continuous temperature logging. A supercapacitor keeps the electronics alive if the battery fails mid-trip.</p>
@@ -1994,6 +2071,7 @@ function switchView(v){
   if(sk)sk.href=v==='manual'?'#main':'#view-'+v;
   window.scrollTo(0,0);
   if(v==='live'&&window.liveViewOpened)window.liveViewOpened();
+  if(v==='device'&&window.deviceViewOpened)window.deviceViewOpened();
 }
 /* hide the gallery section entirely when no photos exist yet */
 function dvGalleryCheck(){
@@ -2024,6 +2102,19 @@ const navObs=new IntersectionObserver(entries=>entries.forEach(e=>{
   }
 }),{threshold:.2,rootMargin:'-60px 0px -60% 0px'});
 document.querySelectorAll('#main section[id]').forEach(s=>navObs.observe(s));
+
+/* ── SCROLL REVEALS (motion-gated; content fully visible without JS) ── */
+if(matchMedia('(prefers-reduced-motion: no-preference)').matches){
+  const rEls=document.querySelectorAll('.illus-panel,.led-card,.callout,.spec-item,.gallery figure,.dv-feature,.table-wrap,.qr-panel,.timer-widget,.calc-widget,.wizard-card');
+  const rObs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('rv-in');rObs.unobserve(e.target);}
+  }),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+  rEls.forEach(function(el){
+    const sibs=el.parentElement?[...el.parentElement.children]:[el];
+    el.style.transitionDelay=Math.min(sibs.indexOf(el),5)*60+'ms';
+    el.classList.add('rv');rObs.observe(el);
+  });
+}
 document.querySelectorAll('.nav-item').forEach(l=>l.addEventListener('click',()=>document.getElementById('sidebar').classList.remove('open')));
 
 /* ── READING PROGRESS ── */
@@ -2066,6 +2157,7 @@ const translations={
     'dv-f5':'RFID smart lock','dv-f5p':'Dual latches open only for registered cards and stay locked after a temperature excursion.',
     'dv-f6':'Continuous logging','dv-f6p':'Temperature, battery voltage, and access events recorded every 5 minutes for 30 days.',
     'dv-specs':'Key Specifications',
+    'dv-3d':'Explore the Box in 3D','dv-3d-hint':'drag · zoom · click a part',
     'dv-cta':'Read the full user manual →'
   },
   ar:{
@@ -2098,6 +2190,7 @@ const translations={
     'dv-f5':'قفل RFID ذكي','dv-f5p':'مزلاجان لا يُفتحان إلا للبطاقات المسجلة ويبقيان مقفلين بعد أي انحراف حراري.',
     'dv-f6':'تسجيل متواصل','dv-f6p':'تُسجَّل درجة الحرارة وجهد البطارية وأحداث الوصول كل 5 دقائق لمدة 30 يوماً.',
     'dv-specs':'أبرز المواصفات',
+    'dv-3d':'استكشف الصندوق ثلاثي الأبعاد','dv-3d-hint':'اسحب · قرّب · انقر على جزء',
     'dv-cta':'اقرأ دليل المستخدم الكامل ←'
   }
 };
@@ -2588,6 +2681,7 @@ function applyLang(lang){
   wizLang=lang;
   renderWizard();
   updateCalc();
+  if(window.box3dRefresh)window.box3dRefresh(lang);
 }
 function toggleLang(){
   currentLang=currentLang==='en'?'ar':'en';
@@ -2884,6 +2978,304 @@ document.addEventListener('DOMContentLoaded',function(){
 
 
 
+</script>
+
+<!-- ══════════════════ 3D BOX VIEWER — Three.js scene + React control bar ══════════════════ -->
+<script type="module">
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let b3started = false;
+
+/* viewer UI labels (self-contained EN/AR) */
+const B3L = {
+  en:{lid:['Open lid','Close lid'],explode:['Exploded view','Assemble'],rotate:'Auto-rotate',wire:'X-ray',
+    pick:'Click any part of the box to identify it.',
+    parts:{
+      body:['HDPE Outer Shell','Impact-resistant shell, lined with polyurethane foam insulation.'],
+      lid:['Insulated Lid','Hinged lid carrying two PCM coolant packs in inner pockets.'],
+      vials:['Vaccine Compartment','Custom-cut foam slots hold the vials upright at 2°C–8°C.'],
+      leds:['LED Status Panel','Green, amber and red indicators show cold-chain state at a glance.'],
+      rfid:['RFID Reader','RC522 reader — registered cards release the dual latches.'],
+      vents:['Heat Vents','Reject heat from the Peltier hot side. Never obstruct them.'],
+      latch:['Locking Latches','Electronically controlled; they stay locked after an excursion.'],
+      cool:['Peltier Cooling Wall','Dual TEC1-12706 modules feed a copper heat-pipe loop.']
+    }},
+  ar:{lid:['افتح الغطاء','أغلق الغطاء'],explode:['عرض مفكك','تجميع'],rotate:'دوران تلقائي',wire:'أشعة سينية',
+    pick:'انقر على أي جزء من الصندوق للتعرف عليه.',
+    parts:{
+      body:['الهيكل الخارجي HDPE','هيكل مقاوم للصدمات مبطّن بعزل رغوة البولي يوريثان.'],
+      lid:['الغطاء المعزول','غطاء مفصلي يحمل حزمتي تبريد PCM في جيوب داخلية.'],
+      vials:['حجرة اللقاحات','فتحات رغوة مقصوصة خصيصاً تثبت الأمبولات عمودياً عند 2–8°C.'],
+      leds:['لوحة مؤشرات LED','مؤشرات خضراء وصفراء وحمراء تُظهر حالة السلسلة الباردة بلمحة.'],
+      rfid:['قارئ RFID','قارئ RC522 — البطاقات المسجلة تفتح المزلاجين.'],
+      vents:['فتحات الحرارة','تطرد حرارة الجانب الساخن لوحدات Peltier. لا تسدّها أبداً.'],
+      latch:['مزلاجا القفل','بتحكم إلكتروني؛ يبقيان مقفلين بعد أي انحراف حراري.'],
+      cool:['جدار تبريد Peltier','وحدتا TEC1-12706 تغذيان حلقة أنابيب حرارية نحاسية.']
+    }}
+};
+
+async function initBox3D(){
+  if (b3started) return; b3started = true;
+  const host = document.getElementById('box3d');
+  const wrap = document.getElementById('box3d-wrap');
+  const loading = document.getElementById('box3d-loading');
+  if (!host || !wrap) return;
+  try {
+    const [THREE, {OrbitControls}, {RoundedBoxGeometry}, React, {createRoot}, htmMod] = await Promise.all([
+      import('three'),
+      import('three/addons/controls/OrbitControls.js'),
+      import('three/addons/geometries/RoundedBoxGeometry.js'),
+      import('react'),
+      import('react-dom/client'),
+      import('htm')
+    ]);
+    const html = htmMod.default.bind(React.createElement);
+
+    /* ── renderer / scene / camera ── */
+    const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    host.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, 1, .1, 60);
+    camera.position.set(4.4, 2.7, 5.4);
+
+    scene.add(new THREE.HemisphereLight(0xbfd9e8, 0x0a1626, 1.1));
+    const key = new THREE.DirectionalLight(0xffffff, 2.2);
+    key.position.set(5, 8, 4); key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024);
+    key.shadow.camera.left = key.shadow.camera.bottom = -4;
+    key.shadow.camera.right = key.shadow.camera.top = 4;
+    scene.add(key);
+    const rim = new THREE.DirectionalLight(0x7be3f0, .8);
+    rim.position.set(-6, 3, -5); scene.add(rim);
+
+    const shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry(14, 14), new THREE.ShadowMaterial({opacity:.32}));
+    shadowPlane.rotation.x = -Math.PI/2; shadowPlane.position.y = -.78; shadowPlane.receiveShadow = true;
+    scene.add(shadowPlane);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; controls.dampingFactor = .06;
+    controls.target.set(0, .35, 0);
+    controls.minDistance = 3.2; controls.maxDistance = 12;
+    controls.maxPolarAngle = Math.PI * .52;
+    controls.autoRotate = !reduce; controls.autoRotateSpeed = 1.1;
+
+    /* ── materials ── */
+    const mShell = new THREE.MeshStandardMaterial({color:0xDCE7EC, roughness:.55, metalness:.05});
+    const mLid   = new THREE.MeshStandardMaterial({color:0xC9D8E0, roughness:.5,  metalness:.05});
+    const mNavy  = new THREE.MeshStandardMaterial({color:0x0F2A4A, roughness:.4,  metalness:.2});
+    const mCyan  = new THREE.MeshStandardMaterial({color:0x22D3EE, roughness:.35, metalness:.3});
+    const mDark  = new THREE.MeshStandardMaterial({color:0x11202E, roughness:.7});
+    const mVial  = new THREE.MeshStandardMaterial({color:0x7DD3E8, roughness:.15, metalness:.1, transparent:true, opacity:.85});
+    const mFoam  = new THREE.MeshStandardMaterial({color:0x33505F, roughness:.95});
+    const allMats = [mShell, mLid, mNavy, mCyan, mDark, mVial, mFoam];
+
+    /* ── procedural box model ── */
+    const boxGroup = new THREE.Group(); scene.add(boxGroup);
+    const parts = {};          // key -> {node, base, exp}
+    function part(key, node, exp){
+      node.userData.part = key;
+      node.traverse ? node.traverse(o => o.userData.part = key) : null;
+      parts[key] = {node, base: node.position.clone(), exp: new THREE.Vector3(...exp)};
+      boxGroup.add(node);
+    }
+    function mesh(geo, mat, x=0, y=0, z=0){
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true;
+      return m;
+    }
+
+    /* body */
+    const body = new THREE.Group();
+    body.add(mesh(new RoundedBoxGeometry(2.5, 1.5, 1.7, 4, .08), mShell, 0, 0, 0));
+    const tray = mesh(new THREE.BoxGeometry(2.14, .05, 1.34), mFoam, 0, .74, 0); tray.userData.noXray = true;
+    body.add(tray);
+    part('body', body, [0, 0, 0]);
+
+    /* cooling wall (left) */
+    const cool = new THREE.Group();
+    cool.add(mesh(new THREE.BoxGeometry(.1, 1.0, 1.1), mCyan, -1.3, 0, 0));
+    for (let i = 0; i < 5; i++) cool.add(mesh(new THREE.BoxGeometry(.16, .05, 1.0), mNavy, -1.44, -.4 + i*.2, 0));
+    part('cool', cool, [-1.3, 0, 0]);
+
+    /* lid on a rear hinge pivot */
+    const lidPivot = new THREE.Group(); lidPivot.position.set(0, .75, -.85);
+    const lid = new THREE.Group();
+    lid.add(mesh(new RoundedBoxGeometry(2.5, .36, 1.7, 4, .08), mLid, 0, .18, .85));
+    lid.add(mesh(new RoundedBoxGeometry(.7, .12, .3, 2, .05), mNavy, 0, .42, .85));   // handle
+    lid.add(mesh(new THREE.BoxGeometry(.9, .1, .6), mDark, -.6, .02, .85));           // PCM pockets
+    lid.add(mesh(new THREE.BoxGeometry(.9, .1, .6), mDark, .6, .02, .85));
+    lidPivot.add(lid);
+    part('lid', lidPivot, [0, 1.35, 0]);
+
+    /* vaccine vials (visible when the lid opens) */
+    const vials = new THREE.Group();
+    for (let i = 0; i < 5; i++){
+      const v = mesh(new THREE.CylinderGeometry(.09, .09, .34, 20), mVial, -.72 + i*.36, .93, .12);
+      const cap = mesh(new THREE.CylinderGeometry(.055, .055, .08, 16), mNavy, -.72 + i*.36, 1.13, .12);
+      vials.add(v); vials.add(cap);
+    }
+    vials.visible = false;
+    part('vials', vials, [0, .55, 0]);
+
+    /* LED panel (front) */
+    const leds = new THREE.Group();
+    leds.add(mesh(new THREE.BoxGeometry(.62, .24, .05), mNavy, -.7, .35, .86));
+    const ledMats = [];
+    [0x22C55E, 0xF59E0B, 0xEF4444].forEach((c, i) => {
+      const lm = new THREE.MeshStandardMaterial({color:c, emissive:c, emissiveIntensity:i === 0 ? 1.4 : .12});
+      ledMats.push(lm);
+      leds.add(mesh(new THREE.SphereGeometry(.045, 16, 16), lm, -.86 + i*.16, .35, .9));
+    });
+    part('leds', leds, [0, .25, 1.15]);
+
+    /* RFID reader (right side) */
+    const rfid = new THREE.Group();
+    rfid.add(mesh(new THREE.BoxGeometry(.05, .5, .55), mNavy, 1.27, .1, 0));
+    const ring = mesh(new THREE.TorusGeometry(.14, .02, 12, 32), mCyan, 1.31, .1, 0);
+    ring.rotation.y = Math.PI/2; rfid.add(ring);
+    part('rfid', rfid, [1.25, 0, 0]);
+
+    /* heat vents (rear) */
+    const vents = new THREE.Group();
+    for (let i = 0; i < 6; i++) vents.add(mesh(new THREE.BoxGeometry(.28, .05, .04), mDark, -.75 + i*.3, -.15, -.87));
+    for (let i = 0; i < 6; i++) vents.add(mesh(new THREE.BoxGeometry(.28, .05, .04), mDark, -.75 + i*.3, -.32, -.87));
+    part('vents', vents, [0, 0, -1.15]);
+
+    /* latches (front) */
+    const latch = new THREE.Group();
+    latch.add(mesh(new RoundedBoxGeometry(.3, .34, .1, 2, .04), mNavy, -.75, .62, .84));
+    latch.add(mesh(new RoundedBoxGeometry(.3, .34, .1, 2, .04), mNavy, .75, .62, .84));
+    part('latch', latch, [0, -.1, 1.2]);
+
+    /* optional real model: models/box.glb replaces the procedural one */
+    import('three/addons/loaders/GLTFLoader.js').then(({GLTFLoader}) => {
+      new GLTFLoader().load('models/box.glb', (g) => {
+        boxGroup.visible = false;
+        const m = g.scene;
+        const bb = new THREE.Box3().setFromObject(m);
+        const size = bb.getSize(new THREE.Vector3()).length() || 1;
+        const scale = 3.4 / size; m.scale.setScalar(scale);
+        const c = bb.getCenter(new THREE.Vector3()).multiplyScalar(scale);
+        m.position.sub(c); m.position.y += .1;
+        m.traverse(o => { if (o.isMesh){ o.castShadow = true; o.receiveShadow = true; } });
+        scene.add(m);
+      }, undefined, () => {});      // no file → keep the procedural model
+    }).catch(() => {});
+
+    /* ── state + api (driven by the React bar) ── */
+    const state = {lid:false, explode:false, rotate:!reduce, wire:false};
+    const api = {
+      toggleLid(){ state.lid = !state.lid; return state.lid; },
+      toggleExplode(){ state.explode = !state.explode; return state.explode; },
+      setRotate(v){ state.rotate = v; controls.autoRotate = v; },
+      toggleWire(){
+        state.wire = !state.wire;
+        allMats.forEach(m => { m.wireframe = state.wire; m.transparent = state.wire || m === mVial; m.opacity = state.wire ? .55 : (m === mVial ? .85 : 1); m.needsUpdate = true; });
+        return state.wire;
+      }
+    };
+
+    /* ── part picking ── */
+    const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+    let downAt = null, flash = null;
+    renderer.domElement.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; });
+    renderer.domElement.addEventListener('pointerup', e => {
+      if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 6){ downAt = null; return; }
+      downAt = null;
+      const r = renderer.domElement.getBoundingClientRect();
+      ptr.set(((e.clientX - r.left)/r.width)*2 - 1, -((e.clientY - r.top)/r.height)*2 + 1);
+      ray.setFromCamera(ptr, camera);
+      const hit = ray.intersectObjects(boxGroup.children, true)[0];
+      const key = hit && hit.object.userData.part;
+      if (key && parts[key]){
+        flash = {node: parts[key].node, t: 0};
+        window.dispatchEvent(new CustomEvent('b3part', {detail:key}));
+      }
+    });
+
+    /* ── resize ── */
+    function resize(){
+      const w = host.clientWidth || wrap.clientWidth, h = wrap.clientHeight;
+      renderer.setSize(w, h); camera.aspect = w/h; camera.updateProjectionMatrix();
+    }
+    new ResizeObserver(resize).observe(wrap); resize();
+
+    /* ── loop ── */
+    const clock = new THREE.Clock();
+    const baseY = boxGroup.position.y;
+    renderer.setAnimationLoop(() => {
+      const t = clock.getElapsedTime();
+      controls.update();
+      /* lid hinge */
+      const lidTarget = (state.lid || state.explode) ? -1.55 : 0;
+      lidPivot.rotation.x += (lidTarget - lidPivot.rotation.x) * .08;
+      vials.visible = lidPivot.rotation.x < -.25 || state.explode;
+      /* exploded view */
+      Object.values(parts).forEach(p => {
+        const target = state.explode ? p.base.clone().add(p.exp) : p.base;
+        p.node.position.lerp(target, .08);
+      });
+      /* green LED heartbeat + idle float */
+      ledMats[0].emissiveIntensity = reduce ? 1.4 : 1.1 + Math.sin(t*2.6)*.7;
+      if (!reduce) boxGroup.position.y = baseY + Math.sin(t*1.2)*.03;
+      /* picked-part pulse */
+      if (flash){
+        flash.t += .05;
+        const s = 1 + Math.sin(Math.min(flash.t, 1) * Math.PI) * .05;
+        flash.node.scale.setScalar(s);
+        if (flash.t >= 1){ flash.node.scale.setScalar(1); flash = null; }
+      }
+      renderer.render(scene, camera);
+    });
+
+    /* ── React control bar + part inspector ── */
+    const uiHost = document.getElementById('box3d-ui');
+    const root = createRoot(uiHost);
+    let currentLang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
+    function ControlBar({lang}){
+      const L = B3L[lang] || B3L.en;
+      const [lid, setLid]       = React.useState(state.lid);
+      const [expl, setExpl]     = React.useState(state.explode);
+      const [rot, setRot]       = React.useState(state.rotate);
+      const [wire, setWire]     = React.useState(state.wire);
+      const [pick, setPick]     = React.useState(null);
+      React.useEffect(() => {
+        const on = e => setPick(e.detail);
+        window.addEventListener('b3part', on);
+        return () => window.removeEventListener('b3part', on);
+      }, []);
+      const p = pick && L.parts[pick];
+      return html`
+        <div class="b3-bar">
+          <button class=${'b3-chip' + (lid ? ' on' : '')} onClick=${() => setLid(api.toggleLid())}>${L.lid[lid ? 1 : 0]}</button>
+          <button class=${'b3-chip' + (expl ? ' on' : '')} onClick=${() => setExpl(api.toggleExplode())}>${L.explode[expl ? 1 : 0]}</button>
+          <button class=${'b3-chip' + (rot ? ' on' : '')} aria-pressed=${rot} onClick=${() => { api.setRotate(!rot); setRot(!rot); }}>${L.rotate}</button>
+          <button class=${'b3-chip' + (wire ? ' on' : '')} aria-pressed=${wire} onClick=${() => setWire(api.toggleWire())}>${L.wire}</button>
+          <div class="b3-info" role="status">
+            ${p ? html`<h5>${p[0]}</h5><p>${p[1]}</p>` : html`<p>${L.pick}</p>`}
+          </div>
+        </div>`;
+    }
+    function renderBar(lang){ currentLang = lang; root.render(html`<${ControlBar} lang=${lang}/>`); }
+    window.box3dRefresh = renderBar;
+    renderBar(currentLang);
+
+    if (loading) loading.remove();
+  } catch (err) {
+    /* WebGL or CDN unavailable — hide the viewer, page still works */
+    if (wrap) wrap.style.display = 'none';
+    b3started = false;
+  }
+}
+
+window.deviceViewOpened = initBox3D;
+function b3boot(){ if (document.body.dataset.view === 'device') initBox3D(); }
+if (document.readyState === 'complete') b3boot();
+else window.addEventListener('load', b3boot);
 </script>
 
 <!-- ══════════════════ LIVE MONITORING — Firebase feed (lazy-loaded) ══════════════════ -->

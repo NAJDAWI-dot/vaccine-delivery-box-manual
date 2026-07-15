@@ -11,9 +11,14 @@ Once GitHub Pages is enabled, the manual is available at:
 
 ## Features
 
-- **Three tabs** — **User Manual** (the full document with sidebar navigation and search),
-  **The Device** (description, diagrams, specs, and a photo gallery), and
-  **Live Monitoring** (the serial/NFC-unlocked real-time temperature dashboard).
+- **Three tabs** — **The Device** (landing page: cover, interactive 3D model, description,
+  diagrams, specs, photo gallery), **User Manual** (the full document with sidebar
+  navigation and search), and **Live Monitoring** (the serial/NFC-unlocked real-time
+  temperature dashboard).
+- **Interactive 3D model** — a Three.js scene of the box (drag/zoom, open lid, exploded
+  view, X-ray, click-a-part inspector) with a React control bar. It renders a built-in
+  procedural model; drop a real scan/CAD export at `models/box.glb` and it loads instead.
+  (Three.js and React load from CDNs, so the 3D viewer needs a network connection.)
 - **Single-file app** — `index.html` is fully self-contained (inline CSS + JS); no build step.
 - **Bilingual** — English and Arabic with true `dir="rtl"` right-to-left support,
   including translated table content.
@@ -32,6 +37,7 @@ Once GitHub Pages is enabled, the manual is available at:
 | `index.html`    | The complete site — manual, device, live tabs      |
 | `manifest.json` | PWA manifest (name, icons, theme, start URL)       |
 | `photos/`       | Optional device photos (`device-01.jpg` … `device-06.jpg`) shown in The Device tab; the gallery hides itself while the folder is empty |
+| `models/box.glb` | Optional real 3D model; replaces the built-in procedural box in the 3D viewer |
 
 ## Local preview
 

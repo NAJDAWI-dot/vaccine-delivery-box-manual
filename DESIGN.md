@@ -45,7 +45,11 @@ True `dir="rtl"` set on `<html>` by the language toggle (and pre-paint for saved
 
 ## Motion
 
-Reduced-motion honored on every animation. Remaining motion is state-only: status dot pulses, modal pop, hover transitions (150–250ms). No scroll reveals, loaders, or decorative canvases.
+Reduced-motion honored on every animation — the full motion pack lives behind `prefers-reduced-motion: no-preference`. With motion allowed: view-enter transitions, staggered cover masthead entrance, scroll reveals (`.rv`/`.rv-in`, JS-added so content is always visible without JS), hover lifts/zooms, tab underline slide, LED pulses. With reduce: everything static, 3D auto-rotate and idle float off.
+
+## 3D viewer (Device tab)
+
+Three.js (v0.170 via importmap/jsdelivr) renders a procedural box — shell, hinged lid with PCM pockets, vials, LED panel, RFID reader, vents, latches, cooling wall — with OrbitControls, exploded view, X-ray, raycast part-picking, and a soft shadow. A React 18 control bar (esm.sh + htm, no build step) drives lid/explode/rotate/X-ray and shows the picked part's name/description in EN/AR (`window.box3dRefresh(lang)` re-renders on language switch). `models/box.glb`, if present, replaces the procedural model via GLTFLoader. WebGL/CDN failure hides the viewer section gracefully.
 
 ## Honesty rules (copy)
 
