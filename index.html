@@ -8,53 +8,109 @@
 <meta name="apple-mobile-web-app-title" content="VDB Manual">
 <title>User Manual — Enhanced Reliability Vaccine Delivery Box | HTU</title>
 <link rel="manifest" href="./manifest.json">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230F2A4A' rx='20'/%3E%3Ctext y='.9em' font-size='80' text-anchor='middle' x='50'%3E%F0%9F%92%89%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,600;0,6..72,700;1,6..72,600&family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+/* set theme before first paint: saved choice, else OS preference */
+(function(){
+  var saved=localStorage.getItem('theme');
+  var dark=saved?saved==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.dataset.theme=dark?'dark':'light';
+  if((localStorage.getItem('lang')||'en')==='ar')document.documentElement.dir='rtl';
+})();
+</script>
 <style>
 /* ╔═══════════════════════════════════════════════════════════════╗
-   ║  VDB User Manual — uipro "Accessible & Ethical" design system   ║
-   ║  Rebuilt from scratch · light default · dark toggle · WCAG-AA   ║
+   ║  VDB User Manual — design system v2                             ║
+   ║  Clinical field-document register · editorial serif headings    ║
+   ║  One token system · light + dark · LTR + RTL (logical props)    ║
    ╚═══════════════════════════════════════════════════════════════╝ */
 
 /* ── TOKENS ── */
 :root{
-  /* uipro Accessible medical palette */
-  --bg:        #F0FDFA;
+  color-scheme:light;
+
+  /* surfaces & ink */
+  --bg:        #F4F8F9;
   --surface:   #FFFFFF;
-  --surface-2: #ECFEFF;
-  --surface-3: #F1F5F9;
-  --text:      #0F2A33;   /* darker than uipro #134E4A for AAA body */
-  --muted:     #475569;   /* slate-600, 7:1 on white */
-  --faint:     #64748B;   /* slate-500, 4.6:1 on white */
-  --border:    #CBD9DC;
-  --border-2:  #E2E8F0;
+  --surface-2: #E9F2F4;
+  --surface-3: #F0F5F6;
+  --text:      #0D2330;
+  --muted:     #3A5766;
+  --faint:     #4E6B7A;
+  --border:    #C3D4DA;
+  --border-2:  #DCE7EA;
 
-  --primary:   #0E7490;   /* cyan-700 — single accent */
-  --primary-2: #0891B2;   /* cyan-600 */
-  --primary-ink:#0B5566;
-  --accent:    #0891B2;
-  --ring:      #0E7490;
+  /* brand */
+  --primary:     #0E7490;
+  --primary-2:   #0891B2;
+  --primary-ink: #0A5568;
+  --ring:        #0E7490;
+  --brand:       #0F2A4A;
+  --brand-2:     #0D3D6E;
+  --brand-accent:#7BE3F0;           /* accents on navy */
+  --on-brand:        #FFFFFF;
+  --on-brand-muted:  rgba(255,255,255,.78);
+  --on-brand-faint:  rgba(255,255,255,.66);
+  --on-brand-border: rgba(255,255,255,.14);
 
-  --brand:     #0F2A4A;   /* HTU navy — brand identity */
-  --brand-2:   #0D3D6E;
-
-  /* semantic status */
-  --green:#166534; --green-bg:#DCFCE7; --green-bd:#86EFAC;
-  --amber:#92400E; --amber-bg:#FEF3C7; --amber-bd:#FCD34D;
-  --red:#991B1B;   --red-bg:#FEE2E2;   --red-bd:#FCA5A5;
-  --purple:#5B21B6;--purple-bg:#EDE9FE;--purple-bd:#C4B5FD;
+  /* semantic status — ink / background / border, AA on both themes */
+  --green:#166534;  --green-bg:#DCFCE7;  --green-bd:#86EFAC;
+  --amber:#92400E;  --amber-bg:#FEF3C7;  --amber-bd:#FCD34D;
+  --red:#991B1B;    --red-bg:#FEE2E2;    --red-bd:#FCA5A5;
+  --purple:#5B21B6; --purple-bg:#EDE9FE; --purple-bd:#C4B5FD;
+  --hl:#FDE68A;                      /* search highlight */
 
   --shadow-sm:0 1px 2px rgba(15,42,74,.06),0 1px 3px rgba(15,42,74,.08);
   --shadow-md:0 2px 8px rgba(15,42,74,.08),0 8px 24px rgba(15,42,74,.06);
-  --shadow-lg:0 10px 40px rgba(15,42,74,.12);
+  --shadow-lg:0 10px 40px rgba(15,42,74,.14);
 
-  --radius:12px;
+  /* spacing scale — 4px grid */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px;
+  --sp-5:24px; --sp-6:32px; --sp-7:48px; --sp-8:64px;
+
+  /* type scale — 1.2 modular, rem so the A−/A+ controls scale content */
+  --fs-xs:.75rem;    /* 12 */
+  --fs-sm:.8125rem;  /* 13 */
+  --fs-md:.875rem;   /* 14 */
+  --fs-base:1rem;    /* 16 */
+  --fs-lg:1.1875rem; /* 19 */
+  --fs-xl:1.4375rem; /* 23 */
+  --fs-2xl:1.75rem;  /* 28 */
+  --fs-3xl:2.125rem; /* 34 */
+
+  /* radius scale */
+  --r-sm:6px; --r-md:10px; --r-lg:14px; --r-pill:999px;
+
   --sidebar-w:288px;
   --maxw:860px;
 
-  --font-head:'Figtree',system-ui,sans-serif;
+  --font-display:'Newsreader',Georgia,serif;
   --font-body:'Noto Sans',system-ui,sans-serif;
   --font-mono:'Noto Sans Mono',ui-monospace,monospace;
+
+  /* z-index scale */
+  --z-nav:100; --z-chrome:200; --z-banner:300; --z-modal:900;
+}
+
+/* dark theme — every token re-stated, status inks re-lit for AA */
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0B1520; --surface:#101E2C; --surface-2:#152636; --surface-3:#0E1B28;
+  --text:#E8F0F6; --muted:#B4C6D4; --faint:#8FA6B6;
+  --border:#2A3E52; --border-2:#223448;
+  --primary:#0E7490; --primary-2:#22B8D8; --primary-ink:#86DCEF;
+  --brand:#0A1626; --brand-2:#0E2236; --brand-accent:#7BE3F0;
+  --green:#6EE7A7;  --green-bg:#0F2A1C;  --green-bd:#1F5B38;
+  --amber:#FCD34D;  --amber-bg:#2A2210;  --amber-bd:#6B5416;
+  --red:#FCA5A5;    --red-bg:#2C1517;    --red-bd:#6B2424;
+  --purple:#C4B5FD; --purple-bg:#201633; --purple-bd:#4A3A78;
+  --hl:#A16207;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  --shadow-md:0 2px 8px rgba(0,0,0,.45),0 8px 24px rgba(0,0,0,.3);
+  --shadow-lg:0 10px 40px rgba(0,0,0,.55);
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -67,368 +123,384 @@ body{
   color:var(--text);
   min-height:100vh;
   line-height:1.7;
-  font-size:16px;
+  font-size:var(--fs-base);
   -webkit-font-smoothing:antialiased;
 }
+body.ar{line-height:1.85}
+
+h1,h2,h3{text-wrap:balance}
+p{text-wrap:pretty}
 
 /* ── ACCESSIBILITY: skip link + focus ── */
 .skip-link{
-  position:fixed;left:12px;top:-60px;z-index:10000;
-  background:var(--primary);color:#fff;padding:10px 16px;border-radius:8px;
+  position:fixed;inset-inline-start:12px;top:-60px;z-index:10000;
+  background:var(--primary);color:#fff;padding:10px 16px;border-radius:var(--r-sm);
   font-weight:600;text-decoration:none;transition:top .15s
 }
 .skip-link:focus{top:12px}
 :focus-visible{outline:3px solid var(--ring);outline-offset:2px;border-radius:4px}
 a,button,input,[tabindex]{outline-color:var(--ring)}
 
-/* decorative layers off by default; only on if motion allowed */
-#bg-canvas,#cursor-glow{display:none}
-
-/* ── SIDEBAR (brand navy, AAA white text) ── */
+/* ── SIDEBAR (brand navy) ── */
 #sidebar{
-  width:var(--sidebar-w);height:100vh;position:fixed;top:0;left:0;z-index:100;
-  background:var(--brand);color:#fff;display:flex;flex-direction:column;overflow:hidden;
-  border-right:1px solid rgba(255,255,255,.08);transition:transform .3s
+  width:var(--sidebar-w);height:100vh;position:fixed;top:0;inset-inline-start:0;z-index:var(--z-nav);
+  background:var(--brand);color:var(--on-brand);display:flex;flex-direction:column;overflow:hidden;
+  border-inline-end:1px solid var(--on-brand-border);transition:transform .3s
 }
 @media (prefers-reduced-motion:reduce){#sidebar{transition:none}}
-.search-wrap{padding:14px 16px 10px;border-bottom:1px solid rgba(255,255,255,.1)}
+.search-wrap{padding:14px 16px 10px;border-bottom:1px solid var(--on-brand-border)}
 #search-input{
-  width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);
-  border-radius:8px;padding:10px 12px;color:#fff;font-family:var(--font-body);font-size:14px;outline-offset:2px
+  width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.24);
+  border-radius:var(--r-sm);padding:10px 12px;color:#fff;font-family:var(--font-body);font-size:var(--fs-md);outline-offset:2px
 }
-#search-input::placeholder{color:rgba(255,255,255,.6)}
-#search-input:focus{border-color:#67E8F9;background:rgba(255,255,255,.16)}
-.search-count{font-size:12px;color:#67E8F9;padding:5px 0 2px;min-height:18px}
+#search-input::placeholder{color:rgba(255,255,255,.75)}
+#search-input:focus{border-color:var(--brand-accent);background:rgba(255,255,255,.16)}
+.search-count{font-size:var(--fs-xs);color:var(--brand-accent);padding:5px 0 2px;min-height:18px}
 
-.sb-controls{padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sb-controls{padding:8px 16px;border-bottom:1px solid var(--on-brand-border);display:flex;gap:var(--sp-2);align-items:center;flex-wrap:wrap}
 .ctrl-btn,.font-btn{
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);
-  color:#fff;border-radius:8px;cursor:pointer;font-family:var(--font-body);
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24);
+  color:#fff;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-body);
   display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  min-height:44px;min-width:44px;padding:0 12px;font-size:13px;font-weight:500;
+  min-height:44px;min-width:44px;padding:0 12px;font-size:var(--fs-sm);font-weight:500;
   transition:background .18s,border-color .18s
 }
 .ctrl-btn svg,.font-btn svg{width:18px;height:18px}
 .ctrl-btn:hover,.font-btn:hover{background:rgba(255,255,255,.22)}
-.ctrl-btn.active{background:rgba(103,232,249,.22);border-color:#67E8F9;color:#A5F3FC}
-.font-ctrl{display:flex;gap:6px;margin-left:auto}
+.ctrl-btn.active{background:rgba(123,227,240,.22);border-color:var(--brand-accent);color:var(--brand-accent)}
+.font-ctrl{display:flex;gap:6px;margin-inline-start:auto}
 @media (prefers-reduced-motion:reduce){.ctrl-btn,.font-btn{transition:none}}
 
-.sb-brand{padding:18px 18px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-brand{padding:18px 18px 16px;border-bottom:1px solid var(--on-brand-border)}
 .sb-logo{display:flex;align-items:center;gap:10px;margin-bottom:12px;min-height:40px}
 .sb-logo img{height:34px;filter:brightness(0) invert(1);object-fit:contain}
 .sb-badge{
-  display:inline-block;background:var(--primary-2);color:#fff;
-  font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;
-  padding:4px 10px;border-radius:5px;text-transform:uppercase;font-weight:600
+  display:inline-block;background:var(--primary-2);color:#04222B;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;
+  padding:4px 10px;border-radius:4px;text-transform:uppercase;font-weight:600
 }
-.sb-title{font-size:14px;color:#fff;line-height:1.45;font-weight:600;margin-top:10px}
-.sb-sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:3px}
+html[data-theme="dark"] .sb-badge{color:#04222B}
+.sb-title{font-family:var(--font-display);font-size:1.0625rem;color:#fff;line-height:1.4;font-weight:600;margin-top:10px}
+.sb-sub{font-size:var(--fs-xs);color:var(--on-brand-muted);margin-top:3px}
 
 .sidebar-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.3) transparent}
 .sidebar-scroll::-webkit-scrollbar{width:6px}
 .sidebar-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.25);border-radius:3px}
 .nav-group{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)}
-.nav-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55);padding:0 18px 6px;font-weight:700}
+.nav-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--on-brand-faint);padding:0 18px 6px;font-weight:700}
 .nav-item{
-  display:block;padding:9px 18px;color:rgba(255,255,255,.78);text-decoration:none;
-  font-size:13.5px;line-height:1.4;border-left:3px solid transparent;transition:background .15s,color .15s
+  display:block;padding:9px 18px;color:var(--on-brand-muted);text-decoration:none;
+  font-size:var(--fs-md);line-height:1.4;border-inline-start:3px solid transparent;transition:background .15s,color .15s
 }
-.nav-item:hover{color:#fff;background:rgba(255,255,255,.08);border-left-color:#67E8F9}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.08);border-inline-start-color:var(--brand-accent)}
 .nav-item:focus-visible{outline-offset:-3px}
-.nav-item.active{color:#fff;background:rgba(103,232,249,.16);border-left-color:#22D3EE;font-weight:600}
+.nav-item.active{color:#fff;background:rgba(123,227,240,.16);border-inline-start-color:var(--brand-accent);font-weight:600}
 @media (prefers-reduced-motion:reduce){.nav-item{transition:none}}
-.sb-foot{padding:14px 18px;border-top:1px solid rgba(255,255,255,.1);font-size:11.5px;color:rgba(255,255,255,.6);line-height:1.6}
-#sb-progress-track{position:absolute;right:0;top:0;width:3px;height:100%;background:rgba(255,255,255,.08);pointer-events:none;z-index:10}
-#sb-progress-thumb{width:3px;background:#22D3EE;position:absolute;top:0;min-height:18px;transition:height .08s linear}
+.sb-foot{padding:14px 18px;border-top:1px solid var(--on-brand-border);font-size:var(--fs-xs);color:var(--on-brand-muted);line-height:1.6}
 
 /* ── MAIN ── */
-#main{margin-left:var(--sidebar-w);position:relative;z-index:1}
+#main{margin-inline-start:var(--sidebar-w);position:relative;z-index:1}
 
 /* ── READING PROGRESS ── */
-#reading-progress{position:fixed;top:0;left:0;height:3px;background:var(--primary-2);width:0%;z-index:9999;pointer-events:none}
+#reading-progress{position:fixed;top:0;inset-inline-start:0;height:3px;background:var(--primary-2);width:0%;z-index:calc(var(--z-modal) + 50);pointer-events:none}
 
-/* ── COVER / HERO ── */
+/* ── COVER / MASTHEAD ── */
 #cover{
-  background:linear-gradient(160deg,var(--brand) 0%,var(--brand-2) 100%);
-  color:#fff;padding:72px 56px 64px;position:relative;overflow:hidden;border-bottom:4px solid var(--primary-2)
+  background:var(--brand);
+  color:var(--on-brand);padding:var(--sp-8) 56px;position:relative;
+  border-bottom:4px solid var(--primary-2)
 }
-#cover::before{content:'';position:absolute;top:-90px;right:-90px;width:420px;height:420px;border-radius:50%;border:60px solid rgba(34,211,238,.08);pointer-events:none}
-.cover-top{display:flex;align-items:flex-start;justify-content:space-between;gap:32px;margin-bottom:34px;position:relative;z-index:1}
+.cover-top{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp-6);margin-bottom:var(--sp-6)}
 .cover-text{flex:1}
-.cover-htu{display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0}
+.cover-htu{display:flex;flex-direction:column;align-items:center;gap:var(--sp-2);flex-shrink:0}
 .cover-htu img{height:60px;filter:brightness(0) invert(1);object-fit:contain}
-.cover-htu span{font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.6);text-transform:uppercase;text-align:center;font-family:var(--font-mono)}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(34,211,238,.16);border:1px solid rgba(34,211,238,.4);border-radius:6px;padding:5px 12px;margin-bottom:18px}
-.eyebrow span{font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#A5F3FC}
-.dot-pulse{width:7px;height:7px;border-radius:50%;background:#22D3EE}
-#cover h1{font-family:var(--font-head);font-size:clamp(30px,3.8vw,48px);color:#fff;line-height:1.12;margin-bottom:14px;font-weight:700;letter-spacing:-.5px}
-#cover h1 em{font-style:normal;color:#67E8F9}
-#cover .sub{font-size:15.5px;color:rgba(255,255,255,.82);max-width:60ch;margin-bottom:0;line-height:1.65}
-.cover-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;max-width:760px;position:relative;z-index:1}
-.meta-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px 16px;transition:background .2s,border-color .2s}
-.meta-card:hover{background:rgba(255,255,255,.13);border-color:rgba(34,211,238,.4)}
-.meta-card .ml{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#67E8F9;font-weight:700;margin-bottom:4px}
-.meta-card .mv{font-size:13px;color:#fff;line-height:1.45}
-@media (prefers-reduced-motion:reduce){.meta-card{transition:none}}
+.cover-htu span{font-size:11px;letter-spacing:1px;color:var(--on-brand-faint);text-transform:uppercase;text-align:center;font-family:var(--font-mono)}
+.doc-id{
+  font-family:var(--font-mono);font-size:var(--fs-xs);letter-spacing:2px;text-transform:uppercase;
+  color:var(--brand-accent);border-bottom:1px solid var(--on-brand-border);
+  padding-bottom:var(--sp-3);margin-bottom:var(--sp-5);display:flex;align-items:center;gap:10px;flex-wrap:wrap
+}
+.doc-id .dot-pulse{width:7px;height:7px;border-radius:50%;background:var(--brand-accent);flex:none}
+#cover h1{font-family:var(--font-display);font-size:clamp(2.125rem,4.5vw,3.5rem);color:#fff;line-height:1.08;margin-bottom:var(--sp-4);font-weight:700;letter-spacing:-.01em}
+#cover h1 em{font-style:italic;color:var(--brand-accent)}
+#cover .sub{font-size:var(--fs-base);color:var(--on-brand-muted);max-width:58ch;margin-bottom:0;line-height:1.65}
+.cover-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:var(--sp-3);max-width:760px}
+.meta-card{border-inline-start:1px solid var(--on-brand-border);padding:var(--sp-1) var(--sp-4)}
+.meta-card .ml{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--brand-accent);font-weight:700;margin-bottom:4px;font-family:var(--font-mono)}
+.meta-card .mv{font-size:var(--fs-sm);color:#fff;line-height:1.5}
 
 /* ── SECTIONS ── */
-.content-section{max-width:var(--maxw);margin:0 auto;padding:56px 56px 44px}
-.section-header{display:flex;align-items:center;gap:14px;margin-bottom:30px;padding-bottom:18px;border-bottom:2px solid var(--border-2)}
-.sec-num{font-family:var(--font-mono);font-size:13px;font-weight:700;color:#fff;background:var(--primary);padding:6px 12px;border-radius:8px;white-space:nowrap}
-.content-section h2{font-family:var(--font-head);font-size:30px;color:var(--brand);font-weight:700;line-height:1.2;letter-spacing:-.4px}
-.content-section h3{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--primary-ink);margin:32px 0 12px;display:flex;align-items:center;gap:10px}
-.content-section h3::before{content:'';display:block;width:4px;height:18px;background:var(--primary-2);border-radius:2px;flex-shrink:0}
-.content-section p{font-size:16px;color:var(--muted);margin-bottom:14px;line-height:1.75;max-width:72ch}
+.content-section{max-width:var(--maxw);margin:0 auto;padding:var(--sp-8) 56px var(--sp-7)}
+.section-header{display:flex;align-items:baseline;gap:var(--sp-4);margin-bottom:var(--sp-6);padding-bottom:var(--sp-4);border-bottom:2px solid var(--brand)}
+html[data-theme="dark"] .section-header{border-bottom-color:var(--border)}
+.sec-num{font-family:var(--font-display);font-size:var(--fs-3xl);font-weight:600;font-style:italic;color:var(--primary-2);line-height:1;white-space:nowrap}
+.content-section h2{font-family:var(--font-display);font-size:var(--fs-2xl);color:var(--brand);font-weight:700;line-height:1.15}
+html[data-theme="dark"] .content-section h2{color:var(--text)}
+.content-section h3{font-family:var(--font-body);font-size:var(--fs-lg);font-weight:700;color:var(--text);margin:var(--sp-6) 0 var(--sp-3)}
+.content-section p{font-size:var(--fs-base);color:var(--muted);margin-bottom:var(--sp-4);line-height:1.75;max-width:72ch}
 
-/* ── ILLUSTRATION PANELS (brand navy keeps embedded SVGs legible) ── */
-.illus-panel{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-2) 100%);border-radius:var(--radius);padding:32px;margin:24px 0 32px;display:flex;align-items:center;gap:32px;overflow:hidden;position:relative;box-shadow:var(--shadow-md)}
-.illus-panel::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;border:30px solid rgba(34,211,238,.08)}
-.illus-content{flex:1;z-index:1}
-.illus-content h4{font-family:var(--font-head);font-size:19px;color:#fff;margin-bottom:8px;font-weight:700}
-.illus-content p{font-size:14px;color:rgba(255,255,255,.78);margin:0;line-height:1.6;max-width:none}
-.illus-svg{flex-shrink:0;z-index:1}
-.illus-panel.light{background:var(--surface);border:1px solid var(--border)}
-.illus-panel.light .illus-content h4{color:var(--brand)}
-.illus-panel.light .illus-content p{color:var(--muted)}
+/* ── ILLUSTRATION PANELS ──
+   navy "figure plates": embedded SVGs are drawn for a dark ground,
+   .light variants for a light ground — both stay fixed across themes */
+.illus-panel{background:var(--brand-2);border:1px solid var(--on-brand-border);border-radius:var(--r-lg);padding:var(--sp-6);margin:var(--sp-5) 0 var(--sp-6);display:flex;align-items:center;gap:var(--sp-6);overflow:hidden;position:relative}
+html[data-theme="dark"] .illus-panel{background:#10243A}
+.illus-content{flex:1}
+.illus-content h4{font-family:var(--font-display);font-size:var(--fs-lg);color:#fff;margin-bottom:var(--sp-2);font-weight:600}
+.illus-content p{font-size:var(--fs-md);color:rgba(255,255,255,.8);margin:0;line-height:1.6;max-width:none}
+.illus-svg{flex-shrink:0}
+.illus-panel.light,html[data-theme="dark"] .illus-panel.light{background:#EDF4F6;border:1px solid #C9DAE0}
+.illus-panel.light .illus-content h4{color:#0F2A4A}
+.illus-panel.light .illus-content p{color:#3A5766}
+.illus-panel.danger{background:#7F1D1D}
+.illus-panel.night{background:#221B3A}
 
-/* ── CALLOUTS (SVG icons, no emoji) ── */
-.callout{display:flex;gap:14px;border-radius:10px;padding:16px 18px;margin:16px 0;border:1px solid;border-left:4px solid}
+/* ── CALLOUTS ── */
+.callout{display:flex;gap:var(--sp-4);border-radius:var(--r-md);padding:var(--sp-4) 18px;margin:var(--sp-4) 0;border:1px solid}
 .callout-icon{width:24px;height:24px;flex-shrink:0;margin-top:1px;font-size:0;background-repeat:no-repeat;background-position:center;background-size:22px 22px}
-.callout-label{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
-.callout-text{font-size:14.5px;line-height:1.6;margin:0;color:var(--text)}
-.callout.critical{background:var(--red-bg);border-color:var(--red-bd);border-left-color:#DC2626}
+.callout-label{font-size:var(--fs-xs);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.callout-text{font-size:var(--fs-md);line-height:1.6;margin:0;color:var(--text)}
+.callout.critical{background:var(--red-bg);border-color:var(--red-bd)}
 .callout.critical .callout-label{color:var(--red)}
 .callout.critical .callout-icon{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23DC2626' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86z'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E")}
-.callout.warning{background:var(--amber-bg);border-color:var(--amber-bd);border-left-color:#D97706}
+.callout.warning{background:var(--amber-bg);border-color:var(--amber-bd)}
 .callout.warning .callout-label{color:var(--amber)}
 .callout.warning .callout-icon{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D97706' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/%3E%3Cline x1='12' y1='9' x2='12' y2='13'/%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'/%3E%3C/svg%3E")}
-.callout.note{background:var(--surface-2);border-color:#A5E8F2;border-left-color:var(--primary-2)}
+.callout.note{background:var(--surface-2);border-color:var(--border)}
 .callout.note .callout-label{color:var(--primary-ink)}
 .callout.note .callout-icon{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230891B2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E")}
-.callout.caution{background:var(--green-bg);border-color:var(--green-bd);border-left-color:#16A34A}
+.callout.caution{background:var(--green-bg);border-color:var(--green-bd)}
 .callout.caution .callout-label{color:var(--green)}
 .callout.caution .callout-icon{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2316A34A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3C/svg%3E")}
 
 /* ── TABLES ── */
-.table-wrap{overflow-x:auto;margin:16px 0 24px;border-radius:var(--radius);border:1px solid var(--border-2);box-shadow:var(--shadow-sm);background:var(--surface)}
-table{width:100%;border-collapse:collapse;font-size:14px}
+.table-wrap{overflow-x:auto;margin:var(--sp-4) 0 var(--sp-5);border-radius:var(--r-md);border:1px solid var(--border-2);box-shadow:var(--shadow-sm);background:var(--surface)}
+table{width:100%;border-collapse:collapse;font-size:var(--fs-md)}
 thead tr{background:var(--brand)}
-thead th{padding:12px 15px;text-align:left;color:#fff;font-weight:700;font-size:12px;letter-spacing:.4px}
+thead th{padding:12px 16px;text-align:start;color:#fff;font-weight:700;font-size:var(--fs-xs);letter-spacing:.4px;text-transform:uppercase}
 tbody tr:nth-child(even){background:var(--surface-3)}
 tbody tr:nth-child(odd){background:var(--surface)}
 tbody tr:hover{background:var(--surface-2)}
-tbody td{padding:11px 15px;color:var(--muted);border-bottom:1px solid var(--border-2);vertical-align:top;line-height:1.55;font-size:14px}
+tbody td{padding:12px 16px;color:var(--muted);border-bottom:1px solid var(--border-2);vertical-align:top;line-height:1.55;font-size:var(--fs-md)}
 tbody td:first-child{font-weight:600;color:var(--text)}
-.tc{background:var(--primary)!important}.tc td{color:#fff!important;font-weight:700!important;font-size:12px;letter-spacing:.4px;text-transform:uppercase;padding:8px 15px}
-.total-row td{background:var(--surface-2)!important;font-weight:800!important;color:var(--brand)!important;font-size:15px}
+.tc{background:var(--primary)!important}.tc td{color:#fff!important;font-weight:700!important;font-size:var(--fs-xs);letter-spacing:.4px;text-transform:uppercase;padding:8px 16px}
+.total-row td{background:var(--surface-2)!important;font-weight:800!important;color:var(--brand)!important;font-size:var(--fs-base)}
+html[data-theme="dark"] .total-row td{color:var(--text)!important}
+html[data-theme="dark"] thead th,html[data-theme="dark"] .tc td{color:#fff}
 
 /* ── LED CARDS ── */
-.led-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:18px 0}
-.led-card{border-radius:var(--radius);padding:18px;border:1px solid;position:relative;overflow:hidden;background:var(--surface)}
+.led-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--sp-4);margin:var(--sp-4) 0}
+.led-card{border-radius:var(--r-md);padding:18px;border:1px solid;position:relative;overflow:hidden}
 .led-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
-.led-card.green{background:#F0FDF4;border-color:var(--green-bd)}.led-card.green::before{background:#22C55E}
-.led-card.amber{background:#FFFBEB;border-color:var(--amber-bd)}.led-card.amber::before{background:#F59E0B}
-.led-card.red{background:#FEF2F2;border-color:var(--red-bd)}.led-card.red::before{background:#EF4444}
+.led-card.green{background:var(--green-bg);border-color:var(--green-bd)}.led-card.green::before{background:var(--green)}
+.led-card.amber{background:var(--amber-bg);border-color:var(--amber-bd)}.led-card.amber::before{background:var(--amber)}
+.led-card.red{background:var(--red-bg);border-color:var(--red-bd)}.led-card.red::before{background:var(--red)}
 .led-card.purple{background:var(--purple-bg);border-color:var(--purple-bd)}.led-card.purple::before{background:var(--purple)}
 .led-dot{width:18px;height:18px;border-radius:50%;margin-bottom:10px}
-.led-card.green .led-dot{background:#22C55E}
-.led-card.amber .led-dot{background:#F59E0B}
-.led-card.red .led-dot{background:#EF4444}
+.led-card.green .led-dot{background:var(--green)}
+.led-card.amber .led-dot{background:var(--amber)}
+.led-card.red .led-dot{background:var(--red)}
 .led-card.purple .led-dot{background:var(--purple)}
-.led-status{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.led-status{font-family:var(--font-mono);font-size:var(--fs-xs);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
 .led-card.green .led-status{color:var(--green)}
 .led-card.amber .led-status{color:var(--amber)}
 .led-card.red .led-status{color:var(--red)}
 .led-card.purple .led-status{color:var(--purple)}
-.led-card h4{font-family:var(--font-head);font-size:14px;font-weight:700;margin-bottom:5px;color:var(--text)}
-.led-card p{font-size:13px;color:var(--muted);line-height:1.55;margin:0}
+.led-card h4{font-family:var(--font-body);font-size:var(--fs-md);font-weight:700;margin-bottom:5px;color:var(--text)}
+.led-card p{font-size:var(--fs-sm);color:var(--muted);line-height:1.55;margin:0}
 
 /* ── LISTS ── */
-.bl{list-style:none;margin:10px 0 18px;display:flex;flex-direction:column;gap:8px}
-.bl li{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:var(--muted);line-height:1.6}
-.bl li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--primary-2);flex-shrink:0;margin-top:9px}
-.sl{list-style:none;margin:14px 0;display:flex;flex-direction:column;gap:12px}
-.sl li{display:flex;align-items:flex-start;gap:12px;font-size:15px;color:var(--muted);line-height:1.6}
-.sn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px;font-family:var(--font-mono)}
+.bl{list-style:none;margin:var(--sp-3) 0 18px;display:flex;flex-direction:column;gap:var(--sp-2)}
+.bl li{display:flex;align-items:flex-start;gap:10px;font-size:var(--fs-base);color:var(--muted);line-height:1.6}
+.bl li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--primary-2);flex-shrink:0;margin-top:10px}
+.sl{list-style:none;margin:var(--sp-4) 0;display:flex;flex-direction:column;gap:var(--sp-3)}
+.sl li{display:flex;align-items:flex-start;gap:var(--sp-3);font-size:var(--fs-base);color:var(--muted);line-height:1.6}
+.sn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;font-size:var(--fs-xs);font-weight:700;flex-shrink:0;margin-top:1px;font-family:var(--font-mono)}
 
 /* ── SPECS GRID ── */
-.specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:18px 0}
-.spec-item{background:var(--surface);border:1px solid var(--border-2);border-radius:10px;padding:14px 16px;border-left:3px solid var(--primary-2);box-shadow:var(--shadow-sm)}
-.spec-label{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--faint);text-transform:uppercase;margin-bottom:4px}
-.spec-val{font-size:14px;font-weight:700;color:var(--brand);line-height:1.4}
+.specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--sp-3);margin:var(--sp-4) 0}
+.spec-item{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);padding:var(--sp-4)}
+.spec-label{font-size:var(--fs-xs);font-weight:700;letter-spacing:.5px;color:var(--faint);text-transform:uppercase;margin-bottom:4px}
+.spec-val{font-size:var(--fs-md);font-weight:700;color:var(--brand);line-height:1.4}
+html[data-theme="dark"] .spec-val{color:var(--text)}
 
-/* ── CHECKLIST ── */
-.checklist{list-style:none;margin:14px 0}
-.checklist li{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-2);font-size:15px;color:var(--muted);line-height:1.5}
+/* ── CHECKLIST (native buttons — keyboard + AT reachable) ── */
+.checklist{list-style:none;margin:var(--sp-4) 0}
+.checklist li{display:flex;align-items:flex-start;gap:var(--sp-3);padding:11px 0;border-bottom:1px solid var(--border-2);font-size:var(--fs-base);color:var(--muted);line-height:1.5}
 .checklist li:last-child{border:none}
-.cb{width:24px;height:24px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;cursor:pointer;transition:background .2s,border-color .2s;position:relative;background:var(--surface)}
+.cb{width:24px;height:24px;border:2px solid var(--border);border-radius:var(--r-sm);flex-shrink:0;cursor:pointer;transition:background .2s,border-color .2s;position:relative;background:var(--surface);padding:0}
 .cb:hover{border-color:var(--primary-2)}
 .cb.checked{background:var(--primary);border-color:var(--primary)}
 .cb.checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:14px;font-weight:700}
 @media (prefers-reduced-motion:reduce){.cb{transition:none}}
 
-/* ── QR / REFERENCE PANELS ── */
-.qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
-.qr-panel{border-radius:var(--radius);padding:18px;border:1px solid;background:var(--surface)}
-.qr-panel.bl-p{background:var(--surface-2);border-color:#A5E8F2}
-.qr-panel.gr-p{background:var(--surface-3);border-color:var(--border-2)}
-.qr-panel.ye-p{background:#FFFBEB;border-color:var(--amber-bd)}
-.qr-panel h4{font-family:var(--font-head);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--brand);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border-2)}
-.qr-panel ul{list-style:none;display:flex;flex-direction:column;gap:8px}
-.qr-panel ul li{font-size:13px;color:var(--muted);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+/* ── QUICK REFERENCE PANELS ── */
+.qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4);margin:var(--sp-4) 0}
+.qr-panel{border-radius:var(--r-md);padding:18px;border:1px solid var(--border-2);background:var(--surface)}
+.qr-panel.bl-p{background:var(--surface-2);border-color:var(--border)}
+.qr-panel.gr-p{background:var(--surface-3)}
+.qr-panel.ye-p{background:var(--amber-bg);border-color:var(--amber-bd)}
+.qr-panel h4{font-family:var(--font-body);font-size:var(--fs-sm);font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--brand);margin-bottom:10px;padding-bottom:var(--sp-2);border-bottom:1px solid var(--border-2)}
+html[data-theme="dark"] .qr-panel h4{color:var(--text)}
+.qr-panel ul{list-style:none;display:flex;flex-direction:column;gap:var(--sp-2)}
+.qr-panel ul li{font-size:var(--fs-sm);color:var(--muted);display:flex;align-items:flex-start;gap:var(--sp-2);line-height:1.5}
 .qr-box{width:16px;height:16px;border:2px solid var(--faint);border-radius:4px;flex-shrink:0;margin-top:2px}
+.qr-led{font-weight:700}
+.qr-led.g{color:var(--green)}
+.qr-led.a{color:var(--amber)}
+.qr-led.r{color:var(--red)}
+.qr-led.p{color:var(--purple)}
 
 /* ── FORM ── */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
-.form-field{background:var(--surface);border:1px solid var(--border-2);border-radius:10px;padding:12px 14px}
-.form-field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--faint);margin-bottom:6px}
-.form-field input{width:100%;border:none;border-bottom:2px solid var(--border);outline:none;font-size:14px;color:var(--text);padding:4px 0;background:transparent;font-family:var(--font-body)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3);margin:var(--sp-4) 0}
+.form-field{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);padding:var(--sp-3) 14px}
+.form-field label{display:block;font-size:var(--fs-xs);font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--faint);margin-bottom:6px}
+.form-field input{width:100%;border:none;border-bottom:2px solid var(--border);outline:none;font-size:var(--fs-md);color:var(--text);padding:4px 0;background:transparent;font-family:var(--font-body)}
+.form-field input::placeholder{color:var(--faint)}
 .form-field input:focus{border-color:var(--primary-2)}
 
 /* ── GLOSSARY ── */
 .glossary-list{display:flex;flex-direction:column}
-.gitem{display:grid;grid-template-columns:140px 1fr;gap:18px;padding:13px 0;border-bottom:1px solid var(--border-2);font-size:14px}
-.gterm{font-family:var(--font-mono);font-weight:600;color:var(--primary-ink);font-size:13px}
+.gitem{display:grid;grid-template-columns:140px 1fr;gap:18px;padding:13px 0;border-bottom:1px solid var(--border-2);font-size:var(--fs-md)}
+.gterm{font-family:var(--font-mono);font-weight:600;color:var(--primary-ink);font-size:var(--fs-sm)}
 .gdef{color:var(--muted);line-height:1.6}
 
 /* ── DIVIDER ── */
 .sec-div{max-width:var(--maxw);margin:0 auto;padding:0 56px}
 .sec-div hr{border:none;border-top:1px solid var(--border-2)}
 
+/* ── CODE CHIP ── */
+.code-chip{background:var(--surface-2);border:1px solid var(--border-2);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--primary-ink)}
+
 /* ── WIZARD ── */
-.wizard-wrap{margin:18px 0}
-.wizard-card{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius);padding:24px;max-width:700px;box-shadow:var(--shadow-sm)}
-.wizard-question{font-family:var(--font-head);font-size:17px;font-weight:700;color:var(--brand);margin-bottom:16px;line-height:1.5}
+.wizard-wrap{margin:var(--sp-4) 0}
+.wizard-card{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-lg);padding:var(--sp-5);max-width:700px;box-shadow:var(--shadow-sm)}
+.wizard-question{font-family:var(--font-display);font-size:var(--fs-lg);font-weight:600;color:var(--brand);margin-bottom:var(--sp-4);line-height:1.4}
+html[data-theme="dark"] .wizard-question{color:var(--text)}
 .wizard-options{display:flex;flex-direction:column;gap:10px}
-.wiz-btn{background:var(--surface-3);border:1px solid var(--border-2);border-radius:10px;padding:14px 16px;text-align:left;font-size:14.5px;color:var(--text);cursor:pointer;transition:background .2s,border-color .2s;font-family:var(--font-body);width:100%;min-height:44px}
+.wiz-btn{background:var(--surface-3);border:1px solid var(--border-2);border-radius:var(--r-md);padding:14px 16px;text-align:start;font-size:var(--fs-md);color:var(--text);cursor:pointer;transition:background .2s,border-color .2s;font-family:var(--font-body);width:100%;min-height:44px}
 .wiz-btn:hover{background:var(--surface-2);border-color:var(--primary-2)}
-.wizard-solution{background:var(--surface-2);border-radius:10px;padding:16px 18px;border-left:4px solid var(--primary-2)}
-.sol-label{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary-ink);margin-bottom:6px;font-family:var(--font-mono)}
-.sol-text{font-size:14.5px;color:var(--muted);line-height:1.7}
-.wiz-actions{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
-.wiz-back,.wiz-reset,.wiz-table-toggle{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--muted);cursor:pointer;font-family:var(--font-body);transition:border-color .15s,color .15s;min-height:44px}
+.wizard-solution{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-4) 18px}
+.sol-label{font-size:var(--fs-xs);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary-ink);margin-bottom:6px;font-family:var(--font-mono)}
+.sol-text{font-size:var(--fs-md);color:var(--muted);line-height:1.7}
+.wiz-actions{margin-top:var(--sp-4);display:flex;gap:var(--sp-2);flex-wrap:wrap}
+.wiz-back,.wiz-reset,.wiz-table-toggle{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 16px;font-size:var(--fs-sm);color:var(--muted);cursor:pointer;font-family:var(--font-body);transition:border-color .15s,color .15s;min-height:44px}
 .wiz-back:hover,.wiz-reset:hover,.wiz-table-toggle:hover{border-color:var(--primary-2);color:var(--primary-ink)}
 .wiz-table-toggle{display:inline-flex;align-items:center;margin:14px 0 8px}
-.wiz-breadcrumb{font-family:var(--font-mono);font-size:12px;color:var(--faint);margin-bottom:12px;min-height:16px}
+.wiz-breadcrumb{font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--faint);margin-bottom:var(--sp-3);min-height:16px}
 #s11-table.hidden{display:none}
 
 /* ── PCM TIMER ── */
-.timer-widget{background:var(--surface-2);border:1px solid #A5E8F2;border-radius:var(--radius);padding:16px 18px;margin:18px 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.timer-display{font-family:var(--font-mono);font-size:26px;font-weight:600;color:var(--brand);min-width:100px}
-.timer-label{font-size:13px;color:var(--faint);margin-top:2px}
-.timer-start{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:11px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body);transition:background .2s;white-space:nowrap;min-height:44px}
+.timer-widget{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-4) 18px;margin:var(--sp-4) 0;display:flex;align-items:center;gap:var(--sp-4);flex-wrap:wrap}
+.timer-display{font-family:var(--font-mono);font-size:var(--fs-xl);font-weight:600;color:var(--brand);min-width:100px}
+html[data-theme="dark"] .timer-display{color:var(--text)}
+.timer-display.done{color:var(--green)}
+.timer-label{font-size:var(--fs-sm);color:var(--faint);margin-top:2px}
+.timer-start{background:var(--primary);color:#fff;border:none;border-radius:var(--r-sm);padding:11px 18px;font-size:var(--fs-sm);font-weight:700;cursor:pointer;font-family:var(--font-body);transition:background .2s;white-space:nowrap;min-height:44px}
 .timer-start:hover{background:var(--primary-ink)}
-.timer-start.running{background:#DC2626}
-.timer-bar-wrap{flex:1;min-width:120px;background:var(--border-2);border-radius:10px;height:8px;overflow:hidden}
-.timer-bar{height:100%;background:var(--primary-2);border-radius:10px;transition:width 1s linear;width:0%}
+html[data-theme="dark"] .timer-start:hover{background:var(--primary-2);color:#04222B}
+.timer-start.running{background:#B91C1C}
+.timer-bar-wrap{flex:1;min-width:120px;background:var(--border-2);border-radius:var(--r-pill);height:8px;overflow:hidden}
+.timer-bar{height:100%;background:var(--primary-2);border-radius:var(--r-pill);width:0%}
 
 /* ── BATTERY CALCULATOR ── */
-.calc-widget{background:var(--surface-3);border:1px solid var(--border-2);border-radius:var(--radius);padding:18px;margin:18px 0}
-.calc-widget h4{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--brand);margin-bottom:14px}
-.calc-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.calc-row label{font-size:13px;color:var(--muted);min-width:180px}
+.calc-widget{background:var(--surface-3);border:1px solid var(--border-2);border-radius:var(--r-lg);padding:18px;margin:var(--sp-4) 0}
+.calc-widget h4{font-family:var(--font-body);font-size:var(--fs-base);font-weight:700;color:var(--brand);margin-bottom:14px}
+html[data-theme="dark"] .calc-widget h4{color:var(--text)}
+.calc-row{display:flex;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-3);flex-wrap:wrap}
+.calc-row label{font-size:var(--fs-sm);color:var(--muted);min-width:180px}
 .calc-row input[type=range]{flex:1;min-width:90px;accent-color:var(--primary-2);height:24px}
-.calc-val{font-family:var(--font-mono);font-size:13px;color:var(--brand);min-width:52px;text-align:right;font-weight:600}
-.calc-result{background:var(--surface);border:1px solid var(--border-2);border-radius:8px;padding:13px 15px;margin-top:12px;font-size:14px;color:var(--text)}
+.calc-val{font-family:var(--font-mono);font-size:var(--fs-sm);color:var(--brand);min-width:52px;text-align:end;font-weight:600}
+html[data-theme="dark"] .calc-val{color:var(--text)}
+.calc-result{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-sm);padding:13px 15px;margin-top:var(--sp-3);font-size:var(--fs-md);color:var(--text)}
+.calc-result strong{font-family:var(--font-mono);font-size:var(--fs-base)}
+.calc-result.ok strong{color:var(--green)}
+.calc-result.warn strong{color:var(--amber)}
+.calc-result.low strong{color:var(--red)}
 
 /* ── PRINT BUTTON ── */
-.print-btn{position:fixed;bottom:24px;right:24px;background:var(--primary);color:#fff;border:none;border-radius:50px;padding:0 20px;min-height:48px;font-family:var(--font-body);font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg);transition:background .2s;z-index:200}
+.print-btn{position:fixed;bottom:24px;inset-inline-end:24px;background:var(--primary);color:#fff;border:none;border-radius:var(--r-pill);padding:0 20px;min-height:48px;font-family:var(--font-body);font-size:var(--fs-md);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:var(--sp-2);box-shadow:var(--shadow-lg);transition:background .2s;z-index:var(--z-chrome)}
 .print-btn svg{width:18px;height:18px}
 .print-btn:hover{background:var(--primary-ink)}
+html[data-theme="dark"] .print-btn:hover{background:var(--primary-2);color:#04222B}
 @media (prefers-reduced-motion:reduce){.print-btn{transition:none}}
 
 /* ── LIVE MONITORING (button + modal) ── */
-#live-btn{position:fixed;top:14px;right:24px;z-index:300;display:inline-flex;align-items:center;gap:9px;background:var(--brand);color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:50px;padding:0 18px;min-height:44px;font-family:var(--font-head);font-size:14px;font-weight:600;cursor:pointer;box-shadow:var(--shadow-md);transition:background .2s,transform .15s}
+#live-btn{position:fixed;top:14px;inset-inline-end:24px;z-index:var(--z-banner);display:inline-flex;align-items:center;gap:9px;background:var(--brand);color:#fff;border:1px solid var(--on-brand-border);border-radius:var(--r-pill);padding:0 18px;min-height:44px;font-family:var(--font-body);font-size:var(--fs-md);font-weight:600;cursor:pointer;box-shadow:var(--shadow-md);transition:background .2s,transform .15s}
 #live-btn:hover{background:var(--brand-2)}
 #live-btn:active{transform:scale(.97)}
 #live-btn .live-dot{width:10px;height:10px;border-radius:50%;background:#22C55E;flex:none}
 @media (prefers-reduced-motion:no-preference){#live-btn .live-dot{animation:livePulse 1.8s ease-out infinite}}
 @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 9px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
-body.ar #live-btn{right:auto;left:24px}
 @media print{#live-btn{display:none!important}}
-@media (max-width:640px){#live-btn{top:10px;right:14px;padding:0 13px;font-size:12.5px;min-height:38px}body.ar #live-btn{right:auto;left:14px}}
+@media (max-width:640px){#live-btn{top:10px;inset-inline-end:14px;padding:0 13px;font-size:var(--fs-xs);min-height:38px}}
 
-#live-modal{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,15,28,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+#live-modal{position:fixed;inset:0;z-index:var(--z-modal);display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,15,28,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 #live-modal.open{display:flex}
 @media (prefers-reduced-motion:no-preference){#live-modal.open .live-card{animation:livePop .22s ease-out}}
 @keyframes livePop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
-.live-card{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);width:100%;max-width:600px;max-height:92vh;overflow:auto;padding:22px 24px}
-.live-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
-.live-head h2{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:9px}
-.live-head h2 svg{width:22px;height:22px;color:var(--primary)}
-#live-close{background:var(--surface-3);border:1px solid var(--border-2);color:var(--text);width:40px;height:40px;min-width:40px;border-radius:10px;cursor:pointer;font-size:22px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.live-card{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);width:100%;max-width:600px;max-height:92vh;overflow:auto;padding:22px 24px}
+.live-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);margin-bottom:4px}
+.live-head h2{font-family:var(--font-display);font-size:var(--fs-xl);font-weight:600;color:var(--text);display:flex;align-items:center;gap:9px}
+.live-head h2 svg{width:22px;height:22px;color:var(--primary-2)}
+#live-close{background:var(--surface-3);border:1px solid var(--border-2);color:var(--text);width:40px;height:40px;min-width:40px;border-radius:var(--r-md);cursor:pointer;font-size:22px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
 #live-close:hover{background:var(--border-2)}
-.live-statusrow{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--faint);margin-bottom:16px}
+.live-statusrow{display:flex;align-items:center;gap:10px;font-size:var(--fs-sm);font-weight:600;color:var(--faint);margin-bottom:var(--sp-4)}
 .live-statusrow .live-sub{font-weight:400}
-.live-temp{font-family:var(--font-head);font-size:64px;font-weight:700;line-height:1;color:var(--primary);letter-spacing:-1px}
-.live-flags{font-size:14px;color:var(--muted);min-height:1.3em;margin:10px 0 2px;display:flex;flex-wrap:wrap;gap:6px 16px}
+.live-temp{font-family:var(--font-display);font-size:4rem;font-weight:700;line-height:1;color:var(--primary-ink);letter-spacing:-.01em}
+.live-flags{font-size:var(--fs-md);color:var(--muted);min-height:1.3em;margin:10px 0 2px;display:flex;flex-wrap:wrap;gap:6px 16px}
 .live-flag{display:inline-flex;align-items:center;gap:6px}
 .live-flag.warn{color:var(--red);font-weight:700}
 .live-flag.ok{color:var(--green);font-weight:700}
-.live-chartwrap{position:relative;height:220px;margin-top:14px;border-top:1px solid var(--border-2);padding-top:16px}
-.live-updated{font-size:12px;color:var(--faint);margin-top:12px}
-body.ar .live-statusrow,body.ar .live-flags{flex-direction:row-reverse}
+.live-chartwrap{position:relative;height:220px;margin-top:14px;border-top:1px solid var(--border-2);padding-top:var(--sp-4)}
+.live-updated{font-size:var(--fs-xs);color:var(--faint);margin-top:var(--sp-3)}
 
-/* auth gate */
+/* unlock gate */
 #live-gate{padding:4px 0 2px}
-.live-gate-intro{font-size:14px;color:var(--muted);margin-bottom:18px}
-.live-auth-block label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:7px}
-.live-serial-row{display:flex;gap:8px}
-#live-serial{flex:1;min-width:0;min-height:46px;padding:0 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-family:var(--font-body);font-size:15px}
+.live-gate-intro{font-size:var(--fs-md);color:var(--muted);margin-bottom:18px}
+.live-auth-block label{display:block;font-size:var(--fs-sm);font-weight:600;color:var(--text);margin-bottom:7px}
+.live-serial-row{display:flex;gap:var(--sp-2)}
+#live-serial{flex:1;min-width:0;min-height:46px;padding:0 14px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);color:var(--text);font-family:var(--font-body);font-size:var(--fs-base)}
 #live-serial::placeholder{color:var(--faint)}
-#live-serial-btn,#live-nfc-btn{min-height:46px;border-radius:10px;cursor:pointer;font-family:var(--font-head);font-weight:600;font-size:14px;transition:background .2s}
+#live-serial-btn,#live-nfc-btn{min-height:46px;border-radius:var(--r-md);cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:var(--fs-md);transition:background .2s}
 #live-serial-btn{padding:0 22px;background:var(--primary);color:#fff;border:none;flex:none}
 #live-serial-btn:hover{background:var(--primary-ink)}
+html[data-theme="dark"] #live-serial-btn:hover{background:var(--primary-2);color:#04222B}
 #live-nfc-btn{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 18px;background:var(--surface-3);color:var(--text);border:1px solid var(--border)}
 #live-nfc-btn:hover{background:var(--border-2)}
-#live-nfc-btn svg{width:18px;height:18px;color:var(--primary)}
+#live-nfc-btn svg{width:18px;height:18px;color:var(--primary-2)}
 #live-nfc-btn[disabled]{opacity:.55;cursor:not-allowed}
-#live-nfc-btn.scanning{border-color:var(--primary);color:var(--primary)}
+#live-nfc-btn.scanning{border-color:var(--primary-2);color:var(--primary-ink)}
 @media (prefers-reduced-motion:no-preference){#live-nfc-btn.scanning svg{animation:livePulse 1.4s ease-out infinite}}
-.live-or{display:flex;align-items:center;gap:12px;color:var(--faint);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin:18px 0}
+.live-or{display:flex;align-items:center;gap:var(--sp-3);color:var(--faint);font-size:var(--fs-xs);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin:18px 0}
 .live-or::before,.live-or::after{content:"";flex:1;height:1px;background:var(--border-2)}
-.live-hint{font-size:12px;color:var(--faint);margin-top:9px}
-.live-gate-msg{font-size:13px;font-weight:600;margin-top:16px;min-height:1.2em}
+.live-hint{font-size:var(--fs-xs);color:var(--faint);margin-top:9px}
+.live-gate-msg{font-size:var(--fs-sm);font-weight:600;margin-top:var(--sp-4);min-height:1.2em}
 .live-gate-msg.warn{color:var(--red)}
 .live-gate-msg.ok{color:var(--green)}
-body.ar .live-serial-row{flex-direction:row-reverse}
 
 /* ── MOBILE TOGGLE ── */
-#menu-toggle{display:none;position:fixed;top:14px;left:14px;z-index:300;background:var(--brand);border:none;color:#fff;width:48px;height:48px;border-radius:10px;cursor:pointer;align-items:center;justify-content:center;box-shadow:var(--shadow-md)}
+#menu-toggle{display:none;position:fixed;top:14px;inset-inline-start:14px;z-index:var(--z-banner);background:var(--brand);border:1px solid var(--on-brand-border);color:#fff;width:48px;height:48px;border-radius:var(--r-md);cursor:pointer;align-items:center;justify-content:center;box-shadow:var(--shadow-md)}
 #menu-toggle svg{width:22px;height:22px}
 
 /* ── FOOTER ── */
-#page-footer{background:var(--brand);color:rgba(255,255,255,.7);text-align:center;padding:32px 40px;font-size:13px;line-height:1.8;margin-top:50px}
+#page-footer{background:var(--brand);color:var(--on-brand-muted);text-align:center;padding:var(--sp-6) 40px;font-size:var(--fs-sm);line-height:1.8;margin-top:var(--sp-7)}
 #page-footer strong{color:#fff}
 
 /* ── RESUME / OFFLINE BANNERS ── */
-#resume-banner{position:fixed;top:3px;left:var(--sidebar-w);right:0;background:var(--primary);color:#fff;padding:9px 20px;font-size:14px;display:none;align-items:center;justify-content:space-between;z-index:400;font-family:var(--font-body);gap:10px}
-.rb-btn{background:rgba(255,255,255,.22);border:none;color:#fff;padding:7px 14px;border-radius:6px;cursor:pointer;font-family:var(--font-body);font-size:13px;min-height:36px}
+#resume-banner{position:fixed;top:3px;inset-inline-start:var(--sidebar-w);inset-inline-end:0;background:var(--primary);color:#fff;padding:9px 20px;font-size:var(--fs-md);display:none;align-items:center;justify-content:space-between;z-index:var(--z-banner);font-family:var(--font-body);gap:10px}
+.rb-btn{background:rgba(255,255,255,.22);border:none;color:#fff;padding:7px 14px;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-body);font-size:var(--fs-sm);min-height:36px}
 .rb-btn:hover{background:rgba(255,255,255,.34)}
 .rb-close{background:none;border:none;color:rgba(255,255,255,.85);cursor:pointer;font-size:20px;padding:0 6px;line-height:1;min-width:32px;min-height:32px}
-#offline-banner{position:fixed;bottom:84px;right:24px;background:var(--green);color:#fff;padding:11px 16px;border-radius:10px;font-size:13px;z-index:300;font-family:var(--font-body);display:none;align-items:center;gap:8px;box-shadow:var(--shadow-md)}
+#offline-banner{position:fixed;bottom:84px;inset-inline-end:24px;background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);padding:11px 16px;border-radius:var(--r-md);font-size:var(--fs-sm);z-index:var(--z-banner);font-family:var(--font-body);display:none;align-items:center;gap:var(--sp-2);box-shadow:var(--shadow-md)}
 #offline-banner svg{width:18px;height:18px;flex-shrink:0}
 
-/* ── SECTION NAV DOTS ── */
-#section-nav{position:fixed;right:14px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:150;padding:8px 4px}
-.sec-dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .2s,transform .2s;position:relative;flex-shrink:0;border:none;padding:0}
-.sec-dot:hover{background:var(--faint);transform:scale(1.35)}
-.sec-dot.active{background:var(--primary-2);transform:scale(1.5)}
-.sec-dot::after{content:attr(data-label);position:absolute;right:18px;top:50%;transform:translateY(-50%);background:var(--brand);color:#fff;padding:4px 10px;border-radius:6px;font-size:11px;white-space:nowrap;opacity:0;transition:opacity .15s;pointer-events:none;font-family:var(--font-mono);box-shadow:var(--shadow-md)}
-.sec-dot:hover::after,.sec-dot:focus-visible::after{opacity:1}
-@media (prefers-reduced-motion:reduce){.sec-dot{transition:none}}
-@media(max-width:1180px){#section-nav{display:none}}
-
 /* ── SEARCH HIGHLIGHT ── */
-mark.sh{background:#FEF08A;color:var(--text);border-radius:3px;padding:0 1px}
+mark.sh{background:var(--hl);color:var(--text);border-radius:3px;padding:0 1px}
+html[data-theme="dark"] mark.sh{color:#fff}
 mark.sh.active{background:var(--primary-2);color:#fff}
 
-/* ── REVEAL (content visible by default; animate only if motion allowed) ── */
-.reveal{opacity:1;transform:none}
+/* ── STATUS DOT PULSES (state indication, motion-gated) ── */
 @media (prefers-reduced-motion:no-preference){
-  .reveal{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}
-  .reveal.visible{opacity:1;transform:none}
   .dot-pulse{animation:pulse 2s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
   .led-card.amber .led-dot{animation:b-slow 3s infinite}
@@ -437,108 +509,37 @@ mark.sh.active{background:var(--primary-2);color:#fff}
   @keyframes b-fast{0%,100%{opacity:1}50%{opacity:.15}}
 }
 
-/* ── LOADER ── */
-#loader{position:fixed;inset:0;z-index:99999;background:var(--brand);display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity .6s ease,visibility .6s ease}
-#loader.ld-done{opacity:0;visibility:hidden;pointer-events:none}
-.ld-rings{position:relative;width:96px;height:96px;flex-shrink:0}
-.ld-r,.ld-r2,.ld-r3{position:absolute;inset:0;border-radius:50%;border:2px solid transparent}
-.ld-r{border-top-color:#22D3EE}
-.ld-r2{inset:14px;border-top-color:rgba(34,211,238,.55)}
-.ld-r3{inset:28px;border-top-color:rgba(165,243,252,.4)}
-.ld-dot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.ld-dot svg{width:34px;height:34px;color:#67E8F9}
-.ld-title{font-family:var(--font-head);font-size:21px;font-weight:700;margin-top:22px;text-align:center;line-height:1.3;color:#fff}
-.ld-title em{font-style:normal;color:#67E8F9}
-.ld-bar-track{width:220px;height:3px;background:rgba(255,255,255,.16);border-radius:2px;margin-top:20px;overflow:hidden}
-#ld-bar{height:100%;width:0%;background:#22D3EE;border-radius:2px;transition:width .15s ease}
-#ld-status{margin-top:10px;font-family:var(--font-mono);font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.55);text-transform:uppercase}
-@media (prefers-reduced-motion:no-preference){
-  .ld-r{animation:ldspin 1.1s linear infinite}
-  .ld-r2{animation:ldspin .8s linear infinite reverse}
-  .ld-r3{animation:ldspin 1.6s linear infinite}
-  @keyframes ldspin{to{transform:rotate(360deg)}}
-}
-
-/* ╔══════════════════════════════════════╗
-   ║   D A R K   M O D E   (opt-in)        ║
-   ╚══════════════════════════════════════╝ */
-body.dark-mode{
-  --bg:#0B1220; --surface:#111C2F; --surface-2:#15233A; --surface-3:#0F1A2C;
-  --text:#E6EEF7; --muted:#AFC0D4; --faint:#8AA0B8; --border:#2A3A53; --border-2:#243349;
-  --primary:#22D3EE; --primary-2:#38BDF8; --primary-ink:#A5F3FC;
-  --brand:#0A1626; --brand-2:#0E2236;
-  --green-bg:#0E2A1C; --amber-bg:#2C2310; --red-bg:#2C1517; --purple-bg:#211633;
-}
-body.dark-mode #cover{background:linear-gradient(160deg,#0A1626,#10243a)}
-body.dark-mode .content-section h2{color:#E6EEF7}
-body.dark-mode .sec-num{color:#06121b}
-body.dark-mode thead th,body.dark-mode .total-row td{color:#fff}
-body.dark-mode .led-card.green{background:#0E2A1C}
-body.dark-mode .led-card.amber{background:#2C2310}
-body.dark-mode .led-card.red{background:#2C1517}
-body.dark-mode .led-card.purple{background:#211633}
-body.dark-mode .led-card h4,body.dark-mode .spec-val{color:#E6EEF7}
-body.dark-mode mark.sh{background:#A16207;color:#fff}
-
-/* ── ARABIC RTL ── */
-body.ar{direction:rtl;text-align:right;font-family:var(--font-body)}
-body.ar #sidebar{left:auto;right:0;border-right:none;border-left:1px solid rgba(255,255,255,.08)}
-body.ar #main{margin-left:0;margin-right:var(--sidebar-w)}
-body.ar #reading-progress{left:auto;right:0}
-body.ar #resume-banner{left:0;right:var(--sidebar-w)}
-body.ar .print-btn{right:auto;left:24px}
-body.ar #offline-banner{right:auto;left:24px}
-body.ar #menu-toggle{left:auto;right:14px}
-body.ar .nav-item{border-left:none;border-right:3px solid transparent}
-body.ar .nav-item:hover{border-right-color:#67E8F9;border-left-color:transparent}
-body.ar .nav-item.active{border-right-color:#22D3EE;border-left-color:transparent}
-body.ar .font-ctrl{margin-left:0;margin-right:auto}
-body.ar .section-header,body.ar .content-section h3{flex-direction:row-reverse}
-body.ar .content-section h3::before{margin-right:0}
-body.ar .callout{flex-direction:row-reverse;border-left:1px solid var(--border-2);border-right:4px solid}
-body.ar .callout.critical{border-right-color:#DC2626}
-body.ar .callout.warning{border-right-color:#D97706}
-body.ar .callout.note{border-right-color:var(--primary-2)}
-body.ar .callout.caution{border-right-color:#16A34A}
-body.ar .bl li,body.ar .sl li,body.ar .checklist li,body.ar .qr-panel ul li{flex-direction:row-reverse}
-body.ar .spec-item{border-left:1px solid var(--border-2);border-right:3px solid var(--primary-2)}
-body.ar .wizard-solution{border-left:none;border-right:4px solid var(--primary-2)}
-body.ar .wiz-btn{text-align:right}
-body.ar .sb-logo,body.ar .sb-controls{flex-direction:row-reverse}
-body.ar .led-card{text-align:right}
-body.ar #section-nav{right:auto;left:14px}
-body.ar .sec-dot::after{right:auto;left:18px}
+/* ── ARABIC ── */
+body.ar{letter-spacing:0}
+body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body.ar .led-status,body.ar .spec-label,body.ar .meta-card .ml{letter-spacing:0}
 
 /* ── RESPONSIVE ── */
 @media(max-width:1024px){
-  .content-section,#cover{padding-left:40px;padding-right:40px}
-  .sec-div{padding-left:40px;padding-right:40px}
+  .content-section,#cover{padding-inline:40px}
+  .sec-div{padding-inline:40px}
 }
 @media(max-width:768px){
   #sidebar{transform:translateX(-100%)}
+  [dir="rtl"] #sidebar{transform:translateX(100%)}
   #sidebar.open{transform:translateX(0)}
-  #main{margin-left:0}
-  body.ar #main{margin-right:0}
-  body.ar #sidebar{transform:translateX(100%)}
-  body.ar #sidebar.open{transform:translateX(0)}
+  #main{margin-inline-start:0}
   #menu-toggle{display:inline-flex}
-  #resume-banner{left:0;right:0}
-  body.ar #resume-banner{left:0;right:0}
+  #resume-banner{inset-inline:0}
   .content-section,#cover{padding:40px 20px 32px}
   .sec-div{padding:0 20px}
   .cover-top{flex-direction:column-reverse;gap:18px}
   .qr-grid,.form-grid{grid-template-columns:1fr}
   .illus-panel{flex-direction:column}
-  .content-section h2{font-size:25px}
+  .content-section h2{font-size:var(--fs-xl)}
+  .sec-num{font-size:var(--fs-2xl)}
+  .gitem{grid-template-columns:110px 1fr;gap:12px}
 }
 
 /* ── PRINT ── */
 @media print{
-  #sidebar,.print-btn,#menu-toggle,#bg-canvas,#cursor-glow,#section-nav,#reading-progress,#resume-banner,#offline-banner,#loader{display:none!important}
+  #sidebar,.print-btn,#menu-toggle,#reading-progress,#resume-banner,#offline-banner,#live-modal{display:none!important}
   #main{margin:0!important}
   body{background:#fff;color:#000}
-  .reveal{opacity:1!important;transform:none!important}
-  .illus-panel{box-shadow:none}
   .content-section{page-break-inside:avoid}
 }
 
@@ -546,31 +547,15 @@ body.ar .sec-dot::after{right:auto;left:18px}
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
 ::-webkit-scrollbar-thumb:hover{background:var(--faint)}
-
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
-<!-- ══ LOADER ══ -->
-<div id="loader">
-  <div class="ld-rings">
-    <div class="ld-r"></div><div class="ld-r2"></div><div class="ld-r3"></div>
-    <div class="ld-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="9" y1="11" x2="15" y2="11"/></svg></div>
-  </div>
-  <p class="ld-title">Enhanced Reliability<br><em>Vaccine Delivery Box</em></p>
-  <div class="ld-bar-track"><div id="ld-bar"></div></div>
-  <p id="ld-status">Initializing…</p>
-</div>
-
-<!-- ══ CURSOR GLOW ══ -->
-<div id="cursor-glow"></div>
-
-<canvas id="bg-canvas"></canvas>
 <div id="reading-progress"></div>
 <div id="resume-banner"></div>
 <div id="offline-banner" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg><span>Offline — manual available from cache</span></div>
-<button id="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Open navigation menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+<button id="menu-toggle" onclick="this.setAttribute('aria-expanded',document.getElementById('sidebar').classList.toggle('open'))" aria-expanded="false" aria-controls="sidebar" aria-label="Open navigation menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
 
 <!-- ══════════════════ LIVE MONITORING ══════════════════ -->
 <button id="live-btn" onclick="openLiveMonitor()" aria-haspopup="dialog" aria-controls="live-modal" aria-label="Open live temperature monitoring"><span class="live-dot" aria-hidden="true"></span><span data-i18n="live-btn">Live Monitoring</span></button>
@@ -584,7 +569,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
 
     <!-- AUTH GATE — shown until access is verified -->
     <div id="live-gate">
-      <p class="live-gate-intro" data-i18n="live-gate-intro">Access to live monitoring is restricted. Verify your access to continue.</p>
+      <p class="live-gate-intro" data-i18n="live-gate-intro">Unlock the live dashboard with your box's serial number or its NFC card.</p>
       <div class="live-auth-block">
         <label for="live-serial" data-i18n="live-serial-label">Device serial number</label>
         <div class="live-serial-row">
@@ -617,7 +602,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
     <input id="search-input" type="search" placeholder="Search manual… (Ctrl+K)" autocomplete="off" aria-label="Search the manual">
     <div class="search-count" id="search-count"></div>
   </div>
-  <div class="sb-controls" style="padding:8px 16px;margin-bottom:0">
+  <div class="sb-controls">
     <button class="ctrl-btn" id="lang-btn" onclick="toggleLang()" aria-label="Switch language — Arabic or English"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n="lang-btn">AR</span></button>
     <button class="ctrl-btn" id="dark-btn" onclick="toggleDark()" aria-label="Switch to dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
     <span class="font-ctrl">
@@ -628,7 +613,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
   <div class="sb-brand">
     <div class="sb-logo">
       <img src="https://htu.edu.jo/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHTU%20White%20Logo.8126eecd.svg&w=384&q=75" alt="HTU Logo" onerror="this.style.display='none';document.getElementById('htu-text-logo').style.display='block'">
-      <span id="htu-text-logo" style="display:none;color:white;font-family:'DM Serif Display',serif;font-size:20px;font-weight:400">HTU</span>
+      <span id="htu-text-logo" style="display:none;color:white;font-family:var(--font-display);font-size:20px;font-weight:600">HTU</span>
     </div>
     <div class="sb-badge" data-i18n="sb-badge">User Manual v1.0</div>
     <div class="sb-title">Enhanced Reliability Vaccine Delivery Box</div>
@@ -673,7 +658,6 @@ body.ar .sec-dot::after{right:auto;left:18px}
   </div>
   </div><!-- /sidebar-scroll -->
   <div class="sb-foot">HTU · MPEP 2026<br>User Manual v1.0 · May 2026</div>
-  <div id="sb-progress-track"><div id="sb-progress-thumb"></div></div>
 </nav>
 
 <!-- ══════════════════ MAIN ══════════════════ -->
@@ -683,8 +667,8 @@ body.ar .sec-dot::after{right:auto;left:18px}
 <section id="cover">
   <div class="cover-top">
     <div class="cover-text">
-      <div class="eyebrow"><div class="dot-pulse"></div><span>Official User Manual — v1.0</span></div>
-      <h1>Enhanced Reliability<br><em>Vaccine Delivery Box</em></h1>
+      <div class="doc-id"><div class="dot-pulse" aria-hidden="true"></div><span data-i18n="doc-id">User Manual · Version 1.0 · May 2026</span></div>
+      <h1 id="cover-h1">Enhanced Reliability<br><em>Vaccine Delivery Box</em></h1>
       <p class="sub">Smart Dual-Thermoelectric Cold Box with RFID Locking, Real-Time Temperature Monitoring, and Emergency Supercapacitor Backup — Designed for Jordan's Healthcare Cold Chain</p>
     </div>
     <div class="cover-htu">
@@ -722,21 +706,21 @@ body.ar .sec-dot::after{right:auto;left:18px}
         </defs>
         <!-- LEFT: Vaccine trip temperature log chart -->
         <rect x="6" y="6" width="126" height="138" rx="6" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-        <text x="69" y="16" fill="rgba(255,255,255,0.55)" font-size="6.5" font-family="DM Mono,monospace" text-anchor="middle">VACCINE TRIP — TEMP LOG</text>
+        <text x="69" y="16" fill="rgba(255,255,255,0.55)" font-size="6.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">VACCINE TRIP — TEMP LOG</text>
         <!-- Axes -->
         <line x1="27" y1="22" x2="27" y2="128" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
         <line x1="27" y1="128" x2="125" y2="128" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
         <!-- Y-axis labels (scale: 0°C=128, 50°C=22 → 2.12px/°C) -->
-        <text x="25" y="26" fill="rgba(255,255,255,0.4)" font-size="6" font-family="DM Mono,monospace" text-anchor="end">45°</text>
-        <text x="25" y="60" fill="rgba(255,255,255,0.4)" font-size="6" font-family="DM Mono,monospace" text-anchor="end">25°</text>
-        <text x="25" y="94" fill="rgba(239,68,68,0.9)" font-size="6" font-family="DM Mono,monospace" text-anchor="end">8°</text>
-        <text x="25" y="107" fill="rgba(255,255,255,0.4)" font-size="6" font-family="DM Mono,monospace" text-anchor="end">2°</text>
-        <text x="25" y="130" fill="rgba(255,255,255,0.3)" font-size="6" font-family="DM Mono,monospace" text-anchor="end">0°</text>
+        <text x="25" y="26" fill="rgba(255,255,255,0.4)" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="end">45°</text>
+        <text x="25" y="60" fill="rgba(255,255,255,0.4)" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="end">25°</text>
+        <text x="25" y="94" fill="rgba(239,68,68,0.9)" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="end">8°</text>
+        <text x="25" y="107" fill="rgba(255,255,255,0.4)" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="end">2°</text>
+        <text x="25" y="130" fill="rgba(255,255,255,0.3)" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="end">0°</text>
         <!-- Danger zone (above 8°C) -->
         <rect x="27" y="22" width="98" height="72" fill="rgba(239,68,68,0.05)"/>
         <!-- Safe zone band (2°C=107, 8°C=94) -->
         <rect x="27" y="94" width="98" height="13" fill="rgba(34,197,94,0.1)" stroke="rgba(34,197,94,0.2)" stroke-width="0.5"/>
-        <text x="124" y="102" fill="rgba(34,197,94,0.65)" font-size="5.5" font-family="DM Mono,monospace" text-anchor="end">SAFE</text>
+        <text x="124" y="102" fill="rgba(34,197,94,0.65)" font-size="5.5" font-family="Noto Sans Mono,monospace" text-anchor="end">SAFE</text>
         <!-- 8°C threshold dashed line -->
         <line x1="27" y1="94" x2="125" y2="94" stroke="rgba(239,68,68,0.5)" stroke-width="0.8" stroke-dasharray="3 2"/>
         <!-- Area fill under excursion curve -->
@@ -750,15 +734,15 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <!-- Peak excursion marker -->
         <circle cx="119" cy="34" r="3.5" fill="#EF4444" stroke="rgba(255,255,255,0.9)" stroke-width="1"/>
         <!-- Breach label -->
-        <text x="63" y="88" fill="#F59E0B" font-size="5.5" font-family="DM Mono,monospace">BREACH</text>
+        <text x="63" y="88" fill="#F59E0B" font-size="5.5" font-family="Noto Sans Mono,monospace">BREACH</text>
         <!-- Peak label -->
-        <text x="110" y="30" fill="rgba(239,68,68,0.85)" font-size="5.5" font-family="DM Mono,monospace">~40°C</text>
+        <text x="110" y="30" fill="rgba(239,68,68,0.85)" font-size="5.5" font-family="Noto Sans Mono,monospace">~40°C</text>
         <!-- Vertical breach event line -->
         <line x1="75" y1="94" x2="75" y2="128" stroke="rgba(245,158,11,0.3)" stroke-width="1" stroke-dasharray="2 2"/>
         <!-- X-axis event labels -->
-        <text x="27" y="140" fill="rgba(255,255,255,0.35)" font-size="5.5" font-family="DM Mono,monospace">LOAD</text>
-        <text x="75" y="140" fill="rgba(255,255,255,0.35)" font-size="5.5" font-family="DM Mono,monospace" text-anchor="middle">TRANSIT</text>
-        <text x="119" y="140" fill="rgba(255,255,255,0.35)" font-size="5.5" font-family="DM Mono,monospace" text-anchor="end">ARRIVE</text>
+        <text x="27" y="140" fill="rgba(255,255,255,0.35)" font-size="5.5" font-family="Noto Sans Mono,monospace">LOAD</text>
+        <text x="75" y="140" fill="rgba(255,255,255,0.35)" font-size="5.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">TRANSIT</text>
+        <text x="119" y="140" fill="rgba(255,255,255,0.35)" font-size="5.5" font-family="Noto Sans Mono,monospace" text-anchor="end">ARRIVE</text>
         <!-- Divider -->
         <line x1="137" y1="12" x2="137" y2="138" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
         <!-- RIGHT: Real Jordan map (simplemaps.com — Free for Commercial Use) + stats -->
@@ -783,7 +767,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <circle cx="186" cy="100" r="3.5" fill="rgba(245,158,11,0.25)" stroke="rgba(245,158,11,0.65)" stroke-width="1"/>
         <!-- Safe delivery (Irbid — cooler north) -->
         <circle cx="163" cy="39" r="4" fill="rgba(34,197,94,0.2)" stroke="#22C55E" stroke-width="1"/>
-        <text x="163" y="43" fill="#22C55E" font-size="6.5" font-family="DM Mono,monospace" text-anchor="middle">✓</text>
+        <text x="163" y="43" fill="#22C55E" font-size="6.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">✓</text>
         <!-- Sun icon -->
         <circle cx="249" cy="22" r="9" fill="#FCD34D" opacity="0.18"/>
         <circle cx="249" cy="22" r="6" fill="#FCD34D" opacity="0.55"/>
@@ -792,14 +776,14 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <line x1="235" y1="22" x2="239" y2="22" stroke="#FCD34D" stroke-width="1.5" opacity="0.7"/>
         <line x1="237" y1="14" x2="240" y2="17" stroke="#FCD34D" stroke-width="1.5" opacity="0.7"/>
         <line x1="237" y1="30" x2="240" y2="27" stroke="#FCD34D" stroke-width="1.5" opacity="0.7"/>
-        <text x="249" y="44" fill="rgba(253,211,77,0.85)" font-size="7" font-family="DM Mono,monospace" text-anchor="middle">43°C</text>
+        <text x="249" y="44" fill="rgba(253,211,77,0.85)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">43°C</text>
         <!-- Stats -->
-        <text x="148" y="42" fill="rgba(255,255,255,0.92)" font-size="20" font-family="DM Mono,monospace" font-weight="500">35%</text>
-        <text x="148" y="51" fill="rgba(255,255,255,0.4)" font-size="6.5" font-family="DM Sans,sans-serif">excursion rate</text>
-        <text x="148" y="84" fill="#EF4444" font-size="16" font-family="DM Mono,monospace" font-weight="500">~15%</text>
-        <text x="148" y="93" fill="rgba(255,255,255,0.4)" font-size="6.5" font-family="DM Sans,sans-serif">potency loss</text>
-        <text x="148" y="126" fill="#22C55E" font-size="14" font-family="DM Mono,monospace" font-weight="500">2–8°C</text>
-        <text x="148" y="135" fill="rgba(255,255,255,0.4)" font-size="6.5" font-family="DM Sans,sans-serif">required safe range</text>
+        <text x="148" y="42" fill="rgba(255,255,255,0.92)" font-size="20" font-family="Noto Sans Mono,monospace" font-weight="500">35%</text>
+        <text x="148" y="51" fill="rgba(255,255,255,0.4)" font-size="6.5" font-family="Noto Sans,sans-serif">excursion rate</text>
+        <text x="148" y="84" fill="#EF4444" font-size="16" font-family="Noto Sans Mono,monospace" font-weight="500">~15%</text>
+        <text x="148" y="93" fill="rgba(255,255,255,0.4)" font-size="6.5" font-family="Noto Sans,sans-serif">potency loss</text>
+        <text x="148" y="126" fill="#22C55E" font-size="14" font-family="Noto Sans Mono,monospace" font-weight="500">2–8°C</text>
+        <text x="148" y="135" fill="rgba(255,255,255,0.4)" font-size="6.5" font-family="Noto Sans,sans-serif">required safe range</text>
       </svg>
     </div>
   </div>
@@ -827,7 +811,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
   <div class="section-header"><div class="sec-num">02</div><h2 data-i18n="h2-s2">Safety Warnings & Precautions</h2></div>
 
   <!-- Illustration: safety shield -->
-  <div class="illus-panel" style="background:linear-gradient(135deg,#7F1D1D 0%,#991B1B 100%)">
+  <div class="illus-panel danger">
     <div class="illus-content">
       <h4>Read Before Operating</h4>
       <p>Failure to comply with these warnings may result in vaccine spoilage, patient harm, or device damage. All users must read this section first.</p>
@@ -890,16 +874,16 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <circle cx="90" cy="70" r="5" fill="#22C55E"/>
         <circle cx="106" cy="70" r="5" fill="#F59E0B"/>
         <circle cx="122" cy="70" r="5" fill="#EF4444"/>
-        <text x="82" y="83" fill="#1A5C9A" font-size="7" font-family="DM Mono,monospace">LEDs</text>
+        <text x="82" y="83" fill="#1A5C9A" font-size="7" font-family="Noto Sans Mono,monospace">LEDs</text>
         <!-- RFID reader -->
         <rect x="145" y="62" width="28" height="18" rx="3" fill="none" stroke="#1A5C9A" stroke-width="1.5"/>
-        <text x="148" y="73" fill="#1A5C9A" font-size="6.5" font-family="DM Mono,monospace">RFID</text>
+        <text x="148" y="73" fill="#1A5C9A" font-size="6.5" font-family="Noto Sans Mono,monospace">RFID</text>
         <!-- Vents -->
         <line x1="220" y1="75" x2="226" y2="75" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
         <line x1="220" y1="82" x2="226" y2="82" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
         <line x1="220" y1="89" x2="226" y2="89" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
         <line x1="220" y1="96" x2="226" y2="96" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
-        <text x="222" y="108" fill="#94A3B8" font-size="6" font-family="DM Sans,sans-serif" text-anchor="middle">Vents</text>
+        <text x="222" y="108" fill="#94A3B8" font-size="6" font-family="Noto Sans,sans-serif" text-anchor="middle">Vents</text>
         <!-- Foam interior -->
         <rect x="75" y="98" width="130" height="42" rx="5" fill="rgba(14,165,233,0.1)" stroke="rgba(14,165,233,0.3)" stroke-width="1" stroke-dasharray="3 2"/>
         <!-- Vaccine vials -->
@@ -910,16 +894,16 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <rect x="148" y="105" width="10" height="28" rx="3" fill="#0EA5E9" opacity="0.5"/>
         <!-- PCM packs in lid -->
         <rect x="75" y="33" width="55" height="16" rx="4" fill="#BAE6FD" stroke="#0EA5E9" stroke-width="1"/>
-        <text x="102" y="44" fill="#1A5C9A" font-size="7" font-family="DM Mono,monospace" text-anchor="middle">PCM</text>
+        <text x="102" y="44" fill="#1A5C9A" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">PCM</text>
         <rect x="138" y="33" width="55" height="16" rx="4" fill="#BAE6FD" stroke="#0EA5E9" stroke-width="1"/>
-        <text x="165" y="44" fill="#1A5C9A" font-size="7" font-family="DM Mono,monospace" text-anchor="middle">PCM</text>
+        <text x="165" y="44" fill="#1A5C9A" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">PCM</text>
         <!-- Battery -->
         <rect x="30" y="85" width="24" height="40" rx="4" fill="#E0F2FE" stroke="#1A5C9A" stroke-width="1.5"/>
         <rect x="36" y="81" width="12" height="6" rx="2" fill="#1A5C9A"/>
-        <text x="42" y="116" fill="#1A5C9A" font-size="6" font-family="DM Mono,monospace" text-anchor="middle">BATT</text>
+        <text x="42" y="116" fill="#1A5C9A" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="middle">BATT</text>
         <!-- Supercap -->
         <rect x="30" y="55" width="24" height="22" rx="4" fill="#EDE9FE" stroke="#5B21B6" stroke-width="1.5"/>
-        <text x="42" y="69" fill="#5B21B6" font-size="6" font-family="DM Mono,monospace" text-anchor="middle">SCAP</text>
+        <text x="42" y="69" fill="#5B21B6" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="middle">SCAP</text>
         <!-- Connection lines -->
         <line x1="54" y1="95" x2="60" y2="95" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2 2"/>
         <line x1="54" y1="65" x2="60" y2="80" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2 2"/>
@@ -927,16 +911,16 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <rect x="62" y="56" width="6" height="88" rx="2" fill="rgba(186,230,253,0.88)" stroke="#0EA5E9" stroke-width="1"/>
         <!-- TEC module indicator on left outer wall -->
         <rect x="52" y="62" width="8" height="60" rx="2" fill="rgba(14,165,233,0.45)" stroke="#0EA5E9" stroke-width="1"/>
-        <text x="56" y="95" fill="white" font-size="5.5" font-family="DM Mono,monospace" text-anchor="middle">T</text>
-        <text x="56" y="102" font-family="DM Mono,monospace" font-size="5.5" fill="white" text-anchor="middle">E</text>
-        <text x="56" y="109" font-family="DM Mono,monospace" font-size="5.5" fill="white" text-anchor="middle">C</text>
+        <text x="56" y="95" fill="white" font-size="5.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">T</text>
+        <text x="56" y="102" font-family="Noto Sans Mono,monospace" font-size="5.5" fill="white" text-anchor="middle">E</text>
+        <text x="56" y="109" font-family="Noto Sans Mono,monospace" font-size="5.5" fill="white" text-anchor="middle">C</text>
         <!-- Heat sink fins (exterior, left) -->
         <line x1="52" y1="70" x2="46" y2="70" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
         <line x1="52" y1="78" x2="46" y2="78" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
         <line x1="52" y1="86" x2="46" y2="86" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
         <line x1="52" y1="94" x2="46" y2="94" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
         <line x1="52" y1="102" x2="46" y2="102" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
-        <text x="65" y="152" fill="#0EA5E9" font-size="6" font-family="DM Mono,monospace" text-anchor="middle">HEAT PIPES</text>
+        <text x="65" y="152" fill="#0EA5E9" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="middle">HEAT PIPES</text>
       </svg>
     </div>
   </div>
@@ -945,7 +929,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
   <div class="led-grid">
     <div class="led-card green"><div class="led-dot"></div><div class="led-status" data-i18n="led-normal">Normal</div><h4 data-i18n="led-h4-green">Green — All Clear</h4><p>Temperature within 2°C–8°C. Box locked and secure. Continue delivery.</p></div>
     <div class="led-card amber"><div class="led-dot"></div><div class="led-status" data-i18n="led-warning">Warning</div><h4 data-i18n="led-h4-amber">Amber — Approaching Limit</h4><p>Interior temperature is 7°C–8°C (upper) or 2°C–3°C (lower). Peltier PWM is at maximum. Reduce heat exposure immediately and monitor every 5 minutes.</p></div>
-    <div class="led-card red"><div class="led-dot"></div><div class="led-status" data-i18n="led-excursion">Excursion</div><h4 data-i18n="led-h4-red">Red — Temperature Exceeded</h4><p>Excursion detected. Box LOCKED. Stop delivery. Contact supervisor.</p></div>
+    <div class="led-card red"><div class="led-dot"></div><div class="led-status" data-i18n="led-excursion">Out of range</div><h4 data-i18n="led-h4-red">Red — Temperature Exceeded</h4><p>Excursion detected. Box LOCKED. Stop delivery. Contact supervisor.</p></div>
     <div class="led-card purple"><div class="led-dot"></div><div class="led-status" data-i18n="led-emergency">Emergency</div><h4 data-i18n="led-h4-purple">Flashing — Backup Active</h4><p>Battery failed. Supercapacitor active. 15–30 min. Get power now.</p></div>
   </div>
 
@@ -987,7 +971,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <rect x="30" y="17" width="8" height="5" rx="2" fill="#0EA5E9"/>
         <rect x="28" y="22" width="12" height="6" rx="2" fill="#0EA5E9" opacity="0.8"/>
         <rect x="28" y="30" width="12" height="6" rx="2" fill="#0EA5E9" opacity="0.5"/>
-        <text x="34" y="68" fill="rgba(255,255,255,0.6)" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle">Charge</text>
+        <text x="34" y="68" fill="rgba(255,255,255,0.6)" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle">Charge</text>
         <!-- Arrow -->
         <path d="M60 34 L72 34" stroke="rgba(14,165,233,0.5)" stroke-width="1.5" marker-end="url(#arr)"/>
         <!-- Step 2: PCM freeze -->
@@ -998,7 +982,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <line x1="90" y1="32" x2="106" y2="32" stroke="#BAE6FD" stroke-width="1.5"/>
         <line x1="92" y1="24" x2="104" y2="40" stroke="#BAE6FD" stroke-width="1"/>
         <line x1="104" y1="24" x2="92" y2="40" stroke="#BAE6FD" stroke-width="1"/>
-        <text x="98" y="68" fill="rgba(255,255,255,0.6)" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle">Freeze PCM</text>
+        <text x="98" y="68" fill="rgba(255,255,255,0.6)" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle">Freeze PCM</text>
         <!-- Arrow -->
         <path d="M124 34 L136 34" stroke="rgba(14,165,233,0.5)" stroke-width="1.5" marker-end="url(#arr)"/>
         <!-- Step 3: Power ON + LED -->
@@ -1007,7 +991,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <circle cx="152" cy="34" r="4" fill="#22C55E"/>
         <circle cx="165" cy="34" r="8" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
         <circle cx="178" cy="34" r="8" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-        <text x="162" y="68" fill="rgba(255,255,255,0.6)" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle">Power On</text>
+        <text x="162" y="68" fill="rgba(255,255,255,0.6)" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle">Power On</text>
         <!-- Arrow -->
         <path d="M188 34 L200 34" stroke="rgba(14,165,233,0.5)" stroke-width="1.5" marker-end="url(#arr)"/>
         <!-- Step 4: RFID -->
@@ -1017,32 +1001,32 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <path d="M216 27 Q220 23 224 27" stroke="#22C55E" stroke-width="1.5" fill="none"/>
         <path d="M214 30 Q220 24 226 30" stroke="#22C55E" stroke-width="1" fill="none" opacity=".5"/>
         <circle cx="220" cy="33" r="2" fill="#22C55E"/>
-        <text x="220" y="68" fill="rgba(255,255,255,0.6)" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle">RFID</text>
+        <text x="220" y="68" fill="rgba(255,255,255,0.6)" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle">RFID</text>
         <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="rgba(14,165,233,0.5)"/></marker></defs>
         <!-- Bottom label -->
-        <text x="120" y="100" fill="rgba(255,255,255,0.5)" font-size="9" font-family="DM Sans,sans-serif" text-anchor="middle">Complete all 4 steps before loading vaccines</text>
+        <text x="120" y="100" fill="rgba(255,255,255,0.5)" font-size="9" font-family="Noto Sans,sans-serif" text-anchor="middle">Complete all 4 steps before loading vaccines</text>
       </svg>
     </div>
   </div>
 
   <h3>4.1 Pre-Deployment Checklist (Interactive)</h3>
   <ul class="checklist" id="checklist">
-    <li><div class="cb" onclick="toggleCheck(this)"></div><span>Inspect outer shell for cracks, dents, or damage to the HDPE casing</span></li>
-    <li><div class="cb" onclick="toggleCheck(this)"></div><span>Verify silicone seals around the lid are intact and free of debris</span></li>
-    <li><div class="cb" onclick="toggleCheck(this)"></div><span>Charge the 12V lithium-ion battery to 100% (minimum 4 hours)</span></li>
-    <li><div class="cb" onclick="toggleCheck(this)"></div><span>Place PCM coolant packs in a freezer for a minimum of 12 hours</span></li>
-    <li><div class="cb" onclick="toggleCheck(this)"></div><span>Power ON the Device and verify the Green LED illuminates within 60 seconds</span></li>
-    <li><div class="cb" onclick="toggleCheck(this)"></div><span>Register or verify your RFID access card is recognized by the system</span></li>
-    <li><div class="cb" onclick="toggleCheck(this)"></div><span>Test locking mechanism: tap RFID → latches release → tap again → latches lock</span></li>
-    <li><div class="cb" onclick="toggleCheck(this)"></div><span>Insert the pre-frozen PCM packs into the lid pockets</span></li>
-    <li><div class="cb" onclick="toggleCheck(this)"></div><span>Allow Device to pre-cool for 30 minutes before loading vaccines</span></li>
-    <li><div class="cb" onclick="toggleCheck(this)"></div><span>Verify Green LED is still lit. Record start temperature in the trip log</span></li>
+    <li><button type="button" class="cb" aria-pressed="false" aria-label="Mark step complete" onclick="toggleCheck(this)"></button><span>Inspect outer shell for cracks, dents, or damage to the HDPE casing</span></li>
+    <li><button type="button" class="cb" aria-pressed="false" aria-label="Mark step complete" onclick="toggleCheck(this)"></button><span>Verify silicone seals around the lid are intact and free of debris</span></li>
+    <li><button type="button" class="cb" aria-pressed="false" aria-label="Mark step complete" onclick="toggleCheck(this)"></button><span>Charge the 12V lithium-ion battery to 100% (minimum 4 hours)</span></li>
+    <li><button type="button" class="cb" aria-pressed="false" aria-label="Mark step complete" onclick="toggleCheck(this)"></button><span>Place PCM coolant packs in a freezer for a minimum of 12 hours</span></li>
+    <li><button type="button" class="cb" aria-pressed="false" aria-label="Mark step complete" onclick="toggleCheck(this)"></button><span>Power ON the Device and verify the Green LED illuminates within 60 seconds</span></li>
+    <li><button type="button" class="cb" aria-pressed="false" aria-label="Mark step complete" onclick="toggleCheck(this)"></button><span>Register or verify your RFID access card is recognized by the system</span></li>
+    <li><button type="button" class="cb" aria-pressed="false" aria-label="Mark step complete" onclick="toggleCheck(this)"></button><span>Test locking mechanism: tap RFID → latches release → tap again → latches lock</span></li>
+    <li><button type="button" class="cb" aria-pressed="false" aria-label="Mark step complete" onclick="toggleCheck(this)"></button><span>Insert the pre-frozen PCM packs into the lid pockets</span></li>
+    <li><button type="button" class="cb" aria-pressed="false" aria-label="Mark step complete" onclick="toggleCheck(this)"></button><span>Allow Device to pre-cool for 30 minutes before loading vaccines</span></li>
+    <li><button type="button" class="cb" aria-pressed="false" aria-label="Mark step complete" onclick="toggleCheck(this)"></button><span>Verify Green LED is still lit. Record start temperature in the trip log</span></li>
   </ul>
 
   <div class="timer-widget" id="pcm-timer-widget">
     <div>
       <div class="timer-display" id="pcm-display">12:00:00</div>
-      <div class="timer-label" data-i18n="pcm_label">PCM Pre-conditioning Countdown</div>
+      <div class="timer-label" data-i18n="pcm_label">Cooling-pack pre-chill timer (PCM)</div>
     </div>
     <div class="timer-bar-wrap"><div class="timer-bar" id="pcm-bar"></div></div>
     <button class="timer-start" id="pcm-btn" onclick="togglePcmTimer()" data-i18n="timer-start">▶ Start 12h Timer</button>
@@ -1066,24 +1050,24 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <!-- Phase 1: Load -->
         <circle cx="50" cy="65" r="16" fill="#1A5C9A"/>
         <text x="50" y="61" fill="white" font-size="18" font-family="sans-serif" text-anchor="middle">📦</text>
-        <text x="50" y="92" fill="#1A5C9A" font-size="9" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">LOAD</text>
+        <text x="50" y="92" fill="#1A5C9A" font-size="9" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">LOAD</text>
         <!-- Phase 2: Lock -->
         <circle cx="110" cy="65" r="16" fill="#0EA5E9"/>
         <text x="110" y="61" fill="white" font-size="18" font-family="sans-serif" text-anchor="middle">🔒</text>
-        <text x="110" y="92" fill="#0EA5E9" font-size="9" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">LOCK</text>
+        <text x="110" y="92" fill="#0EA5E9" font-size="9" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">LOCK</text>
         <!-- Phase 3: Transport -->
         <circle cx="170" cy="65" r="16" fill="#1A5C9A"/>
         <text x="170" y="61" fill="white" font-size="18" font-family="sans-serif" text-anchor="middle">🚗</text>
-        <text x="170" y="92" fill="#1A5C9A" font-size="9" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">TRANSPORT</text>
+        <text x="170" y="92" fill="#1A5C9A" font-size="9" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">TRANSPORT</text>
         <!-- Phase 4: Deliver -->
         <circle cx="240" cy="65" r="16" fill="#22C55E"/>
         <text x="240" y="61" fill="white" font-size="18" font-family="sans-serif" text-anchor="middle">✅</text>
-        <text x="240" y="92" fill="#166534" font-size="9" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">DELIVER</text>
+        <text x="240" y="92" fill="#166534" font-size="9" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">DELIVER</text>
         <!-- LED monitor bar -->
         <rect x="90" y="108" width="100" height="12" rx="6" fill="#E0F2FE" stroke="#BAE6FD" stroke-width="1"/>
         <rect x="90" y="108" width="100" height="12" rx="6" fill="url(#ledbar)"/>
         <defs><linearGradient id="ledbar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#22C55E"/><stop offset="70%" stop-color="#22C55E"/><stop offset="100%" stop-color="#F59E0B" stop-opacity=".6"/></linearGradient></defs>
-        <text x="140" y="128" fill="#475569" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle">Continuous LED monitoring</text>
+        <text x="140" y="128" fill="#475569" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle">Continuous LED monitoring</text>
       </svg>
     </div>
   </div>
@@ -1130,16 +1114,16 @@ body.ar .sec-dot::after{right:auto;left:18px}
   <div class="illus-panel">
     <div class="illus-content">
       <h4>Three-Layer Thermal Defense</h4>
-      <p>Active Peltier cooling via aluminum cold plates (direct conduction) + passive PCM thermal buffer + supercapacitor emergency backup — three independent layers ensuring 2°C–8°C under any condition.</p>
+      <p>Active Peltier cooling via a copper heat-pipe loop + passive PCM thermal buffer + supercapacitor emergency backup — three independent layers designed to hold 2°C–8°C across Jordan's field conditions.</p>
     </div>
     <div class="illus-svg">
       <svg width="240" height="150" viewBox="0 0 240 150" fill="none" xmlns="http://www.w3.org/2000/svg">
         <!-- HDPE outer shell -->
         <rect x="26" y="8" width="204" height="134" rx="10" fill="rgba(14,165,233,0.06)" stroke="#0EA5E9" stroke-width="1.5"/>
-        <text x="128" y="5" fill="rgba(14,165,233,0.7)" font-size="7" font-family="DM Mono,monospace" text-anchor="middle">HDPE OUTER SHELL</text>
+        <text x="128" y="5" fill="rgba(14,165,233,0.7)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">HDPE OUTER SHELL</text>
         <!-- PU foam insulation (inside HDPE walls) -->
         <rect x="36" y="16" width="184" height="118" rx="8" fill="rgba(14,165,233,0.04)" stroke="rgba(14,165,233,0.22)" stroke-width="1" stroke-dasharray="4 3"/>
-        <text x="47" y="13" fill="rgba(14,165,233,0.4)" font-size="6.5" font-family="DM Mono,monospace">PU FOAM</text>
+        <text x="47" y="13" fill="rgba(14,165,233,0.4)" font-size="6.5" font-family="Noto Sans Mono,monospace">PU FOAM</text>
         <!-- External hot-side heat sink (outside HDPE, left wall) -->
         <rect x="5" y="42" width="13" height="64" rx="2" fill="#EF4444" opacity="0.38"/>
         <line x1="5" y1="50" x2="0" y2="50" stroke="#EF4444" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
@@ -1149,32 +1133,32 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <line x1="5" y1="82" x2="0" y2="82" stroke="#EF4444" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
         <line x1="5" y1="90" x2="0" y2="90" stroke="#EF4444" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
         <line x1="5" y1="98" x2="0" y2="98" stroke="#EF4444" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
-        <text x="9" y="114" fill="#EF4444" font-size="5.5" font-family="DM Mono,monospace" text-anchor="middle">HOT</text>
-        <text x="9" y="121" fill="#EF4444" font-size="5.5" font-family="DM Mono,monospace" text-anchor="middle">SINK</text>
+        <text x="9" y="114" fill="#EF4444" font-size="5.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">HOT</text>
+        <text x="9" y="121" fill="#EF4444" font-size="5.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">SINK</text>
         <!-- TEC1-12706 Peltier module ×2 (spans HDPE left wall, hot face outside, cold face inside) -->
         <rect x="18" y="42" width="18" height="64" rx="3" fill="rgba(14,165,233,0.6)" stroke="#0EA5E9" stroke-width="1.5"/>
-        <text x="27" y="67" fill="white" font-size="6.5" font-family="DM Mono,monospace" text-anchor="middle" font-weight="600">TEC</text>
-        <text x="27" y="77" fill="white" font-size="5.5" font-family="DM Mono,monospace" text-anchor="middle">12V</text>
-        <text x="27" y="86" fill="white" font-size="5.5" font-family="DM Mono,monospace" text-anchor="middle">6A</text>
-        <text x="27" y="115" fill="#0EA5E9" font-size="5.5" font-family="DM Mono,monospace" text-anchor="middle">×2</text>
+        <text x="27" y="67" fill="white" font-size="6.5" font-family="Noto Sans Mono,monospace" text-anchor="middle" font-weight="600">TEC</text>
+        <text x="27" y="77" fill="white" font-size="5.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">12V</text>
+        <text x="27" y="86" fill="white" font-size="5.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">6A</text>
+        <text x="27" y="115" fill="#0EA5E9" font-size="5.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">×2</text>
         <!-- Copper cold block (TEC cold face condenser — connects to heat pipes) -->
         <rect x="36" y="44" width="9" height="60" rx="2" fill="rgba(186,230,253,0.92)" stroke="#0EA5E9" stroke-width="1.5"/>
-        <text x="40" y="5" fill="#0EA5E9" font-size="5" font-family="DM Mono,monospace" text-anchor="middle">COLD</text>
-        <text x="40" y="11" fill="#0EA5E9" font-size="5" font-family="DM Mono,monospace" text-anchor="middle">BLOCK</text>
+        <text x="40" y="5" fill="#0EA5E9" font-size="5" font-family="Noto Sans Mono,monospace" text-anchor="middle">COLD</text>
+        <text x="40" y="11" fill="#0EA5E9" font-size="5" font-family="Noto Sans Mono,monospace" text-anchor="middle">BLOCK</text>
         <!-- Interior vaccine compartment -->
         <rect x="46" y="22" width="166" height="106" rx="5" fill="rgba(186,230,253,0.06)" stroke="rgba(14,165,233,0.14)" stroke-width="1" stroke-dasharray="3 2"/>
         <!-- PCM packs in lid — passive thermal buffer only -->
         <rect x="56" y="26" width="54" height="13" rx="4" fill="#BAE6FD" stroke="#0EA5E9" stroke-width="1"/>
-        <text x="83" y="36" fill="#1A5C9A" font-size="7" font-family="DM Mono,monospace" text-anchor="middle">PCM</text>
+        <text x="83" y="36" fill="#1A5C9A" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">PCM</text>
         <rect x="116" y="26" width="54" height="13" rx="4" fill="#BAE6FD" stroke="#0EA5E9" stroke-width="1"/>
-        <text x="143" y="36" fill="#1A5C9A" font-size="7" font-family="DM Mono,monospace" text-anchor="middle">PCM</text>
-        <text x="113" y="21" fill="rgba(14,165,233,0.55)" font-size="5.5" font-family="DM Mono,monospace" text-anchor="middle">PASSIVE BUFFER — LID</text>
+        <text x="143" y="36" fill="#1A5C9A" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">PCM</text>
+        <text x="113" y="21" fill="rgba(14,165,233,0.55)" font-size="5.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">PASSIVE BUFFER — LID</text>
         <!-- Heat pipes (left wall evaporators — draw heat from interior to cold block) -->
         <rect x="47" y="44" width="4" height="56" rx="2" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9" stroke-width="1.2"/>
         <rect x="54" y="44" width="4" height="56" rx="2" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9" stroke-width="1.2"/>
         <!-- Floor heat pipe (evaporator along base) -->
         <rect x="47" y="101" width="118" height="4" rx="2" fill="rgba(14,165,233,0.12)" stroke="#0EA5E9" stroke-width="1.2"/>
-        <text x="106" y="114" fill="rgba(14,165,233,0.6)" font-size="5.5" font-family="DM Mono,monospace" text-anchor="middle">HEAT PIPES — evaporators</text>
+        <text x="106" y="114" fill="rgba(14,165,233,0.6)" font-size="5.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">HEAT PIPES — evaporators</text>
         <!-- Heat flow arrows: interior heat → heat pipe → cold block (condensed) -->
         <path d="M52 62 L45 62" stroke="#0EA5E9" stroke-width="1.2" stroke-dasharray="2 2" marker-end="url(#cs6)"/>
         <path d="M52 80 L45 80" stroke="#0EA5E9" stroke-width="1.2" stroke-dasharray="2 2" marker-end="url(#cs6)"/>
@@ -1185,11 +1169,11 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <rect x="110" y="47" width="10" height="34" rx="3" fill="#0EA5E9" opacity="0.65"/>
         <rect x="124" y="47" width="10" height="34" rx="3" fill="#0EA5E9" opacity="0.6"/>
         <!-- Temperature label -->
-        <text x="158" y="75" fill="#22C55E" font-size="13" font-family="DM Mono,monospace" font-weight="500">2–8°C</text>
+        <text x="158" y="75" fill="#22C55E" font-size="13" font-family="Noto Sans Mono,monospace" font-weight="500">2–8°C</text>
         <!-- Supercapacitor (right) -->
         <rect x="190" y="50" width="26" height="40" rx="4" fill="rgba(91,33,182,0.22)" stroke="#7C3AED" stroke-width="1.5"/>
-        <text x="203" y="68" fill="#7C3AED" font-size="7" font-family="DM Mono,monospace" text-anchor="middle">CAP</text>
-        <text x="203" y="83" fill="#7C3AED" font-size="8" font-family="DM Mono,monospace" text-anchor="middle">⚡</text>
+        <text x="203" y="68" fill="#7C3AED" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">CAP</text>
+        <text x="203" y="83" fill="#7C3AED" font-size="8" font-family="Noto Sans Mono,monospace" text-anchor="middle">⚡</text>
         <!-- Heat rejection arrows (hot sink → outside) -->
         <path d="M17 55 L6 55" stroke="#EF4444" stroke-width="1.5" marker-end="url(#hs6)"/>
         <path d="M17 70 L6 70" stroke="#EF4444" stroke-width="1.5" marker-end="url(#hs6)"/>
@@ -1233,7 +1217,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
   <div class="illus-panel light">
     <div class="illus-content">
       <h4>Smart Access Control Logic</h4>
-      <p>Every access event is authenticated, logged, and linked to real-time temperature data — creating a complete tamper-evident audit trail.</p>
+      <p>Every access event is authenticated, logged, and linked to real-time temperature data — building a complete, timestamped access record.</p>
     </div>
     <div class="illus-svg">
       <svg width="260" height="140" viewBox="0 0 260 140" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1244,39 +1228,39 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <path d="M26 72 Q32 66 38 72" stroke="#0EA5E9" stroke-width="1.5" fill="none"/>
         <path d="M23 75 Q32 63 41 75" stroke="#0EA5E9" stroke-width="1" fill="none" opacity=".5"/>
         <circle cx="32" cy="78" r="2" fill="#0EA5E9"/>
-        <text x="32" y="106" fill="#1A5C9A" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">TAP CARD</text>
+        <text x="32" y="106" fill="#1A5C9A" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">TAP CARD</text>
         <!-- Arrow -->
         <path d="M56 72 L72 72" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#a2)"/>
         <!-- Microcontroller check -->
         <rect x="74" y="44" width="56" height="56" rx="8" fill="#F8FAFC" stroke="#1A5C9A" stroke-width="1.5"/>
         <rect x="82" y="52" width="40" height="40" rx="4" fill="#E0F2FE"/>
-        <text x="102" y="70" fill="#1A5C9A" font-size="8" font-family="DM Mono,monospace" text-anchor="middle">MCU</text>
-        <text x="102" y="82" fill="#0EA5E9" font-size="7" font-family="DM Sans,sans-serif" text-anchor="middle">Auth?</text>
-        <text x="102" y="93" fill="#0EA5E9" font-size="7" font-family="DM Sans,sans-serif" text-anchor="middle">Temp OK?</text>
-        <text x="102" y="110" fill="#1A5C9A" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">VERIFY</text>
+        <text x="102" y="70" fill="#1A5C9A" font-size="8" font-family="Noto Sans Mono,monospace" text-anchor="middle">MCU</text>
+        <text x="102" y="82" fill="#0EA5E9" font-size="7" font-family="Noto Sans,sans-serif" text-anchor="middle">Auth?</text>
+        <text x="102" y="93" fill="#0EA5E9" font-size="7" font-family="Noto Sans,sans-serif" text-anchor="middle">Temp OK?</text>
+        <text x="102" y="110" fill="#1A5C9A" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">VERIFY</text>
         <!-- Yes path -->
         <path d="M130 65 L148 55" stroke="#22C55E" stroke-width="1.5" marker-end="url(#ag)"/>
-        <text x="138" y="46" fill="#166534" font-size="8" font-family="DM Sans,sans-serif">YES</text>
+        <text x="138" y="46" fill="#166534" font-size="8" font-family="Noto Sans,sans-serif">YES</text>
         <!-- No path -->
         <path d="M130 79 L148 89" stroke="#EF4444" stroke-width="1.5" marker-end="url(#ar)"/>
-        <text x="138" y="90" fill="#991B1B" font-size="8" font-family="DM Sans,sans-serif">NO</text>
+        <text x="138" y="90" fill="#991B1B" font-size="8" font-family="Noto Sans,sans-serif">NO</text>
         <!-- Unlock -->
         <rect x="150" y="34" width="50" height="34" rx="8" fill="#DCFCE7" stroke="#22C55E" stroke-width="1.5"/>
         <text x="175" y="51" fill="#22C55E" font-size="16" font-family="sans-serif" text-anchor="middle">🔓</text>
-        <text x="175" y="68" fill="#166534" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">UNLOCK</text>
+        <text x="175" y="68" fill="#166534" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">UNLOCK</text>
         <!-- Deny -->
         <rect x="150" y="78" width="50" height="34" rx="8" fill="#FEE2E2" stroke="#EF4444" stroke-width="1.5"/>
         <text x="175" y="95" fill="#EF4444" font-size="16" font-family="sans-serif" text-anchor="middle">🔒</text>
-        <text x="175" y="110" fill="#991B1B" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">LOCKED</text>
+        <text x="175" y="110" fill="#991B1B" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">LOCKED</text>
         <!-- Log -->
         <path d="M200 51 L216 51" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3 2"/>
         <path d="M200 95 L216 95" stroke="#94A3B8" stroke-width="1" stroke-dasharray="3 2"/>
         <rect x="216" y="38" width="36" height="68" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
-        <text x="234" y="56" fill="#475569" font-size="7" font-family="DM Mono,monospace" text-anchor="middle">LOG</text>
+        <text x="234" y="56" fill="#475569" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">LOG</text>
         <line x1="222" y1="62" x2="246" y2="62" stroke="#CBD5E1" stroke-width="1"/>
-        <text x="234" y="72" fill="#94A3B8" font-size="6" font-family="DM Mono,monospace" text-anchor="middle">UID</text>
-        <text x="234" y="82" fill="#94A3B8" font-size="6" font-family="DM Mono,monospace" text-anchor="middle">TIME</text>
-        <text x="234" y="92" fill="#94A3B8" font-size="6" font-family="DM Mono,monospace" text-anchor="middle">°C</text>
+        <text x="234" y="72" fill="#94A3B8" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="middle">UID</text>
+        <text x="234" y="82" fill="#94A3B8" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="middle">TIME</text>
+        <text x="234" y="92" fill="#94A3B8" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="middle">°C</text>
         <defs>
           <marker id="a2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#94A3B8"/></marker>
           <marker id="ag" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22C55E"/></marker>
@@ -1305,7 +1289,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
   <div class="section-header"><div class="sec-num">08</div><h2 data-i18n="h2-s8">Emergency Procedures</h2></div>
 
   <!-- Illustration: emergency decision tree -->
-  <div class="illus-panel" style="background:linear-gradient(135deg,#1c1c2e 0%,#2d1b4e 100%)">
+  <div class="illus-panel night">
     <div class="illus-content">
       <h4>Emergency Decision Tree</h4>
       <p>Use this tree to determine the correct response when an abnormal condition is detected during a delivery trip.</p>
@@ -1314,7 +1298,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
       <svg width="240" height="140" viewBox="0 0 240 140" fill="none" xmlns="http://www.w3.org/2000/svg">
         <!-- Abnormal signal -->
         <rect x="80" y="6" width="80" height="22" rx="6" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-        <text x="120" y="20" fill="white" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle">Abnormal LED?</text>
+        <text x="120" y="20" fill="white" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle">Abnormal LED?</text>
         <line x1="80" y1="17" x2="120" y2="17"/>
         <!-- Branch down -->
         <line x1="120" y1="28" x2="120" y2="40" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
@@ -1322,20 +1306,20 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <!-- Amber branch -->
         <line x1="60" y1="40" x2="60" y2="54" stroke="#F59E0B" stroke-width="1.5"/>
         <rect x="22" y="54" width="76" height="20" rx="5" fill="rgba(245,158,11,0.2)" stroke="#F59E0B" stroke-width="1"/>
-        <text x="60" y="65" fill="#FCD34D" font-size="7.5" font-family="DM Sans,sans-serif" text-anchor="middle">🟡 AMBER</text>
+        <text x="60" y="65" fill="#FCD34D" font-size="7.5" font-family="Noto Sans,sans-serif" text-anchor="middle">🟡 AMBER</text>
         <line x1="60" y1="74" x2="60" y2="86" stroke="#F59E0B" stroke-width="1"/>
         <rect x="14" y="86" width="92" height="20" rx="5" fill="rgba(245,158,11,0.1)" stroke="rgba(245,158,11,0.4)" stroke-width="1"/>
-        <text x="60" y="97" fill="rgba(255,255,255,0.7)" font-size="7" font-family="DM Sans,sans-serif" text-anchor="middle">Reduce heat, monitor 10min</text>
+        <text x="60" y="97" fill="rgba(255,255,255,0.7)" font-size="7" font-family="Noto Sans,sans-serif" text-anchor="middle">Reduce heat, monitor 10min</text>
         <!-- Red branch -->
         <line x1="180" y1="40" x2="180" y2="54" stroke="#EF4444" stroke-width="1.5"/>
         <rect x="142" y="54" width="76" height="20" rx="5" fill="rgba(239,68,68,0.2)" stroke="#EF4444" stroke-width="1"/>
-        <text x="180" y="65" fill="#FCA5A5" font-size="7.5" font-family="DM Sans,sans-serif" text-anchor="middle">🔴 RED / FLASH</text>
+        <text x="180" y="65" fill="#FCA5A5" font-size="7.5" font-family="Noto Sans,sans-serif" text-anchor="middle">🔴 RED / FLASH</text>
         <line x1="180" y1="74" x2="180" y2="86" stroke="#EF4444" stroke-width="1"/>
         <rect x="134" y="86" width="92" height="20" rx="5" fill="rgba(239,68,68,0.1)" stroke="rgba(239,68,68,0.4)" stroke-width="1"/>
-        <text x="180" y="97" fill="rgba(255,255,255,0.7)" font-size="7" font-family="DM Sans,sans-serif" text-anchor="middle">Stop. Call supervisor. Sec 8</text>
+        <text x="180" y="97" fill="rgba(255,255,255,0.7)" font-size="7" font-family="Noto Sans,sans-serif" text-anchor="middle">Stop. Call supervisor. Sec 8</text>
         <!-- Bottom action bar -->
         <rect x="10" y="118" width="220" height="16" rx="5" fill="rgba(14,165,233,0.15)" stroke="rgba(14,165,233,0.3)" stroke-width="1"/>
-        <text x="120" y="129" fill="rgba(14,165,233,0.9)" font-size="7.5" font-family="DM Mono,monospace" text-anchor="middle">DO NOT OPEN DEVICE UNTIL AUTHORIZED</text>
+        <text x="120" y="129" fill="rgba(14,165,233,0.9)" font-size="7.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">DO NOT OPEN DEVICE UNTIL AUTHORIZED</text>
       </svg>
     </div>
   </div>
@@ -1379,36 +1363,36 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <!-- Daily -->
         <circle cx="40" cy="65" r="14" fill="#0EA5E9"/>
         <text x="40" y="61" fill="white" font-size="14" text-anchor="middle">🔍</text>
-        <text x="40" y="88" fill="#0EA5E9" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">DAILY</text>
-        <text x="40" y="99" fill="#94A3B8" font-size="7" font-family="DM Sans,sans-serif" text-anchor="middle">Inspect</text>
+        <text x="40" y="88" fill="#0EA5E9" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">DAILY</text>
+        <text x="40" y="99" fill="#94A3B8" font-size="7" font-family="Noto Sans,sans-serif" text-anchor="middle">Inspect</text>
         <!-- Weekly -->
         <circle cx="95" cy="65" r="14" fill="#1A5C9A"/>
         <text x="95" y="61" fill="white" font-size="14" text-anchor="middle">🧹</text>
-        <text x="95" y="88" fill="#1A5C9A" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">WEEKLY</text>
-        <text x="95" y="99" fill="#94A3B8" font-size="7" font-family="DM Sans,sans-serif" text-anchor="middle">Clean &amp; Test</text>
+        <text x="95" y="88" fill="#1A5C9A" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">WEEKLY</text>
+        <text x="95" y="99" fill="#94A3B8" font-size="7" font-family="Noto Sans,sans-serif" text-anchor="middle">Clean &amp; Test</text>
         <!-- Monthly -->
         <circle cx="150" cy="65" r="14" fill="#5B21B6"/>
         <text x="150" y="61" fill="white" font-size="14" text-anchor="middle">📋</text>
-        <text x="150" y="88" fill="#5B21B6" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">MONTHLY</text>
-        <text x="150" y="99" fill="#94A3B8" font-size="7" font-family="DM Sans,sans-serif" text-anchor="middle">Full Test</text>
+        <text x="150" y="88" fill="#5B21B6" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">MONTHLY</text>
+        <text x="150" y="99" fill="#94A3B8" font-size="7" font-family="Noto Sans,sans-serif" text-anchor="middle">Full Test</text>
         <!-- 6-monthly -->
         <circle cx="205" cy="65" r="14" fill="#0F2A4A"/>
         <text x="205" y="61" fill="white" font-size="14" text-anchor="middle">🔧</text>
-        <text x="205" y="88" fill="#0F2A4A" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">6-MONTHLY</text>
-        <text x="205" y="99" fill="#94A3B8" font-size="7" font-family="DM Sans,sans-serif" text-anchor="middle">Service</text>
+        <text x="205" y="88" fill="#0F2A4A" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">6-MONTHLY</text>
+        <text x="205" y="99" fill="#94A3B8" font-size="7" font-family="Noto Sans,sans-serif" text-anchor="middle">Service</text>
         <!-- Annually -->
         <circle cx="240" cy="48" r="12" fill="#166534"/>
         <text x="240" y="44" fill="white" font-size="12" text-anchor="middle">🏆</text>
         <line x1="240" y1="60" x2="240" y2="65" stroke="#166534" stroke-width="1.5"/>
-        <text x="240" y="76" fill="#166534" font-size="7" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">ANNUAL</text>
-        <text x="240" y="86" fill="#94A3B8" font-size="6" font-family="DM Sans,sans-serif" text-anchor="middle">WHO Qual.</text>
+        <text x="240" y="76" fill="#166534" font-size="7" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">ANNUAL</text>
+        <text x="240" y="86" fill="#94A3B8" font-size="6" font-family="Noto Sans,sans-serif" text-anchor="middle">WHO Qual.</text>
         <!-- Performed-by labels -->
         <rect x="10" y="108" width="80" height="14" rx="4" fill="#E0F2FE"/>
-        <text x="50" y="118" fill="#1A5C9A" font-size="7.5" font-family="DM Sans,sans-serif" text-anchor="middle">Operator</text>
+        <text x="50" y="118" fill="#1A5C9A" font-size="7.5" font-family="Noto Sans,sans-serif" text-anchor="middle">Operator</text>
         <rect x="96" y="108" width="100" height="14" rx="4" fill="#EDE9FE"/>
-        <text x="146" y="118" fill="#5B21B6" font-size="7.5" font-family="DM Sans,sans-serif" text-anchor="middle">Biomedical Technician</text>
+        <text x="146" y="118" fill="#5B21B6" font-size="7.5" font-family="Noto Sans,sans-serif" text-anchor="middle">Biomedical Technician</text>
         <rect x="202" y="108" width="50" height="14" rx="4" fill="#DCFCE7"/>
-        <text x="227" y="118" fill="#166534" font-size="7.5" font-family="DM Sans,sans-serif" text-anchor="middle">Quality Officer</text>
+        <text x="227" y="118" fill="#166534" font-size="7.5" font-family="Noto Sans,sans-serif" text-anchor="middle">Quality Officer</text>
       </svg>
     </div>
   </div>
@@ -1457,7 +1441,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
   <div class="illus-panel">
     <div class="illus-content">
       <h4>Continuous Audit Trail</h4>
-      <p>Every 5 minutes, temperature, battery voltage, and RFID access events are logged — creating a complete, tamper-evident record for JFDA compliance.</p>
+      <p>Every 5 minutes, temperature, battery voltage, and RFID access events are logged — a continuous, timestamped record designed to meet JFDA audit requirements.</p>
     </div>
     <div class="illus-svg">
       <svg width="240" height="130" viewBox="0 0 240 130" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1465,11 +1449,11 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <line x1="30" y1="10" x2="30" y2="95" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
         <line x1="30" y1="95" x2="220" y2="95" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
         <!-- Y axis labels -->
-        <text x="25" y="14" fill="rgba(255,255,255,0.5)" font-size="7" font-family="DM Mono,monospace" text-anchor="end">10°C</text>
-        <text x="25" y="40" fill="rgba(255,255,255,0.5)" font-size="7" font-family="DM Mono,monospace" text-anchor="end">8°C</text>
-        <text x="25" y="57" fill="rgba(14,165,233,0.9)" font-size="7" font-family="DM Mono,monospace" text-anchor="end">5°C</text>
-        <text x="25" y="74" fill="rgba(255,255,255,0.5)" font-size="7" font-family="DM Mono,monospace" text-anchor="end">2°C</text>
-        <text x="25" y="90" fill="rgba(255,255,255,0.5)" font-size="7" font-family="DM Mono,monospace" text-anchor="end">0°C</text>
+        <text x="25" y="14" fill="rgba(255,255,255,0.5)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="end">10°C</text>
+        <text x="25" y="40" fill="rgba(255,255,255,0.5)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="end">8°C</text>
+        <text x="25" y="57" fill="rgba(14,165,233,0.9)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="end">5°C</text>
+        <text x="25" y="74" fill="rgba(255,255,255,0.5)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="end">2°C</text>
+        <text x="25" y="90" fill="rgba(255,255,255,0.5)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="end">0°C</text>
         <!-- Safe zone band -->
         <rect x="30" y="40" width="190" height="34" fill="rgba(34,197,94,0.07)" stroke="rgba(34,197,94,0.2)" stroke-width="1" stroke-dasharray="4 3"/>
         <!-- Temperature line (normal trip) -->
@@ -1479,14 +1463,14 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <defs><linearGradient id="linefill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="transparent"/></linearGradient></defs>
         <!-- RFID access markers -->
         <line x1="50" y1="40" x2="50" y2="95" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="2 2"/>
-        <text x="50" y="104" fill="rgba(14,165,233,0.6)" font-size="6.5" font-family="DM Mono,monospace" text-anchor="middle">LOAD</text>
+        <text x="50" y="104" fill="rgba(14,165,233,0.6)" font-size="6.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">LOAD</text>
         <line x1="210" y1="40" x2="210" y2="95" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="2 2"/>
-        <text x="210" y="104" fill="rgba(34,197,94,0.8)" font-size="6.5" font-family="DM Mono,monospace" text-anchor="middle">DELIVER</text>
+        <text x="210" y="104" fill="rgba(34,197,94,0.8)" font-size="6.5" font-family="Noto Sans Mono,monospace" text-anchor="middle">DELIVER</text>
         <!-- Legend -->
         <line x1="35" y1="118" x2="55" y2="118" stroke="#0EA5E9" stroke-width="2"/>
-        <text x="60" y="121" fill="rgba(255,255,255,0.6)" font-size="7" font-family="DM Sans,sans-serif">Temperature</text>
+        <text x="60" y="121" fill="rgba(255,255,255,0.6)" font-size="7" font-family="Noto Sans,sans-serif">Temperature</text>
         <rect x="125" y="113" width="10" height="10" rx="2" fill="rgba(34,197,94,0.2)" stroke="rgba(34,197,94,0.4)" stroke-width="1"/>
-        <text x="140" y="121" fill="rgba(255,255,255,0.6)" font-size="7" font-family="DM Sans,sans-serif">Safe Zone (2–8°C)</text>
+        <text x="140" y="121" fill="rgba(255,255,255,0.6)" font-size="7" font-family="Noto Sans,sans-serif">Safe Zone (2–8°C)</text>
       </svg>
     </div>
   </div>
@@ -1500,7 +1484,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
     <li><span class="sn">2</span>Power on the Device.</li>
     <li><span class="sn">3</span>Open the TempLogger PC software (supplied on USB drive or from your facility IT officer).</li>
     <li><span class="sn">4</span>Select the Device from the connected devices list and click "Download Log".</li>
-    <li><span class="sn">5</span>Save as CSV. Naming convention: <code style="background:rgba(14,165,233,0.15);padding:2px 6px;border-radius:3px;font-family:'DM Mono',monospace;font-size:11px;color:#0EA5E9">DEVICE-ID_YYYY-MM-DD_TripNumber.csv</code></li>
+    <li><span class="sn">5</span>Save as CSV. Naming convention: <code class="code-chip">DEVICE-ID_YYYY-MM-DD_TripNumber.csv</code></li>
     <li><span class="sn">6</span>For JFDA submissions, use "Export Report" to generate a PDF.</li>
   </ul>
 
@@ -1540,7 +1524,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <text x="50" y="94" fill="#F59E0B" font-size="11" text-anchor="middle">!</text>
         <circle cx="170" cy="90" r="10" fill="#EDE9FE" stroke="#5B21B6" stroke-width="1.5"/>
         <text x="170" y="94" fill="#5B21B6" font-size="11" text-anchor="middle">?</text>
-        <text x="110" y="115" fill="#94A3B8" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle">If unresolved → Contact biomedical technician</text>
+        <text x="110" y="115" fill="#94A3B8" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle">If unresolved → Contact biomedical technician</text>
       </svg>
     </div>
   </div>
@@ -1580,7 +1564,7 @@ body.ar .sec-dot::after{right:auto;left:18px}
   <div class="illus-panel">
     <div class="illus-content">
       <h4>Performance at a Glance</h4>
-      <p>Engineered to WHO standards — the only cold box in its price range with dual active cooling, smart locking, and emergency backup power.</p>
+      <p>Designed to WHO performance targets — combining dual active cooling, smart locking, and emergency backup power at a low-cost bill of materials.</p>
     </div>
     <div class="illus-svg">
       <svg width="200" height="140" viewBox="0 0 200 140" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1602,12 +1586,12 @@ body.ar .sec-dot::after{right:auto;left:18px}
         <circle cx="46" cy="82" r="3" fill="#0EA5E9"/>
         <circle cx="44" cy="57" r="3" fill="#0EA5E9"/>
         <!-- Labels -->
-        <text x="100" y="12" fill="rgba(255,255,255,0.7)" font-size="7" font-family="DM Mono,monospace" text-anchor="middle">Insulation</text>
-        <text x="170" y="52" fill="rgba(255,255,255,0.7)" font-size="7" font-family="DM Mono,monospace" text-anchor="start">Cooling</text>
-        <text x="170" y="90" fill="rgba(255,255,255,0.7)" font-size="7" font-family="DM Mono,monospace" text-anchor="start">Safety</text>
-        <text x="100" y="132" fill="rgba(255,255,255,0.7)" font-size="7" font-family="DM Mono,monospace" text-anchor="middle">Cost</text>
-        <text x="28" y="90" fill="rgba(255,255,255,0.7)" font-size="7" font-family="DM Mono,monospace" text-anchor="end">Logging</text>
-        <text x="28" y="52" fill="rgba(255,255,255,0.7)" font-size="7" font-family="DM Mono,monospace" text-anchor="end">Backup</text>
+        <text x="100" y="12" fill="rgba(255,255,255,0.7)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">Insulation</text>
+        <text x="170" y="52" fill="rgba(255,255,255,0.7)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="start">Cooling</text>
+        <text x="170" y="90" fill="rgba(255,255,255,0.7)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="start">Safety</text>
+        <text x="100" y="132" fill="rgba(255,255,255,0.7)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">Cost</text>
+        <text x="28" y="90" fill="rgba(255,255,255,0.7)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="end">Logging</text>
+        <text x="28" y="52" fill="rgba(255,255,255,0.7)" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="end">Backup</text>
       </svg>
     </div>
   </div>
@@ -1649,19 +1633,19 @@ body.ar .sec-dot::after{right:auto;left:18px}
   <div class="calc-widget">
     <h4 data-i18n="calc_title">Battery Runtime Estimator</h4>
     <div class="calc-row">
-      <label data-i18n="calc_charge">Battery charge:</label>
+      <label for="cc" data-i18n="calc_charge">Battery charge:</label>
       <input type="range" id="cc" min="10" max="100" value="100" oninput="updateCalc()">
-      <span class="calc-val" id="cv1">100%</span>
+      <span class="calc-val" id="cv1" aria-hidden="true">100%</span>
     </div>
     <div class="calc-row">
-      <label data-i18n="calc_ambient">Ambient temperature:</label>
+      <label for="ca" data-i18n="calc_ambient">Ambient temperature:</label>
       <input type="range" id="ca" min="20" max="50" value="25" oninput="updateCalc()">
-      <span class="calc-val" id="cv2">25°C</span>
+      <span class="calc-val" id="cv2" aria-hidden="true">25°C</span>
     </div>
     <div class="calc-row">
-      <label data-i18n="calc_pwm">Peltier PWM duty:</label>
+      <label for="cp" data-i18n="calc_pwm">Cooler power level (PWM):</label>
       <input type="range" id="cp" min="10" max="100" value="50" oninput="updateCalc()">
-      <span class="calc-val" id="cv3">50%</span>
+      <span class="calc-val" id="cv3" aria-hidden="true">50%</span>
     </div>
     <div class="calc-result" id="calc-res"></div>
   </div>
@@ -1674,45 +1658,45 @@ body.ar .sec-dot::after{right:auto;left:18px}
   <!-- Illustration: compliance badges -->
   <div class="illus-panel light">
     <div class="illus-content">
-      <h4>Multi-Standard Compliance</h4>
-      <p>Designed to satisfy WHO, JFDA, UNICEF, EU Ecodesign, NSPE, and IEEE requirements simultaneously — not just one.</p>
+      <h4>Standards This Design References</h4>
+      <p>The Device is designed with reference to WHO, JFDA, UNICEF, EU Ecodesign, NSPE, and IEEE requirements. These are design targets of a student prototype, not held certifications.</p>
     </div>
     <div class="illus-svg">
       <svg width="260" height="120" viewBox="0 0 260 120" fill="none" xmlns="http://www.w3.org/2000/svg">
         <!-- WHO -->
         <rect x="10" y="20" width="60" height="60" rx="10" fill="#E0F2FE" stroke="#0EA5E9" stroke-width="1.5"/>
         <text x="40" y="42" fill="#0EA5E9" font-size="18" text-anchor="middle">🌍</text>
-        <text x="40" y="58" fill="#1A5C9A" font-size="8.5" font-family="DM Mono,monospace" text-anchor="middle" font-weight="600">WHO</text>
-        <text x="40" y="70" fill="#475569" font-size="6.5" font-family="DM Sans,sans-serif" text-anchor="middle">43°C Test</text>
+        <text x="40" y="58" fill="#1A5C9A" font-size="8.5" font-family="Noto Sans Mono,monospace" text-anchor="middle" font-weight="600">WHO</text>
+        <text x="40" y="70" fill="#475569" font-size="6.5" font-family="Noto Sans,sans-serif" text-anchor="middle">43°C Test</text>
         <!-- JFDA -->
         <rect x="80" y="20" width="60" height="60" rx="10" fill="#DCFCE7" stroke="#22C55E" stroke-width="1.5"/>
         <text x="110" y="42" fill="#22C55E" font-size="18" text-anchor="middle">📋</text>
-        <text x="110" y="58" fill="#166534" font-size="8.5" font-family="DM Mono,monospace" text-anchor="middle" font-weight="600">JFDA</text>
-        <text x="110" y="70" fill="#475569" font-size="6.5" font-family="DM Sans,sans-serif" text-anchor="middle">Data Log</text>
+        <text x="110" y="58" fill="#166534" font-size="8.5" font-family="Noto Sans Mono,monospace" text-anchor="middle" font-weight="600">JFDA</text>
+        <text x="110" y="70" fill="#475569" font-size="6.5" font-family="Noto Sans,sans-serif" text-anchor="middle">Data Log</text>
         <!-- UNICEF -->
         <rect x="150" y="20" width="60" height="60" rx="10" fill="#EDE9FE" stroke="#5B21B6" stroke-width="1.5"/>
         <text x="180" y="42" fill="#5B21B6" font-size="18" text-anchor="middle">🤝</text>
-        <text x="180" y="58" fill="#5B21B6" font-size="8.5" font-family="DM Mono,monospace" text-anchor="middle" font-weight="600">UNICEF</text>
-        <text x="180" y="70" fill="#475569" font-size="6.5" font-family="DM Sans,sans-serif" text-anchor="middle">E004 Spec</text>
+        <text x="180" y="58" fill="#5B21B6" font-size="8.5" font-family="Noto Sans Mono,monospace" text-anchor="middle" font-weight="600">UNICEF</text>
+        <text x="180" y="70" fill="#475569" font-size="6.5" font-family="Noto Sans,sans-serif" text-anchor="middle">E004 Spec</text>
         <!-- Ethics -->
         <rect x="10" y="92" width="130" height="20" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
-        <text x="75" y="105" fill="#1A5C9A" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">NSPE · IEEE · Eng. Council Ethics</text>
+        <text x="75" y="105" fill="#1A5C9A" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">NSPE · IEEE · Eng. Council Ethics</text>
         <!-- EU -->
         <rect x="150" y="92" width="60" height="20" rx="6" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1"/>
-        <text x="180" y="105" fill="#92400E" font-size="8" font-family="DM Sans,sans-serif" text-anchor="middle" font-weight="600">EU Ecodesign</text>
-        <!-- Check marks -->
-        <circle cx="66" cy="20" r="8" fill="#22C55E"/>
-        <path d="M62,20 L65,23 L70,17" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <circle cx="136" cy="20" r="8" fill="#22C55E"/>
-        <path d="M132,20 L135,23 L140,17" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <circle cx="206" cy="20" r="8" fill="#22C55E"/>
-        <path d="M202,20 L205,23 L210,17" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <text x="180" y="105" fill="#92400E" font-size="8" font-family="Noto Sans,sans-serif" text-anchor="middle" font-weight="600">EU Ecodesign</text>
+        <!-- design-target markers (not certification ticks) -->
+        <circle cx="66" cy="20" r="8" fill="none" stroke="#0EA5E9" stroke-width="1.5"/>
+        <circle cx="66" cy="20" r="3" fill="#0EA5E9"/>
+        <circle cx="136" cy="20" r="8" fill="none" stroke="#0EA5E9" stroke-width="1.5"/>
+        <circle cx="136" cy="20" r="3" fill="#0EA5E9"/>
+        <circle cx="206" cy="20" r="8" fill="none" stroke="#0EA5E9" stroke-width="1.5"/>
+        <circle cx="206" cy="20" r="3" fill="#0EA5E9"/>
       </svg>
     </div>
   </div>
 
   <div class="table-wrap"><table>
-    <thead><tr><th>Standard / Regulation</th><th>Compliance Area</th></tr></thead>
+    <thead><tr><th>Standard / Regulation</th><th>Design Target</th></tr></thead>
     <tbody>
       <tr><td>WHO Performance Qualification Standards</td><td>Thermal testing at 43°C and −20°C; internal range 2°C–8°C</td></tr>
       <tr><td>UNICEF Supply Division — E004 Specification</td><td>Cold boxes and vaccine carriers procurement compliance for Jordan's EPI program</td></tr>
@@ -1739,10 +1723,10 @@ body.ar .sec-dot::after{right:auto;left:18px}
       <li><div class="qr-box"></div>30 min pre-cool before loading</li>
     </ul></div>
     <div class="qr-panel gr-p"><h4>LED Quick Guide</h4><ul>
-      <li style="color:#166534;font-weight:600">GREEN — Normal. Continue.</li>
-      <li style="color:#92400E;font-weight:600">AMBER — Reduce heat. Monitor.</li>
-      <li style="color:#991B1B;font-weight:700">RED — STOP. Call supervisor. Sec 8.3.</li>
-      <li style="color:#5B21B6;font-weight:700">FLASHING — Get power NOW. 15–30 min.</li>
+      <li class="qr-led g">GREEN — Normal. Continue.</li>
+      <li class="qr-led a">AMBER — Reduce heat. Monitor.</li>
+      <li class="qr-led r">RED — STOP. Call supervisor. Sec 8.2.</li>
+      <li class="qr-led p">FLASHING — Get power NOW. 15–30 min.</li>
     </ul></div>
     <div class="qr-panel bl-p"><h4>Unlock Procedure</h4><ul>
       <li>1. Confirm Green LED is lit</li>
@@ -1841,7 +1825,6 @@ body.ar .sec-dot::after{right:auto;left:18px}
 
 <!-- ─── FOOTER ─── -->
 <footer id="page-footer">
-  <img src="https://htu.edu.jo/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHTU%20White%20Logo.8126eecd.svg&w=384&q=75" alt="HTU" style="height:32px;opacity:.4;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto" onerror="this.style.display='none'">
   <p><strong>Enhanced Reliability Vaccine Delivery Box — User Manual v1.0</strong><br>
   Al Hussein Technical University (HTU) · MPEP Engineering Project Management · May 2026<br>
   Team: Hashem Najdawi · Ibrahim Hosban · Jood Alabbadi · Yasmina Marwan<br>
@@ -1852,34 +1835,12 @@ body.ar .sec-dot::after{right:auto;left:18px}
 
 <button class="print-btn" onclick="window.print()" aria-label="Print or save as PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span data-i18n="print-btn">Print / Save as PDF</span></button>
 
-<nav id="section-nav" aria-label="Section navigation">
-  <div class="sec-dot active" data-section="cover" data-label="Cover"></div>
-  <div class="sec-dot" data-section="s1" data-label="1. Introduction"></div>
-  <div class="sec-dot" data-section="s2" data-label="2. Safety"></div>
-  <div class="sec-dot" data-section="s3" data-label="3. Overview"></div>
-  <div class="sec-dot" data-section="s4" data-label="4. Getting Started"></div>
-  <div class="sec-dot" data-section="s5" data-label="5. Operating"></div>
-  <div class="sec-dot" data-section="s6" data-label="6. Cooling"></div>
-  <div class="sec-dot" data-section="s7" data-label="7. RFID"></div>
-  <div class="sec-dot" data-section="s8" data-label="8. Emergency"></div>
-  <div class="sec-dot" data-section="s9" data-label="9. Maintenance"></div>
-  <div class="sec-dot" data-section="s10" data-label="10. Data Logging"></div>
-  <div class="sec-dot" data-section="s11" data-label="11. Troubleshooting"></div>
-  <div class="sec-dot" data-section="s12" data-label="12. Specifications"></div>
-  <div class="sec-dot" data-section="s13" data-label="13. Regulatory"></div>
-  <div class="sec-dot" data-section="s14" data-label="14. Quick Ref."></div>
-  <div class="sec-dot" data-section="appA" data-label="A. Trip Log"></div>
-  <div class="sec-dot" data-section="appB" data-label="B. Materials"></div>
-  <div class="sec-dot" data-section="appC" data-label="C. Glossary"></div>
-</nav>
-
 <script>
 /* ── CHECKLIST ── */
-function toggleCheck(el){el.classList.toggle('checked')}
-
-/* ── SCROLL REVEAL ── */
-const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.08});
-document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+function toggleCheck(el){
+  const on=el.classList.toggle('checked');
+  el.setAttribute('aria-pressed',on?'true':'false');
+}
 
 /* ── SECTION NAMES (for memory & resume banner) ── */
 const sectionNames={cover:'Cover Page',s1:'Introduction',s2:'Safety Warnings',s3:'Device Overview',s4:'Getting Started',s5:'Operating Procedures',s6:'Cooling System',s7:'RFID Locking',s8:'Emergency Procedures',s9:'Maintenance',s10:'Data Logging',s11:'Troubleshooting',s12:'Specifications',s13:'Regulatory & Ethics',s14:'Quick Reference',appA:'Appendix A',appB:'Appendix B',appC:'Appendix C'};
@@ -1888,17 +1849,13 @@ const sectionNames={cover:'Cover Page',s1:'Introduction',s2:'Safety Warnings',s3
 const navObs=new IntersectionObserver(entries=>entries.forEach(e=>{
   if(e.isIntersecting){
     document.querySelectorAll('.nav-item').forEach(l=>l.classList.remove('active'));
-    document.querySelectorAll('.sec-dot').forEach(d=>d.classList.remove('active'));
     const a=document.querySelector('.nav-item[href="#'+e.target.id+'"]');
     if(a)a.classList.add('active');
-    const dot=document.querySelector('.sec-dot[data-section="'+e.target.id+'"]');
-    if(dot)dot.classList.add('active');
     if(e.target.id!=='cover')localStorage.setItem('lastSection',e.target.id);
   }
 }),{threshold:.2,rootMargin:'-60px 0px -60% 0px'});
 document.querySelectorAll('section[id]').forEach(s=>navObs.observe(s));
 document.querySelectorAll('.nav-item').forEach(l=>l.addEventListener('click',()=>document.getElementById('sidebar').classList.remove('open')));
-document.querySelectorAll('.sec-dot').forEach(d=>d.addEventListener('click',()=>{const id=d.getAttribute('data-section');const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});d.blur();}));
 
 /* ── READING PROGRESS ── */
 window.addEventListener('scroll',()=>{
@@ -1906,16 +1863,7 @@ window.addEventListener('scroll',()=>{
   const pct=h.scrollTop/(h.scrollHeight-h.clientHeight);
   const p=document.getElementById('reading-progress');
   if(p)p.style.width=(pct*100)+'%';
-  const sb=document.getElementById('sidebar');
-  const thumb=document.getElementById('sb-progress-thumb');
-  if(sb&&thumb){
-    const trackH=sb.offsetHeight;
-    const thumbH=Math.max(18,trackH*0.06);
-    const travel=trackH-thumbH;
-    thumb.style.height=thumbH+'px';
-    thumb.style.top=(pct*travel)+'px';
-  }
-});
+},{passive:true});
 
 /* ── TRANSLATIONS ── */
 const translations={
@@ -1923,27 +1871,29 @@ const translations={
     'nav-cover':'Cover Page','nav-s1':'1. Introduction','nav-s2':'2. Safety Warnings','nav-s3':'3. Device Overview','nav-s4':'4. Getting Started','nav-s5':'5. Operating Procedures','nav-s6':'6. Cooling System','nav-s7':'7. RFID Locking','nav-s8':'8. Emergency Procedures','nav-s9':'9. Maintenance','nav-s10':'10. Data Logging','nav-s11':'11. Troubleshooting','nav-s12':'12. Specifications','nav-s13':'13. Regulatory & Ethics','nav-s14':'14. Quick Reference','nav-appA':'A. Trip Log Form','nav-appB':'B. Bill of Materials','nav-appC':'C. Glossary',
     'grp-overview':'Overview','grp-safety':'Safety & Device','grp-ops':'Operations','grp-maint':'Maintenance & Data','grp-ref':'Reference','grp-app':'Appendices',
     'h2-s1':'Introduction','h2-s2':'Safety Warnings & Precautions','h2-s3':'Device Overview & Technical Specifications','h2-s4':'Getting Started — Initial Setup','h2-s5':'Standard Operating Procedures','h2-s6':'Cooling System — Technical Details','h2-s7':'RFID Smart Locking System','h2-s8':'Emergency Procedures','h2-s9':'Maintenance & Care','h2-s10':'Temperature Data Logging & Reporting','h2-s11':'Troubleshooting Guide','h2-s12':'Full Technical Specifications','h2-s13':'Regulatory Compliance & Engineering Ethics','h2-s14':'Quick Reference Card','h2-appA':'Appendix A — Vaccine Delivery Trip Log Form','h2-appB':'Appendix B — Bill of Materials','h2-appC':'Appendix C — Glossary of Terms',
-    'led-normal':'Normal','led-warning':'Warning','led-excursion':'Excursion','led-emergency':'Emergency',
+    'led-normal':'Normal','led-warning':'Warning','led-excursion':'Out of range','led-emergency':'Emergency',
+    'doc-id':'User Manual · Version 1.0 · May 2026',
     'led-h4-green':'Green — All Clear','led-h4-amber':'Amber — Approaching Limit','led-h4-red':'Red — Temperature Exceeded','led-h4-purple':'Flashing — Backup Active',
     'print-btn':'Print / Save as PDF','sb-badge':'User Manual v1.0','lang-btn':'AR',
-    'pcm_label':'PCM Pre-conditioning Countdown','timer-start':'▶ Start 12h Timer','timer-stop':'⏹ Stop','timer-ready':'PCM Ready!',
-    'calc_title':'Battery Runtime Estimator','calc_charge':'Battery charge:','calc_ambient':'Ambient temperature:','calc_pwm':'Peltier PWM duty:',
+    'pcm_label':'Cooling-pack pre-chill timer (PCM)','timer-start':'▶ Start 12h Timer','timer-stop':'⏹ Stop','timer-ready':'Packs ready!',
+    'calc_title':'Battery Runtime Estimator','calc_charge':'Battery charge:','calc_ambient':'Ambient temperature:','calc_pwm':'Cooler power level (PWM):',
     'wiz-back':'← Back','wiz-reset':'Start over','wiz-solution-label':'SOLUTION','wiz-table-show':'Show full table ▼','wiz-table-hide':'Hide full table ▲',
     'live-btn':'Live Monitoring','live-title':'Live Temperature Monitoring','live-sub':'Vaccine box · live feed',
-    'live-gate-intro':'Access to live monitoring is restricted. Verify your access to continue.','live-serial-label':'Device serial number','live-unlock':'Unlock','live-or':'or','live-nfc':'Tap NFC card'
+    'live-gate-intro':'Unlock the live dashboard with your box\'s serial number or its NFC card.','live-serial-label':'Device serial number','live-unlock':'Unlock','live-or':'or','live-nfc':'Tap NFC card'
   },
   ar:{
     'nav-cover':'الغلاف','nav-s1':'١. مقدمة','nav-s2':'٢. تحذيرات السلامة','nav-s3':'٣. نظرة عامة','nav-s4':'٤. البدء','nav-s5':'٥. إجراءات التشغيل','nav-s6':'٦. نظام التبريد','nav-s7':'٧. قفل RFID','nav-s8':'٨. إجراءات الطوارئ','nav-s9':'٩. الصيانة','nav-s10':'١٠. تسجيل البيانات','nav-s11':'١١. استكشاف الأعطال','nav-s12':'١٢. المواصفات','nav-s13':'١٣. الامتثال التنظيمي','nav-s14':'١٤. المرجع السريع','nav-appA':'أ. سجل الرحلة','nav-appB':'ب. قائمة المواد','nav-appC':'ج. المسرد',
     'grp-overview':'نظرة عامة','grp-safety':'السلامة والجهاز','grp-ops':'العمليات','grp-maint':'الصيانة والبيانات','grp-ref':'المرجع','grp-app':'الملاحق',
     'h2-s1':'مقدمة','h2-s2':'تحذيرات ومحاذير السلامة','h2-s3':'نظرة عامة على الجهاز والمواصفات','h2-s4':'البدء — الإعداد الأولي','h2-s5':'إجراءات التشغيل القياسية','h2-s6':'نظام التبريد — التفاصيل التقنية','h2-s7':'نظام القفل الذكي RFID','h2-s8':'إجراءات الطوارئ','h2-s9':'الصيانة والعناية','h2-s10':'تسجيل بيانات درجة الحرارة','h2-s11':'دليل استكشاف الأعطال','h2-s12':'المواصفات التقنية الكاملة','h2-s13':'الامتثال التنظيمي والأخلاقيات','h2-s14':'بطاقة المرجع السريع','h2-appA':'الملحق أ — نموذج سجل رحلة التوصيل','h2-appB':'الملحق ب — قائمة المواد','h2-appC':'الملحق ج — مسرد المصطلحات',
-    'led-normal':'طبيعي','led-warning':'تحذير','led-excursion':'انحراف','led-emergency':'طوارئ',
+    'led-normal':'طبيعي','led-warning':'تحذير','led-excursion':'خارج النطاق','led-emergency':'طوارئ',
+    'doc-id':'دليل المستخدم · الإصدار 1.0 · مايو 2026',
     'led-h4-green':'أخضر — آمن','led-h4-amber':'أصفر — اقتراب الحد','led-h4-red':'أحمر — تجاوز درجة الحرارة','led-h4-purple':'وامض — الطاقة الاحتياطية',
     'print-btn':'طباعة / PDF','sb-badge':'دليل المستخدم v1.0','lang-btn':'EN',
-    'pcm_label':'مؤقت تحضير PCM','timer-start':'▶ ابدأ مؤقت 12 ساعة','timer-stop':'⏹ إيقاف','timer-ready':'PCM جاهز!',
-    'calc_title':'حاسبة وقت تشغيل البطارية','calc_charge':'شحن البطارية:','calc_ambient':'درجة الحرارة المحيطة:','calc_pwm':'دورة عمل Peltier:',
+    'pcm_label':'مؤقت التبريد المسبق لحزم PCM','timer-start':'▶ ابدأ مؤقت 12 ساعة','timer-stop':'⏹ إيقاف','timer-ready':'الحزم جاهزة!',
+    'calc_title':'حاسبة وقت تشغيل البطارية','calc_charge':'شحن البطارية:','calc_ambient':'درجة الحرارة المحيطة:','calc_pwm':'مستوى طاقة التبريد (PWM):',
     'wiz-back':'رجوع ←','wiz-reset':'ابدأ من جديد','wiz-solution-label':'الحل','wiz-table-show':'عرض الجدول الكامل ▼','wiz-table-hide':'إخفاء الجدول ▲',
     'live-btn':'المراقبة المباشرة','live-title':'مراقبة درجة الحرارة المباشرة','live-sub':'صندوق اللقاح · بث مباشر',
-    'live-gate-intro':'الوصول إلى المراقبة المباشرة مقيّد. تحقق من صلاحيتك للمتابعة.','live-serial-label':'الرقم التسلسلي للجهاز','live-unlock':'فتح','live-or':'أو','live-nfc':'مسح بطاقة NFC'
+    'live-gate-intro':'افتح لوحة المراقبة المباشرة بالرقم التسلسلي لصندوقك أو ببطاقة NFC الخاصة به.','live-serial-label':'الرقم التسلسلي للجهاز','live-unlock':'فتح','live-or':'أو','live-nfc':'مسح بطاقة NFC'
   }
 };
 
@@ -1964,21 +1914,21 @@ const arTextMap={
 'Delivery Lifecycle':'دورة حياة التوصيل',
 'From loading to delivery — the Device monitors and protects vaccines through every phase of the journey.':'من التحميل حتى التسليم — يراقب الجهاز اللقاحات ويحميها في كل مرحلة من مراحل الرحلة.',
 'Three-Layer Thermal Defense':'الدفاع الحراري ثلاثي الطبقات',
-'Active Peltier cooling via aluminum cold plates (direct conduction) + passive PCM thermal buffer + supercapacitor emergency backup — three independent layers ensuring 2°C–8°C under any condition.':'تبريد Peltier النشط عبر أنابيب حرارية نحاسية + عازل PCM السلبي + احتياط مكثف فائق — ثلاث طبقات مستقلة تضمن 2°C–8°C في أي ظرف.',
+'Active Peltier cooling via a copper heat-pipe loop + passive PCM thermal buffer + supercapacitor emergency backup — three independent layers designed to hold 2°C–8°C across Jordan\'s field conditions.':'تبريد Peltier النشط عبر حلقة أنابيب حرارية نحاسية + عازل PCM السلبي + احتياط مكثف فائق — ثلاث طبقات مستقلة صُمِّمت للحفاظ على 2°C–8°C في ظروف الميدان الأردني.',
 'Smart Access Control Logic':'منطق التحكم الذكي في الوصول',
-'Every access event is authenticated, logged, and linked to real-time temperature data — creating a complete tamper-evident audit trail.':'كل حدث وصول يُوثَّق ويُسجَّل ويُربط ببيانات درجة الحرارة الفورية — مما ينشئ سجلاً تدقيقياً كاملاً محمياً من التلاعب.',
+'Every access event is authenticated, logged, and linked to real-time temperature data — building a complete, timestamped access record.':'كل حدث وصول يُوثَّق ويُسجَّل ويُربط ببيانات درجة الحرارة الفورية — مما يبني سجل وصول كاملاً بطوابع زمنية.',
 'Emergency Decision Tree':'شجرة قرار الطوارئ',
 'Use this tree to determine the correct response when an abnormal condition is detected during a delivery trip.':'استخدم هذه الشجرة لتحديد الاستجابة الصحيحة عند رصد حالة شاذة أثناء رحلة التوصيل.',
 'Maintenance Schedule':'جدول الصيانة',
 'Regular maintenance ensures consistent performance and extends the service life of the Device.':'الصيانة المنتظمة تضمن أداءً متسقاً وتمدّ عمر خدمة الجهاز.',
 'Continuous Audit Trail':'مسار تدقيق مستمر',
-'Every 5 minutes, temperature, battery voltage, and RFID access events are logged — creating a complete, tamper-evident record for JFDA compliance.':'كل 5 دقائق تُسجَّل درجة الحرارة وجهد البطارية وأحداث وصول RFID — مما ينشئ سجلاً كاملاً محمياً لامتثال JFDA.',
+'Every 5 minutes, temperature, battery voltage, and RFID access events are logged — a continuous, timestamped record designed to meet JFDA audit requirements.':'كل 5 دقائق تُسجَّل درجة الحرارة وجهد البطارية وأحداث وصول RFID — سجل متواصل بطوابع زمنية صُمِّم لتلبية متطلبات تدقيق JFDA.',
 'First-Response Diagnostics':'تشخيصات الاستجابة الأولى',
 'Use this guide to identify and resolve the most common Device issues before calling a biomedical technician.':'استخدم هذا الدليل لتحديد وحل أكثر مشكلات الجهاز شيوعاً قبل استدعاء الفني الطبي.',
 'Performance at a Glance':'الأداء في لمحة',
-'Engineered to WHO standards — the only cold box in its price range with dual active cooling, smart locking, and emergency backup power.':'مصمَّم وفق معايير WHO — الصندوق البارد الوحيد في نطاقه السعري بتبريد نشط مزدوج وقفل ذكي واحتياط طارئ.',
-'Multi-Standard Compliance':'الامتثال متعدد المعايير',
-'Designed to satisfy WHO, JFDA, UNICEF, EU Ecodesign, NSPE, and IEEE requirements simultaneously — not just one.':'مصمَّم لاستيفاء متطلبات WHO وJFDA وUNICEF والتصميم البيئي الأوروبي وNSPE وIEEE معاً — لا معياراً واحداً فحسب.',
+'Designed to WHO performance targets — combining dual active cooling, smart locking, and emergency backup power at a low-cost bill of materials.':'مصمَّم وفق أهداف أداء WHO — يجمع تبريداً نشطاً مزدوجاً وقفلاً ذكياً وطاقة احتياطية طارئة بتكلفة مواد منخفضة.',
+'Standards This Design References':'المعايير التي يستند إليها هذا التصميم',
+'The Device is designed with reference to WHO, JFDA, UNICEF, EU Ecodesign, NSPE, and IEEE requirements. These are design targets of a student prototype, not held certifications.':'صُمِّم الجهاز بالاستناد إلى متطلبات WHO وJFDA وUNICEF والتصميم البيئي الأوروبي وNSPE وIEEE. هذه أهداف تصميم لنموذج طلابي أولي، وليست شهادات ممنوحة.',
 /* ── Section h3 headings ── */
 '1.1 Purpose of This Manual':'١٫١ الغرض من هذا الدليل',
 '1.2 Project Background':'١٫٢ خلفية المشروع',
@@ -2108,7 +2058,7 @@ const arTextMap={
 '30 min pre-cool before loading':'30 دقيقة تبريد مسبق قبل التحميل',
 'GREEN — Normal. Continue.':'أخضر — طبيعي. واصل.',
 'AMBER — Reduce heat. Monitor.':'أصفر — قلّل الحرارة. راقب.',
-'RED — STOP. Call supervisor. Sec 8.3.':'أحمر — أوقف. اتصل بمشرفك. القسم 8.2.',
+'RED — STOP. Call supervisor. Sec 8.2.':'أحمر — أوقف. اتصل بمشرفك. القسم 8.2.',
 'FLASHING — Get power NOW. 15–30 min.':'وامض — احصل على طاقة الآن. 15-30 دقيقة.',
 '1. Confirm Green LED is lit':'١. تأكد من إضاءة المؤشر الأخضر',
 '2. Tap RFID card on right-side panel':'٢. انقر بطاقة RFID على اللوحة الجانبية',
@@ -2135,7 +2085,7 @@ const arTextMap={
 'Material':'المادة',
 'Function':'الوظيفة',
 'Standard / Regulation':'المعيار / اللائحة',
-'Compliance Area':'مجال الامتثال',
+'Design Target':'الهدف التصميمي',
 'Source':'المصدر',
 'Qty':'الكمية',
 'Unit (JOD)':'السعر (دينار)',
@@ -2239,13 +2189,127 @@ const arTextMap={
 'Power on the Device.':'شغّل الجهاز.',
 'Open the TempLogger PC software (supplied on USB drive or from your facility IT officer).':'افتح برنامج TempLogger على الحاسوب (مرفق على ذاكرة USB أو من مسؤول تقنية المعلومات بمنشأتك).',
 'For JFDA submissions, use "Export Report" to generate a PDF.':'للتقديم إلى JFDA استخدم "تصدير التقرير" لإنشاء PDF.',
+/* ── Table body cells — §1.3 target audience ── */
+'Vaccine transport operators / field staff':'مشغّلو نقل اللقاحات / العاملون الميدانيون',
+'Healthcare facility managers':'مديرو المرافق الصحية',
+'Biomedical / maintenance technicians':'فنّيو الأجهزة الطبية / الصيانة',
+'Quality assurance / regulatory officers':'مسؤولو ضمان الجودة / الشؤون التنظيمية',
+'Sections 3, 4, 5, 7':'الأقسام 3، 4، 5، 7',
+'Sections 2, 3, 6, 8':'الأقسام 2، 3، 6، 8',
+'Sections 6, 9, 10':'الأقسام 6، 9، 10',
+'Sections 2, 4, 8, 11':'الأقسام 2، 4، 8، 11',
+/* ── §3.2 component identification ── */
+'LED Status Panel':'لوحة مؤشرات LED',
+'Front face — Green, Amber, Red LEDs':'الواجهة الأمامية — مؤشرات خضراء وصفراء وحمراء',
+'RFID Reader (RC522)':'قارئ RFID (طراز RC522)',
+'Right side panel — tap area marked with icon':'اللوحة الجانبية اليمنى — منطقة النقر معلَّمة بأيقونة',
+'Power Switch':'مفتاح التشغيل',
+'Right side panel — beneath RFID reader':'اللوحة الجانبية اليمنى — أسفل قارئ RFID',
+'Battery Charge Port':'منفذ شحن البطارية',
+'Rear panel — DC input (12V)':'اللوحة الخلفية — دخل تيار مستمر (12V)',
+'Battery Level Indicator':'مؤشر مستوى البطارية',
+'Front face — 4-bar LED indicator':'الواجهة الأمامية — مؤشر LED من 4 أشرطة',
+'Heat Dissipation Vents':'فتحات تبديد الحرارة',
+'Rear and side panels — DO NOT OBSTRUCT':'اللوحتان الخلفية والجانبية — لا تسدّها',
+'Locking Latches (×2)':'مزلاجا القفل (×2)',
+'Front face — electronically controlled dual latches':'الواجهة الأمامية — مزلاجان بتحكم إلكتروني',
+'Interior Foam Holders':'حاملات الرغوة الداخلية',
+'Inside lid and base — custom-cut vaccine slots':'داخل الغطاء والقاعدة — فتحات لقاحات مقصوصة خصيصاً',
+'PCM Packs (×2)':'حزم PCM (×2)',
+'Inside lid pockets — pre-frozen coolant':'داخل جيوب الغطاء — مبرِّد مجمَّد مسبقاً',
+'USB Data Port':'منفذ بيانات USB',
+'Right side panel — temperature log download':'اللوحة الجانبية اليمنى — تنزيل سجل درجة الحرارة',
+'Copper Heat Pipes (×3) + Cold Block':'أنابيب حرارية نحاسية (×3) + كتلة باردة',
+'Interior walls and floor — passive two-phase loop; evaporator ends inside box, cold block at Peltier cold face':'الجدران الداخلية والأرضية — حلقة سلبية ثنائية الطور؛ أطراف التبخير داخل الصندوق والكتلة الباردة عند الوجه البارد لـPeltier',
+/* ── §6.4 insulation table ── */
+'High-Density Polyethylene (HDPE)':'بولي إيثيلين عالي الكثافة (HDPE)',
+'Impact-resistant; 410× lower thermal conductivity than aluminum':'مقاوم للصدمات؛ توصيله الحراري أقل 410 مرات من الألومنيوم',
+'Polyurethane foam spray':'رغوة بولي يوريثان بالرش',
+'Fills all air gaps; primary thermal resistance':'تملأ جميع فجوات الهواء؛ المقاومة الحرارية الأساسية',
+'Lid Seal':'ختم الغطاء',
+'Multi-layer silicone gasket':'حشية سيليكون متعددة الطبقات',
+'Airtight seal preventing warm air infiltration':'إغلاق محكم يمنع تسرب الهواء الدافئ',
+'Interior Liner':'البطانة الداخلية',
+'Custom-cut shock-absorbing foam':'رغوة ممتصة للصدمات مقصوصة خصيصاً',
+'Holds vaccines; buffers from PCM packs; absorbs vibration':'تثبت اللقاحات؛ تعزلها عن حزم PCM؛ تمتص الاهتزاز',
+/* ── §9.3 maintenance schedule ── */
+'Before each trip':'قبل كل رحلة',
+'Daily checklist (Section 9.1)':'قائمة التحقق اليومية (القسم 9.1)',
+'Operator':'المشغِّل',
+'Trip Log':'سجل الرحلة',
+'Weekly':'أسبوعياً',
+'Weekly maintenance (Section 9.2)':'الصيانة الأسبوعية (القسم 9.2)',
+'Maintenance Log':'سجل الصيانة',
+'Monthly':'شهرياً',
+'Full performance test — cooling ramp-down, RFID test, log review':'اختبار أداء كامل — منحنى التبريد واختبار RFID ومراجعة السجل',
+'Biomedical Technician':'فني الأجهزة الطبية',
+'Inspection Report':'تقرير الفحص',
+'Every 6 Months':'كل 6 أشهر',
+'Battery capacity test, seal replacement if needed, firmware update check':'اختبار سعة البطارية واستبدال الختم عند الحاجة وفحص تحديث البرنامج الثابت',
+'Service Record':'سجل الخدمة',
+'Annually':'سنوياً',
+'Full WHO performance qualification simulation at 43°C ambient':'محاكاة كاملة لتأهيل الأداء وفق WHO عند 43°C محيطية',
+'Quality Officer':'مسؤول الجودة',
+'Qualification Report':'تقرير التأهيل',
+/* ── §13 standards table ── */
+'WHO Performance Qualification Standards':'معايير تأهيل الأداء لمنظمة الصحة العالمية',
+'Thermal testing at 43°C and −20°C; internal range 2°C–8°C':'اختبار حراري عند 43°C و−20°C؛ نطاق داخلي 2°C–8°C',
+'UNICEF Supply Division — E004 Specification':'شعبة الإمداد في اليونيسف — مواصفة E004',
+'Cold boxes and vaccine carriers procurement compliance for Jordan\'s EPI program':'متطلبات شراء الصناديق الباردة وحاملات اللقاحات لبرنامج التحصين الأردني',
+'JFDA Drug and Pharmacy Law No. 80 of 2001':'قانون الدواء والصيدلة الأردني رقم 80 لسنة 2001',
+'Auditable temperature record per box per trip; prevention of compromised vaccine delivery':'سجل حرارة قابل للتدقيق لكل صندوق في كل رحلة؛ منع تسليم لقاحات متضررة',
+'EU Ecodesign Regulation 2019/2022':'لائحة التصميم البيئي الأوروبية 2019/2022',
+'Energy limits — addressed via smart Li-Ion + supercapacitor design':'حدود الطاقة — عولجت عبر تصميم ليثيوم-أيون ذكي ومكثف فائق',
+'NSPE Code of Ethics — Section I':'مدونة أخلاقيات NSPE — القسم الأول',
+'Public safety paramount — drove HDPE selection over aluminum':'السلامة العامة أولاً — وجّهت اختيار HDPE بدلاً من الألومنيوم',
+'IEEE Code of Ethics — Clause 3':'مدونة أخلاقيات IEEE — البند 3',
+'Honesty — weaknesses documented openly in SWOT and this manual':'الصدق — وُثّقت نقاط الضعف صراحةً في تحليل SWOT وفي هذا الدليل',
+'Engineering Council Ethical Principles':'المبادئ الأخلاقية لمجلس الهندسة',
+'Equitable access — PCM passive cooling for power-unreliable areas':'وصول عادل — تبريد PCM سلبي للمناطق ذات الطاقة غير الموثوقة',
+/* ── §11 troubleshooting table ── */
+'Device does not power on':'الجهاز لا يعمل',
+'Battery fully depleted':'البطارية مستنزفة تماماً',
+'Connect charger, wait 15 minutes, then retry.':'وصّل الشاحن وانتظر 15 دقيقة ثم أعد المحاولة.',
+'Amber LED at startup':'مؤشر أصفر عند التشغيل',
+'Insufficient pre-cooling':'تبريد مسبق غير كافٍ',
+'Allow 30+ min pre-cooling. Check PCM packs are fully frozen.':'اسمح بتبريد مسبق 30 دقيقة أو أكثر وتحقق من تجمّد حزم PCM تماماً.',
+'RFID card not recognized':'بطاقة RFID غير معرَّفة',
+'Card not registered or MCU error':'البطاقة غير مسجلة أو خطأ في وحدة التحكم',
+'Try again once. If still failing, contact biomedical technician.':'حاول مرة أخرى. إذا استمر الفشل اتصل بفني الأجهزة الطبية.',
+'Latch does not release after RFID tap':'المزلاج لا ينفتح بعد نقر RFID',
+'Excursion lock active or latch jam':'قفل الانحراف نشط أو انحشار المزلاج',
+'If Red LED — Section 8.2. If Green LED — contact biomedical technician.':'إذا كان المؤشر أحمر — القسم 8.2. إذا كان أخضر — اتصل بفني الأجهزة الطبية.',
+'Battery drains faster than expected':'البطارية تفرغ أسرع من المتوقع',
+'Battery aging or high ambient temperature':'تقادم البطارية أو حرارة محيطة مرتفعة',
+'Monthly battery capacity test. Replace if below threshold.':'اختبار سعة شهري للبطارية. استبدلها إذا كانت دون الحد.',
+'USB log download fails':'فشل تنزيل السجل عبر USB',
+'Cable fault or software error':'عطل في الكابل أو خطأ برمجي',
+'Try different cable. Restart software. Contact IT officer if still failing.':'جرّب كابلاً آخر وأعد تشغيل البرنامج. اتصل بمسؤول تقنية المعلومات إذا استمر الفشل.',
+'Interior temperature reads below 2°C':'درجة الحرارة الداخلية أقل من 2°C',
+'Peltier PWM duty cycle too high or PCM packs still in transition phase':'دورة عمل PWM مرتفعة جداً أو حزم PCM ما زالت في طور الانتقال',
+'Allow 10–15 minutes — the MCU PWM controller will self-regulate. Do NOT remove PCM packs during a live trip. If temperature persists below 1°C, switch off Peltier modules via the power switch and contact a biomedical technician to review MCU threshold settings before next deployment.':'انتظر 10–15 دقيقة — سيضبط متحكم PWM نفسه ذاتياً. لا تنزع حزم PCM أثناء رحلة جارية. إذا استمرت الحرارة دون 1°C أطفئ وحدات Peltier من مفتاح التشغيل واتصل بفني الأجهزة الطبية لمراجعة إعدادات العتبات قبل النشر التالي.',
+'Heat vents excessively hot':'فتحات التهوية شديدة السخونة',
+'Vents obstructed or fan failure':'انسداد الفتحات أو تعطل المروحة',
+'Clear obstructions immediately. If fan stopped, power off and contact technician.':'أزل العوائق فوراً. إذا توقفت المروحة أطفئ الجهاز واتصل بالفني.',
+'Silicone seal damaged':'تلف ختم السيليكون',
+'Normal wear or improper cleaning':'بلى طبيعي أو تنظيف غير سليم',
+'Remove from service immediately. Technician must replace seal.':'أخرج الجهاز من الخدمة فوراً. يجب أن يستبدل الفني الختم.',
+'LED panel partially lit':'لوحة LED مضاءة جزئياً',
+'Individual LED failure':'تعطل مؤشر LED منفرد',
+'Remove from service. Repair is mandatory — LEDs are safety-critical.':'أخرج الجهاز من الخدمة. الإصلاح إلزامي — المؤشرات حرجة للسلامة.',
+/* ── Appendix B category rows ── */
+'Cooling System':'نظام التبريد',
+'Housing & Insulation':'الهيكل والعزل',
+'Electronics & Sensors':'الإلكترونيات والحساسات',
+'Power Management':'إدارة الطاقة',
+'TOTAL MATERIALS COST':'إجمالي تكلفة المواد',
 };
 
 /* arTextMap: save original innerHTML, replace with Arabic, restore on EN */
 const _arOriginals=new Map();
 function applyTextTranslations(lang){
   /* General elements (no special child structure) */
-  const sel='#main h3, #main p, #main .callout-text, #main .callout-label, #main .bl li, #main th, .led-card p, .gterm, .gdef, .qr-panel h4, .illus-content h4, .illus-content p, #cover .sub, .meta-card .ml, .meta-card .mv, .spec-label, .form-field label, #page-footer p';
+  const sel='#main h3, #main p, #main .callout-text, #main .callout-label, #main .bl li, #main th, #main td, .led-card p, .gterm, .gdef, .qr-panel h4, .illus-content h4, .illus-content p, #cover .sub, .meta-card .ml, .meta-card .mv, .spec-label, .form-field label, #page-footer p';
   document.querySelectorAll(sel).forEach(function(el){
     const key=el.textContent.trim();
     if(lang==='ar'){
@@ -2307,7 +2371,12 @@ function applyLang(lang){
     if(t&&t[k]!==undefined)el.textContent=t[k];
   });
   applyTextTranslations(lang);
+  const h1=document.getElementById('cover-h1');
+  if(h1)h1.innerHTML=lang==='ar'
+    ?'صندوق توصيل اللقاحات<br><em>المحسَّن الموثوقية</em>'
+    :'Enhanced Reliability<br><em>Vaccine Delivery Box</em>';
   document.documentElement.lang=lang;
+  document.documentElement.dir=lang==='ar'?'rtl':'ltr';
   document.body.classList.toggle('ar',lang==='ar');
   const lb=document.getElementById('lang-btn');
   if(lb){lb.classList.toggle('active',lang==='ar');}
@@ -2321,27 +2390,26 @@ function toggleLang(){
   applyLang(currentLang);
 }
 
-/* ── DARK MODE ── */
-let darkMode=localStorage.getItem('darkMode')==='1';
+/* ── THEME (system default, manual override persisted) ── */
+let darkMode=document.documentElement.dataset.theme==='dark';
 function applyDark(){
-  document.body.classList.toggle('dark-mode',darkMode);
+  document.documentElement.dataset.theme=darkMode?'dark':'light';
   const btn=document.getElementById('dark-btn');
   if(btn){
     btn.innerHTML=darkMode?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
     btn.setAttribute('aria-label',darkMode?'Switch to light mode':'Switch to dark mode');
+    btn.setAttribute('aria-pressed',darkMode?'true':'false');
     btn.classList.toggle('active',darkMode);
   }
 }
-function toggleDark(){darkMode=!darkMode;localStorage.setItem('darkMode',darkMode?'1':'0');applyDark();}
+function toggleDark(){darkMode=!darkMode;localStorage.setItem('theme',darkMode?'dark':'light');applyDark();}
 
-/* ── FONT SIZE (zoom on #main so all px-based sizes scale) ── */
-const fontZooms=[0.88,1,1.15];
+/* ── FONT SIZE (root font-size; content sizes are rem-based) ── */
+const fontSizes=[14,16,18];
 let fontIdx=parseInt(localStorage.getItem('fontIdx')||'1');
 if(fontIdx<0||fontIdx>2)fontIdx=1;
 function applyFontSize(){
-  const m=document.getElementById('main');
-  if(m)m.style.zoom=fontZooms[fontIdx];
-  document.querySelectorAll('.font-btn').forEach((b,i)=>b.classList.toggle('active',false));
+  document.documentElement.style.fontSize=fontSizes[fontIdx]+'px';
 }
 function changeFontSize(dir){
   fontIdx=Math.max(0,Math.min(2,fontIdx+dir));
@@ -2433,12 +2501,12 @@ function togglePcmTimer(){
   }
   pcmSecs=43200;
   btn.textContent=translations[currentLang]['timer-stop'];btn.classList.add('running');
-  if(disp){disp.textContent='12:00:00';disp.style.color='';}
+  if(disp){disp.textContent='12:00:00';disp.classList.remove('done');}
   if(bar)bar.style.width='0%';
   pcmInterval=setInterval(function(){
     if(pcmSecs<=0){
       clearInterval(pcmInterval);pcmInterval=null;
-      if(disp){disp.textContent=translations[currentLang]['timer-ready'];disp.style.color='#166534';}
+      if(disp){disp.textContent=translations[currentLang]['timer-ready'];disp.classList.add('done');}
       btn.textContent=translations[currentLang]['timer-start'];btn.classList.remove('running');
       pcmSecs=43200;return;
     }
@@ -2463,9 +2531,12 @@ function updateCalc(){
   const wh=(charge/100)*240;
   const hrs=wh/adjusted;
   const h=Math.floor(hrs),m=Math.floor((hrs-h)*60);
-  const color=hrs>=4?'#166534':hrs>=2?'#92400E':'#991B1B';
+  const level=hrs>=4?'ok':hrs>=2?'warn':'low';
   const res=document.getElementById('calc-res');
-  if(res)res.innerHTML=(currentLang==='ar'?'الوقت المتوقع: ':'Estimated runtime: ')+'<strong style="color:'+color+';font-family:\'DM Mono\',monospace;font-size:16px">'+h+'h '+m+'m</strong> '+(currentLang==='ar'?'عند '+ambient+'°C':'at '+ambient+'°C ambient, '+pwm+'% PWM');
+  if(res){
+    res.className='calc-result '+level;
+    res.innerHTML=(currentLang==='ar'?'الوقت المتوقع: ':'Estimated runtime: ')+'<strong>'+h+'h '+m+'m</strong> '+(currentLang==='ar'?'عند '+ambient+'°C':'at '+ambient+'°C ambient, '+pwm+'% power');
+  }
 }
 
 /* ── WIZARD ── */
@@ -2571,277 +2642,6 @@ function toggleWizTable(){
   btn.textContent=hidden?t['wiz-table-show']:t['wiz-table-hide'];
 }
 
-/* ── COLD-CHAIN MEDICAL CANVAS ── */
-(function(){
-  const cv=document.getElementById('bg-canvas');
-  if(!cv)return;
-  return; /* decorative canvas disabled for accessible design */
-  const cx=cv.getContext('2d');
-  let W,H,frame=0,mouse={x:-9999,y:-9999};
-
-  /* ── resize ── */
-  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
-
-  /* ══ HEX GRID ══ */
-  const HS=72; /* hex size */
-  let hexes=[];
-  function buildHex(){
-    hexes=[];
-    const cols=Math.ceil(W/(HS*1.5))+3, rows=Math.ceil(H/(HS*0.866))+3;
-    for(let c=-1;c<cols;c++) for(let r=-1;r<rows;r++){
-      const x=c*HS*1.5, y=r*HS*1.732+(c%2)*HS*0.866;
-      const kind=Math.random();
-      hexes.push({x,y,phase:Math.random()*Math.PI*2,
-        spd:0.004+Math.random()*0.008,
-        kind:kind<.06?'hot':kind<.18?'warn':kind<.45?'active':'idle'
-      });
-    }
-  }
-  function drawHexOutline(x,y,s,col){
-    cx.beginPath();
-    for(let i=0;i<6;i++){const a=i*Math.PI/3-Math.PI/6;cx.lineTo(x+s*Math.cos(a),y+s*Math.sin(a));}
-    cx.closePath();cx.strokeStyle=col;cx.lineWidth=.7;cx.stroke();
-  }
-
-  /* ══ SNOWFLAKES ══ */
-  function Flake(){this.reset(true);}
-  Flake.prototype.reset=function(init){
-    this.x=Math.random()*W;
-    this.y=init?Math.random()*H:-20;
-    this.r=5+Math.random()*10;
-    this.vy=.18+Math.random()*.28;
-    this.vx=(Math.random()-.5)*.12;
-    this.rot=Math.random()*Math.PI;
-    this.rs=(Math.random()-.5)*.008;
-    this.a=.08+Math.random()*.22;
-    this.phase=Math.random()*Math.PI*2;
-  };
-  Flake.prototype.update=function(){
-    this.x+=this.vx;this.y+=this.vy;this.rot+=this.rs;this.phase+=.02;
-    if(this.y>H+20)this.reset(false);
-  };
-  function drawFlake(x,y,r,rot,a){
-    cx.save();cx.translate(x,y);cx.rotate(rot);
-    cx.strokeStyle=`rgba(180,235,255,${a})`;cx.lineWidth=.9;
-    for(let i=0;i<6;i++){
-      cx.save();cx.rotate(i*Math.PI/3);
-      cx.beginPath();cx.moveTo(0,0);cx.lineTo(0,-r);cx.stroke();
-      cx.beginPath();cx.moveTo(0,-r*.55);cx.lineTo(r*.22,-r*.38);cx.stroke();
-      cx.beginPath();cx.moveTo(0,-r*.55);cx.lineTo(-r*.22,-r*.38);cx.stroke();
-      cx.restore();
-    }
-    cx.restore();
-  }
-  let flakes=[];
-
-  /* ══ MEDICAL CROSSES ══ */
-  function Cross(){this.reset();}
-  Cross.prototype.reset=function(){
-    this.x=Math.random()*W; this.y=Math.random()*H;
-    this.vx=(Math.random()-.5)*.22; this.vy=(Math.random()-.5)*.22;
-    this.s=6+Math.random()*14; this.a=.04+Math.random()*.1;
-    this.phase=Math.random()*Math.PI*2; this.ps=.015+Math.random()*.01;
-  };
-  Cross.prototype.update=function(){
-    this.x+=this.vx;this.y+=this.vy;this.phase+=this.ps;
-    if(this.x<-40)this.x=W+40;if(this.x>W+40)this.x=-40;
-    if(this.y<-40)this.y=H+40;if(this.y>H+40)this.y=-40;
-  };
-  function drawCross(x,y,s,a){
-    cx.strokeStyle=`rgba(103,232,249,${a})`;cx.lineWidth=1.4;cx.lineCap='round';
-    cx.beginPath();cx.moveTo(x-s,y);cx.lineTo(x+s,y);cx.stroke();
-    cx.beginPath();cx.moveTo(x,y-s);cx.lineTo(x,y+s);cx.stroke();
-    /* outer square */
-    cx.strokeStyle=`rgba(103,232,249,${a*.3})`;cx.lineWidth=.6;
-    cx.strokeRect(x-s*1.5,y-s*1.5,s*3,s*3);
-  }
-  let crosses=[];
-
-  /* ══ VIALS ══ */
-  function Vial(){this.reset();}
-  Vial.prototype.reset=function(){
-    this.x=Math.random()*W; this.y=Math.random()*H;
-    this.vx=(Math.random()-.5)*.15; this.vy=(Math.random()-.5)*.15;
-    this.h=14+Math.random()*16; this.a=.05+Math.random()*.1;
-    this.phase=Math.random()*Math.PI*2; this.ps=.01+Math.random()*.01;
-    this.rot=(Math.random()-.5)*Math.PI*.5;
-  };
-  Vial.prototype.update=function(){
-    this.x+=this.vx;this.y+=this.vy;this.phase+=this.ps;
-    if(this.x<-50)this.x=W+50;if(this.x>W+50)this.x=-50;
-    if(this.y<-50)this.y=H+50;if(this.y>H+50)this.y=-50;
-  };
-  function drawVial(x,y,h,rot,a){
-    cx.save();cx.translate(x,y);cx.rotate(rot);
-    const w=h*.38;
-    cx.strokeStyle=`rgba(103,232,249,${a})`;cx.lineWidth=1;cx.lineJoin='round';
-    cx.beginPath();
-    cx.moveTo(-w/2,-h/2+w/2);cx.lineTo(-w/2,h/2-w/2);
-    cx.arc(0,h/2-w/2,w/2,Math.PI,0);
-    cx.lineTo(w/2,-h/2+w/2);
-    /* cap */
-    cx.moveTo(-w*.3,-h/2+w/2);cx.lineTo(-w*.3,-h/2-h*.18);
-    cx.arc(0,-h/2-h*.18,w*.3,Math.PI,0);
-    cx.lineTo(w*.3,-h/2+w/2);
-    cx.stroke();
-    /* liquid fill */
-    cx.fillStyle=`rgba(14,165,233,${a*.5})`;
-    cx.beginPath();cx.rect(-w/2+1,0,w-2,h/2-w/2);cx.fill();
-    cx.restore();
-  }
-  let vials=[];
-
-  /* ══ PULSE RINGS ══ */
-  let rings=[];
-  function spawnRing(){
-    const h=hexes[Math.floor(Math.random()*hexes.length)];
-    if(!h)return;
-    const col=Math.random()<.15?'rgba(239,68,68,':'rgba(14,165,233,';
-    rings.push({x:h.x,y:h.y,r:0,maxR:55+Math.random()*35,a:.45,col});
-  }
-
-  /* ══ DATA STREAMS ══ (dots moving along hex edges) */
-  let streams=[];
-  function Stream(){
-    const a=hexes[Math.floor(Math.random()*hexes.length)];
-    const b=hexes[Math.floor(Math.random()*hexes.length)];
-    if(!a||!b){this.dead=true;return;}
-    this.sx=a.x;this.sy=a.y;this.dx=b.x;this.dy=b.y;
-    this.t=0;this.spd=.006+Math.random()*.01;this.dead=false;
-    this.col=Math.random()<.2?'rgba(34,197,94,':'rgba(103,232,249,';
-  }
-  Stream.prototype.update=function(){
-    this.t+=this.spd;return this.t>=1;
-  };
-
-  /* ══ TEMP GAUGE floating ══ */
-  function drawThermo(x,y,pct,a){
-    const h=36,w=7;
-    cx.strokeStyle=`rgba(103,232,249,${a})`;cx.lineWidth=.9;
-    /* tube */
-    cx.beginPath();cx.roundRect(x-w/2,-h/2+w,w,h-w,w/2);cx.stroke();
-    /* bulb */
-    cx.beginPath();cx.arc(x,h/2,w*.9,0,Math.PI*2);cx.stroke();
-    /* mercury */
-    const fillH=(h-w)*pct;
-    cx.fillStyle=pct>.75?`rgba(239,68,68,${a*.8})`:pct>.4?`rgba(251,191,36,${a*.8})`:`rgba(34,197,94,${a*.8})`;
-    cx.beginPath();cx.roundRect(x-w/2+1.5,h/2-w-fillH,w-3,fillH,2);cx.fill();
-    /* bulb fill */
-    cx.fill();cx.beginPath();cx.arc(x,h/2,w*.7,0,Math.PI*2);cx.fill();
-    /* tick marks */
-    cx.strokeStyle=`rgba(103,232,249,${a*.5})`;cx.lineWidth=.7;
-    for(let i=0;i<=4;i++){const ty=-h/2+w+(h-w)*i/4;cx.beginPath();cx.moveTo(x+w/2,ty);cx.lineTo(x+w/2+4,ty);cx.stroke();}
-  }
-  let thermos=[];
-  function Thermo(){
-    this.x=Math.random()*W;this.y=Math.random()*H;
-    this.vx=(Math.random()-.5)*.14;this.vy=(Math.random()-.5)*.14;
-    this.pct=.1+Math.random()*.6;this.a=.06+Math.random()*.1;
-    this.phase=Math.random()*Math.PI*2;this.ps=.008;
-  }
-  Thermo.prototype.update=function(){
-    this.x+=this.vx;this.y+=this.vy;this.phase+=this.ps;
-    if(this.x<-60)this.x=W+60;if(this.x>W+60)this.x=-60;
-    if(this.y<-60)this.y=H+60;if(this.y>H+60)this.y=-60;
-  };
-
-  /* ══ INIT ══ */
-  function init(){
-    buildHex();
-    flakes=[];for(let i=0;i<22;i++)flakes.push(new Flake());
-    crosses=[];for(let i=0;i<14;i++)crosses.push(new Cross());
-    vials=[];for(let i=0;i<10;i++)vials.push(new Vial());
-    thermos=[];for(let i=0;i<7;i++)thermos.push(new Thermo());
-    streams=[];for(let i=0;i<10;i++){const s=new Stream();if(!s.dead)streams.push(s);}
-    rings=[];
-  }
-
-  /* ══ DRAW ══ */
-  function draw(){
-    frame++;
-    cx.clearRect(0,0,W,H);
-
-    /* deep radial vignette */
-    const bg=cx.createRadialGradient(W*.5,H*.45,0,W*.5,H*.45,Math.max(W,H)*.75);
-    bg.addColorStop(0,'rgba(4,14,32,.12)');bg.addColorStop(1,'rgba(2,5,14,.5)');
-    cx.fillStyle=bg;cx.fillRect(0,0,W,H);
-
-    /* ── hex grid ── */
-    hexes.forEach(function(h){
-      h.phase+=h.spd;
-      const g=.5+.5*Math.sin(h.phase);
-      let col;
-      if(h.kind==='hot')col=`rgba(239,68,68,${g*.1+.03})`;
-      else if(h.kind==='warn')col=`rgba(251,191,36,${g*.08+.02})`;
-      else if(h.kind==='active')col=`rgba(14,165,233,${g*.07+.02})`;
-      else col=`rgba(14,165,233,${g*.03+.008})`;
-      drawHexOutline(h.x,h.y,HS*.5,col);
-      /* node dot at center */
-      if(h.kind!=='idle'){
-        cx.beginPath();cx.arc(h.x,h.y,1.5,0,Math.PI*2);
-        cx.fillStyle=col;cx.fill();
-      }
-    });
-
-    /* ── snowflakes ── */
-    flakes.forEach(function(f){
-      drawFlake(f.x,f.y,f.r,f.rot,f.a*(0.65+0.35*Math.sin(f.phase)));
-      f.update();
-    });
-
-    /* ── vials ── */
-    vials.forEach(function(v){
-      drawVial(v.x,v.y,v.h,v.rot,v.a*(0.6+0.4*Math.sin(v.phase)));
-      v.update();
-    });
-
-    /* ── thermometers ── */
-    thermos.forEach(function(t){
-      drawThermo(t.x,t.y,t.pct,t.a*(0.6+0.4*Math.sin(t.phase)));
-      t.update();
-    });
-
-    /* ── medical crosses ── */
-    crosses.forEach(function(c){
-      drawCross(c.x,c.y,c.s,c.a*(0.6+0.4*Math.sin(c.phase)));
-      c.update();
-    });
-
-    /* ── data streams ── */
-    for(let i=streams.length-1;i>=0;i--){
-      const s=streams[i];
-      const bx=s.sx+(s.dx-s.sx)*s.t, by=s.sy+(s.dy-s.sy)*s.t;
-      cx.beginPath();cx.arc(bx,by,2.5,0,Math.PI*2);
-      cx.fillStyle=s.col+'.7)';cx.fill();
-      cx.beginPath();cx.arc(bx,by,5,0,Math.PI*2);
-      cx.fillStyle=s.col+'.15)';cx.fill();
-      if(s.update()){streams.splice(i,1);const ns=new Stream();if(!ns.dead)streams.push(ns);}
-    }
-
-    /* ── pulse rings ── */
-    if(frame%100===0)spawnRing();
-    for(let i=rings.length-1;i>=0;i--){
-      const r=rings[i];r.r+=1.4;r.a-=.007;
-      cx.beginPath();cx.arc(r.x,r.y,r.r,0,Math.PI*2);
-      cx.strokeStyle=r.col+r.a+')';cx.lineWidth=1;cx.stroke();
-      if(r.a<=0)rings.splice(i,1);
-    }
-
-    /* ── mouse repulsion particles (small ambient dots) ── */
-    if(mouse.x>0&&mouse.x<W){
-      cx.beginPath();cx.arc(mouse.x,mouse.y,40,0,Math.PI*2);
-      cx.strokeStyle='rgba(14,165,233,.06)';cx.lineWidth=1;cx.stroke();
-    }
-
-    requestAnimationFrame(draw);
-  }
-
-  resize();init();draw();
-  window.addEventListener('resize',function(){resize();init();});
-  window.addEventListener('mousemove',function(e){mouse.x=e.clientX;mouse.y=e.clientY;});
-  window.addEventListener('mouseleave',function(){mouse.x=-9999;mouse.y=-9999;});
-})();
-
 /* ── PWA (HTTP/HTTPS only — blocked by browser on file://) ── */
 if('serviceWorker' in navigator && location.protocol !== 'file:'){
   try{
@@ -2873,111 +2673,15 @@ document.addEventListener('DOMContentLoaded',function(){
   updateCalc();
 });
 
-/* ══════════════════════════════════════════════
-   LOADING SCREEN
-══════════════════════════════════════════════ */
-(function(){
-  const loader=document.getElementById('loader');
-  const bar=document.getElementById('ld-bar');
-  const status=document.getElementById('ld-status');
-  if(!loader)return;
-  const msgs=['Initializing…','Loading content…','Applying theme…','Almost ready…','Ready.'];
-  let p=0;
-  const iv=setInterval(function(){
-    p=Math.min(98,p+Math.random()*14+4);
-    if(bar)bar.style.width=p+'%';
-    if(status)status.textContent=msgs[Math.min(msgs.length-1,Math.floor(p/22))];
-  },90);
-  function dismiss(){
-    clearInterval(iv);
-    if(bar)bar.style.width='100%';
-    if(status)status.textContent='Ready.';
-    setTimeout(function(){
-      loader.classList.add('ld-done');
-      setTimeout(function(){loader.remove();},800);
-    },350);
-  }
-  window.addEventListener('load',dismiss);
-  setTimeout(dismiss,3500);
-})();
 
-/* ══════════════════════════════════════════════
-   CURSOR GLOW
-══════════════════════════════════════════════ */
-(function(){
-  const glow=document.getElementById('cursor-glow');
-  if(!glow)return;
-  return; /* cursor glow disabled for accessible design */
-  let tx=window.innerWidth/2,ty=window.innerHeight/2,cx=tx,cy=ty;
-  function lerp(a,b,t){return a+(b-a)*t;}
-  function tick(){
-    cx=lerp(cx,tx,.08); cy=lerp(cy,ty,.08);
-    glow.style.left=cx+'px'; glow.style.top=cy+'px';
-    requestAnimationFrame(tick);
-  }
-  tick();
-  document.addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;});
-  document.addEventListener('mouseleave',function(){glow.style.opacity='0';});
-  document.addEventListener('mouseenter',function(){glow.style.opacity='1';});
-})();
 
-/* ══════════════════════════════════════════════
-   3-D CARD TILT ON HOVER
-══════════════════════════════════════════════ */
-(function(){
-  return; /* 3D tilt disabled for accessible design */
-  function tiltOn(e){
-    const r=this.getBoundingClientRect();
-    const x=(e.clientX-r.left)/r.width-.5;
-    const y=(e.clientY-r.top)/r.height-.5;
-    this.style.transform='perspective(400px) rotateX('+(y*-9)+'deg) rotateY('+(x*9)+'deg) translateY(-3px) scale(1.02)';
-  }
-  function tiltOff(){this.style.transform='';}
-  document.querySelectorAll('.meta-card,.spec-item,.led-card').forEach(function(el){
-    el.addEventListener('mousemove',tiltOn);
-    el.addEventListener('mouseleave',tiltOff);
-  });
-})();
 
-/* ══════════════════════════════════════════════
-   SHOOTING STARS (canvas layer)
-══════════════════════════════════════════════ */
-(function(){
-  const canvas=document.getElementById('bg-canvas');
-  if(!canvas)return;
-  return; /* shooting stars disabled for accessible design */
-  const stars=[];
-  function Star(){
-    this.reset();
-  }
-  Star.prototype.reset=function(){
-    this.x=Math.random()*window.innerWidth;
-    this.y=Math.random()*window.innerHeight*.5;
-    this.len=Math.random()*120+60;
-    this.speed=Math.random()*6+4;
-    this.life=0;
-    this.maxLife=this.len/this.speed*1.5;
-    this.angle=Math.PI*.22+Math.random()*.1;
-    this.a=Math.random()*.5+.3;
-  };
-  Star.prototype.update=function(){
-    this.x+=Math.cos(this.angle)*this.speed;
-    this.y+=Math.sin(this.angle)*this.speed;
-    this.life++;
-    if(this.life>this.maxLife)this.reset();
-  };
-  for(let i=0;i<6;i++){const s=new Star();s.life=Math.floor(Math.random()*s.maxLife);stars.push(s);}
-
-  /* patch the existing draw loop: store stars ref globally for the canvas IIFE to use */
-  window._bgStars=stars;
-})();
 </script>
 
 <!-- ══════════════════ LIVE MONITORING — Firebase feed (lazy-loaded) ══════════════════ -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, onValue, query, orderByKey, limitToLast }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  /* Firebase SDK is imported on demand inside start() — readers who never
+     open the live dashboard download nothing. */
 
   /* ▼▼▼ ONLY EDIT THIS LINE — your Firebase Realtime DB (public reads) ▼▼▼ */
   const DB_URL = "vaccine-box-4ef00-default-rtdb.europe-west1.firebasedatabase.app";
@@ -3016,9 +2720,13 @@ document.addEventListener('DOMContentLoaded',function(){
 
   async function start(){
     if (started) return; started = true;
-    await loadChart();
+    const [{ initializeApp }, { getDatabase, ref, onValue, query, orderByKey, limitToLast }] = await Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"),
+      loadChart()
+    ]);
     const css = getComputedStyle(document.body);
-    const accent = css.getPropertyValue('--primary').trim() || '#0E7490';
+    const accent = css.getPropertyValue('--primary-2').trim() || '#0891B2';
     const grid   = css.getPropertyValue('--border-2').trim() || '#e2e8f0';
 
     const db = getDatabase(initializeApp({ databaseURL: DB_URL }));
@@ -3037,7 +2745,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
       const flags = [];
       if (d.corrupted) flags.push(['warn', '⚠ ' + T('Vaccines may be corrupted', 'قد تكون اللقاحات تالفة')]);
-      else if (d.ready) flags.push(['ok', T('Cold-chain reached', 'تم بلوغ سلسلة التبريد')]);
+      else if (d.ready) flags.push(['ok', T('Safe temperature reached', 'تم بلوغ درجة الحرارة الآمنة')]);
       if (typeof d.maxTemp === 'number')
         flags.push(['', T('Max since cold: ', 'أقصى درجة منذ التبريد: ') + d.maxTemp.toFixed(1) + ' °C']);
       $('live-flags').innerHTML = flags.map(f => '<span class="live-flag ' + f[0] + '">' + f[1] + '</span>').join('');

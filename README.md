@@ -12,12 +12,15 @@ Once GitHub Pages is enabled, the manual is available at:
 ## Features
 
 - **Single-file app** — `index.html` is fully self-contained (inline CSS + JS); no build step.
-- **Bilingual** — English and Arabic with full right-to-left (RTL) support.
-- **Installable PWA** — works offline after first load via a service worker (`manifest.json`).
-- **Accessible** — WCAG-AA oriented design, keyboard navigation, visible focus states,
-  and `prefers-reduced-motion` support.
-- **Interactive helpers** — setup wizard, timer, and dose calculator.
-- **Light / dark theme** toggle.
+- **Bilingual** — English and Arabic with true `dir="rtl"` right-to-left support,
+  including translated table content.
+- **Installable PWA** — `manifest.json` provides the install manifest; an inline
+  service worker in `index.html` caches the page shell for offline reading.
+- **Accessible** — WCAG-AA oriented design, keyboard navigation (including the
+  interactive checklists), visible focus states, and `prefers-reduced-motion` support.
+- **Interactive helpers** — troubleshooting wizard, PCM pre-chill timer, and
+  battery runtime estimator.
+- **Light / dark theme** — follows the OS preference, with a manual toggle.
 
 ## Files
 
