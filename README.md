@@ -11,6 +11,16 @@ Once GitHub Pages is enabled, the manual is available at:
 
 ## Features
 
+- **Command palette & tour** — Ctrl+K opens a command palette (jump to any section,
+  toggle theme/language, print, start the guided tour); Driver.js gives first-time
+  visitors a 30-second tour; glossary terms show tooltip definitions on hover;
+  the sidebar search is typo-tolerant (Fuse.js) with a ranked results panel.
+- **Pro monitoring dashboard** — ECharts temperature history with zoom/pan and a
+  2–8°C safe band, a live gauge, an hourly out-of-range strip, excursion events,
+  CSV export, and alerts (toast + beep + browser notification) on state changes.
+- **Scroll-driven 3D** — the box rotates and opens its lid as you scroll past it
+  (GSAP ScrollTrigger + Lenis smooth scrolling), and a topbar gear lets you pick
+  the animated background style (aurora, network, snow, fireflies, off).
 - **Animated main menu** — the site opens on a centered, fully animated menu
   (aurora background, staggered entrance) with three doors: The Device, User
   Manual, and Live Monitoring. The topbar brand button returns to it.

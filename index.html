@@ -13,6 +13,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,600;0,6..72,700;1,6..72,600&family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css">
 <script>
 /* set theme before first paint: saved choice, else OS preference */
 (function(){
@@ -37,7 +39,11 @@
   "@tsparticles/engine":"https://cdn.jsdelivr.net/npm/@tsparticles/engine@3.7.1/+esm",
   "@tsparticles/slim":"https://cdn.jsdelivr.net/npm/@tsparticles/slim@3.7.1/+esm",
   "echarts":"https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.esm.min.js",
-  "notyf":"https://cdn.jsdelivr.net/npm/notyf@3.10.0/+esm"
+  "notyf":"https://cdn.jsdelivr.net/npm/notyf@3.10.0/+esm",
+  "fuse.js":"https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs",
+  "ninja-keys":"https://cdn.jsdelivr.net/npm/ninja-keys@1.2.2/+esm",
+  "tippy.js":"https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/+esm",
+  "driver.js":"https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.mjs"
 }}
 </script>
 <style>
@@ -349,6 +355,28 @@ body[data-view="menu"] #topbar{display:none}
 .ev-item b{color:var(--text)}
 .ev-empty{display:flex;gap:8px;align-items:center;color:var(--green);font-size:var(--fs-sm);font-weight:600;margin-top:12px}
 @media(max-width:768px){.ld-chartwrap2{height:220px}}
+
+/* ── USABILITY LAYER (fuzzy search panel, glossary terms, palette, tour) ── */
+#search-results{position:absolute;inset-inline:12px;top:calc(100% - 4px);z-index:50;background:var(--brand-2);border:1px solid var(--on-brand-border);border-radius:var(--r-md);box-shadow:var(--shadow-lg);max-height:320px;overflow-y:auto;padding:6px}
+#search-results[hidden]{display:none}
+.search-wrap{position:relative}
+.sr-item{display:block;width:100%;text-align:start;appearance:none;background:none;border:none;border-radius:var(--r-sm);padding:8px 10px;cursor:pointer;color:var(--on-brand-muted);font-family:var(--font-body)}
+.sr-item .sr-t{font-size:var(--fs-sm);font-weight:600;color:#fff}
+.sr-item .sr-s{font-size:var(--fs-xs);color:var(--on-brand-faint)}
+.sr-item:hover,.sr-item.sel{background:rgba(123,227,240,.16)}
+.sr-empty{padding:8px 10px;font-size:var(--fs-xs);color:var(--on-brand-faint)}
+.gl-term{border-bottom:1px dotted var(--primary-2);cursor:help}
+.tippy-box[data-theme~='vdb']{background:var(--brand);color:#fff;font-family:var(--font-body);font-size:var(--fs-sm);border:1px solid var(--on-brand-border);border-radius:var(--r-md);padding:2px 4px}
+.tippy-box[data-theme~='vdb'] .tippy-arrow{color:var(--brand)}
+ninja-keys{--ninja-accent-color:var(--primary-2);--ninja-font-family:var(--font-body);--ninja-modal-background:var(--surface);--ninja-text-color:var(--text);--ninja-secondary-text-color:var(--faint);--ninja-selected-background:var(--surface-2);--ninja-key-border-radius:6px;--ninja-z-index:9999}
+.driver-popover{background:var(--surface);color:var(--text);font-family:var(--font-body);border-radius:var(--r-md)}
+.driver-popover-title{font-family:var(--font-display);color:var(--brand)}
+html[data-theme="dark"] .driver-popover-title{color:var(--text)}
+#tour-prompt{position:fixed;bottom:24px;inset-inline-start:24px;z-index:var(--z-banner);background:var(--brand);color:#fff;border:1px solid var(--on-brand-border);border-radius:var(--r-md);box-shadow:var(--shadow-lg);padding:14px 16px;display:flex;gap:12px;align-items:center;font-size:var(--fs-sm);max-width:320px}
+#tour-prompt button{appearance:none;border-radius:var(--r-sm);min-height:36px;padding:0 14px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:var(--fs-sm)}
+#tour-prompt .tp-go{background:var(--primary-2);border:none;color:#04222B}
+#tour-prompt .tp-x{background:none;border:1px solid var(--on-brand-border);color:var(--on-brand-muted)}
+@media print{#tour-prompt,#search-results{display:none!important}}
 
 /* ── ANIMATE-UI STYLE LAYER (elements created/driven by the motion module) ── */
 #tabs{position:relative}
@@ -1081,6 +1109,7 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
   <div class="search-wrap">
     <input id="search-input" type="search" placeholder="Search manual… (Ctrl+K)" autocomplete="off" aria-label="Search the manual">
     <div class="search-count" id="search-count"></div>
+    <div id="search-results" hidden></div>
   </div>
   <div class="sb-controls">
     <button class="ctrl-btn" id="lang-btn" onclick="toggleLang()" aria-label="Switch language — Arabic or English"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n="lang-btn">AR</span></button>
@@ -2955,6 +2984,7 @@ function applyLang(lang){
   if(mh)mh.innerHTML=titleHtml;
   if(window.liveLangRefresh)window.liveLangRefresh();
   if(window.heroSplitRefresh)window.heroSplitRefresh();
+  if(window.glossaryRefresh)window.glossaryRefresh();
   document.documentElement.lang=lang;
   document.documentElement.dir=lang==='ar'?'rtl':'ltr';
   document.body.classList.toggle('ar',lang==='ar');
@@ -3066,7 +3096,12 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   }
   document.addEventListener('keydown',function(e){
-    if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();switchView('manual');const i=document.getElementById('search-input');if(i)i.focus();}
+    if((e.ctrlKey||e.metaKey)&&e.key==='k'){
+      e.preventDefault();
+      if(document.querySelector('ninja-keys'))return; /* palette handles its own hotkey once loaded */
+      if(window.openPalette){window.openPalette();return;}
+      switchView('manual');const i=document.getElementById('search-input');if(i)i.focus();
+    }
   });
 });
 
@@ -3495,6 +3530,209 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches){
   if (document.readyState === 'complete') boot();
   else window.addEventListener('load', boot);
 }
+</script>
+
+<!-- ══════════ USABILITY LAYER — command palette, fuzzy search, glossary, guided tour ══════════ -->
+<script type="module">
+const $u = (i) => document.getElementById(i);
+const uAr = () => document.documentElement.lang === 'ar';
+const UT = (en, ar) => uAr() ? ar : en;
+
+/* ── search index shared by the palette and the fuzzy sidebar panel ── */
+let uIndex = null, fuse = null;
+async function buildIndex(){
+  if (uIndex) return uIndex;
+  uIndex = [];
+  document.querySelectorAll('#main section[id]').forEach((sec) => {
+    const h2 = sec.querySelector('h2');
+    const secTitle = (h2 ? h2.textContent : sec.id).trim();
+    uIndex.push({id: sec.id, title: secTitle, section: '', text: sec.textContent.replace(/\s+/g, ' ').slice(0, 4000)});
+    sec.querySelectorAll('h3').forEach((h3, i) => {
+      if (!h3.id) h3.id = sec.id + '-h3-' + i;
+      let text = '', n = h3.nextElementSibling;
+      while (n && n.tagName !== 'H3'){ text += ' ' + n.textContent; n = n.nextElementSibling; }
+      uIndex.push({id: h3.id, title: h3.textContent.trim(), section: secTitle, text: text.replace(/\s+/g, ' ').slice(0, 2000)});
+    });
+  });
+  try {
+    const {default: Fuse} = await import('fuse.js');
+    fuse = new Fuse(uIndex, {keys: [{name: 'title', weight: 2}, 'text'],
+      threshold: .38, ignoreLocation: true, minMatchCharLength: 2});
+  } catch (e) {}
+  return uIndex;
+}
+function gotoRecord(id){
+  window.switchView('manual');
+  const el = document.getElementById(id);
+  if (el) setTimeout(() => el.scrollIntoView({behavior: 'smooth', block: 'start'}), 80);
+  const sr = $u('search-results'); if (sr) sr.hidden = true;
+}
+
+/* ── fuzzy results panel under the sidebar search ── */
+(function(){
+  const inp = $u('search-input'), panel = $u('search-results');
+  if (!inp || !panel) return;
+  let sel = -1, items = [];
+  function render(res, q){
+    items = res;
+    sel = -1;
+    if (!q){ panel.hidden = true; return; }
+    panel.hidden = false;
+    panel.innerHTML = res.length
+      ? res.map((r, i) => '<button class="sr-item" data-i="' + i + '"><div class="sr-t">' + r.title +
+          '</div>' + (r.section ? '<div class="sr-s">' + r.section + '</div>' : '') + '</button>').join('')
+      : '<div class="sr-empty">' + UT('No sections match', 'لا أقسام مطابقة') + '</div>';
+    panel.querySelectorAll('.sr-item').forEach((b) =>
+      b.addEventListener('click', () => gotoRecord(items[+b.dataset.i].id)));
+  }
+  inp.addEventListener('input', async (e) => {
+    const q = e.target.value.trim();
+    if (!q){ panel.hidden = true; return; }
+    await buildIndex();
+    if (!fuse) return;
+    render(fuse.search(q, {limit: 8}).map((r) => r.item), q);
+  });
+  inp.addEventListener('keydown', (e) => {
+    if (panel.hidden || !items.length) return;
+    const btns = [...panel.querySelectorAll('.sr-item')];
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+      e.preventDefault(); e.stopImmediatePropagation();
+      sel = e.key === 'ArrowDown' ? Math.min(sel + 1, btns.length - 1) : Math.max(sel - 1, 0);
+      btns.forEach((b, i) => b.classList.toggle('sel', i === sel));
+      if (btns[sel]) btns[sel].scrollIntoView({block: 'nearest'});
+    } else if (e.key === 'Enter' && sel >= 0){
+      e.preventDefault(); e.stopImmediatePropagation();
+      gotoRecord(items[sel].id);
+    } else if (e.key === 'Escape'){ panel.hidden = true; }
+  }, {capture: true});
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrap')) panel.hidden = true;
+  });
+})();
+
+/* ── ninja-keys command palette (lazy on first Ctrl+K) ── */
+let nk = null;
+window.openPalette = async function(){
+  try {
+    await import('ninja-keys');
+    await buildIndex();
+    if (!nk){ nk = document.createElement('ninja-keys'); document.body.appendChild(nk); }
+    const acts = [
+      {id: 'v-device', title: UT('Open: The Device', 'افتح: الجهاز'), section: UT('Navigate', 'تنقل'), handler: () => window.switchView('device')},
+      {id: 'v-manual', title: UT('Open: User Manual', 'افتح: دليل المستخدم'), section: UT('Navigate', 'تنقل'), handler: () => window.switchView('manual')},
+      {id: 'v-live', title: UT('Open: Live Monitoring', 'افتح: المراقبة المباشرة'), section: UT('Navigate', 'تنقل'), handler: () => window.switchView('live')},
+      {id: 'v-menu', title: UT('Open: Main Menu', 'افتح: القائمة الرئيسية'), section: UT('Navigate', 'تنقل'), handler: () => window.switchView('menu')},
+      {id: 'a-search', title: UT('Search the manual', 'ابحث في الدليل'), section: UT('Actions', 'إجراءات'), handler: () => { window.switchView('manual'); setTimeout(() => { const i = $u('search-input'); if (i) i.focus(); }, 60); }},
+      {id: 'a-theme', title: UT('Toggle dark mode', 'بدّل الوضع الداكن'), section: UT('Actions', 'إجراءات'), handler: () => window.toggleDark()},
+      {id: 'a-lang', title: UT('عربي / English', 'English / عربي'), section: UT('Actions', 'إجراءات'), handler: () => window.toggleLang()},
+      {id: 'a-print', title: UT('Print / save as PDF', 'طباعة / حفظ PDF'), section: UT('Actions', 'إجراءات'), handler: () => window.print()},
+      {id: 'a-tour', title: UT('Take the guided tour', 'ابدأ الجولة الإرشادية'), section: UT('Actions', 'إجراءات'), handler: () => window.openTour()}
+    ];
+    const secs = uIndex.filter((r) => !r.section).map((r) => ({
+      id: 's-' + r.id, title: r.title, section: UT('Manual sections', 'أقسام الدليل'),
+      handler: () => gotoRecord(r.id)
+    }));
+    nk.data = acts.concat(secs);
+    nk.open();
+  } catch (e) {}
+};
+
+/* ── glossary tooltips (terms defined in Appendix C) ── */
+const GL_TERMS = ['TEC1-12706', 'Supercapacitor', 'Cold Chain', 'Peltier', 'PCM', 'RFID', 'BMS', 'HDPE', 'JFDA', 'WHO', 'EPI'];
+function termDef(term){
+  const items = document.querySelectorAll('#appC .gitem');
+  for (const it of items){
+    const t = it.querySelector('.gterm'), d = it.querySelector('.gdef');
+    if (t && d && (t.textContent.includes(term) || term.includes(t.textContent.trim()))) return d.textContent;
+  }
+  return '';
+}
+let tippyInstances = [];
+async function glossaryScan(){
+  tippyInstances.forEach((t) => { try { t.destroy(); } catch (e) {} });
+  tippyInstances = [];
+  const re = new RegExp('\\b(' + GL_TERMS.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b');
+  document.querySelectorAll('#main section[id]:not(#appC)').forEach((sec) => {
+    const seen = new Set();
+    const walker = document.createTreeWalker(sec, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) => {
+        const p = n.parentNode;
+        if (!p || p.closest('svg, mark, code, .gl-term, script, style, h2, .sec-num')) return NodeFilter.FILTER_REJECT;
+        return re.test(n.textContent) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    const nodes = []; let n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach((node) => {
+      const m = node.textContent.match(re);
+      if (!m || seen.has(m[1])) return;
+      seen.add(m[1]);
+      const i = m.index;
+      const span = document.createElement('span');
+      span.className = 'gl-term'; span.dataset.term = m[1];
+      span.textContent = m[1];
+      const after = node.splitText(i);
+      after.textContent = after.textContent.slice(m[1].length);
+      node.parentNode.insertBefore(span, after);
+    });
+  });
+  try {
+    const {default: tippy} = await import('tippy.js');
+    tippyInstances = tippy('.gl-term', {
+      theme: 'vdb', allowHTML: false, maxWidth: 300, delay: [120, 0],
+      content: (ref) => termDef(ref.dataset.term) || ref.dataset.term
+    });
+  } catch (e) {}
+}
+window.glossaryRefresh = function(){ setTimeout(glossaryScan, 120); };
+
+/* ── driver.js guided tour ── */
+window.openTour = async function(){
+  try {
+    const {driver} = await import('driver.js');
+    const d = driver({
+      showProgress: true,
+      nextBtnText: UT('Next', 'التالي'), prevBtnText: UT('Back', 'رجوع'), doneBtnText: UT('Done', 'تم'),
+      steps: [
+        {element: '#tabs', popover: {title: UT('Three sections', 'ثلاثة أقسام'),
+          description: UT('The Device, the full User Manual, and Live Monitoring — switch any time.', 'الجهاز ودليل المستخدم الكامل والمراقبة المباشرة — بدّل بينها في أي وقت.')},
+          onHighlightStarted: () => window.switchView('device')},
+        {element: '#box3d-wrap', popover: {title: UT('Explore the box in 3D', 'استكشف الصندوق ثلاثي الأبعاد'),
+          description: UT('Drag to rotate, open the lid, explode the parts, or click any part to identify it.', 'اسحب للتدوير وافتح الغطاء وفكك الأجزاء أو انقر على أي جزء للتعرف عليه.')}},
+        {element: '#search-input', popover: {title: UT('Search the manual', 'ابحث في الدليل'),
+          description: UT('Fuzzy search across all sections — press Ctrl+K anywhere for the command palette.', 'بحث ذكي في جميع الأقسام — اضغط Ctrl+K في أي مكان لفتح لوحة الأوامر.')},
+          onHighlightStarted: () => { window.switchView('manual'); document.getElementById('sidebar').classList.add('open'); }},
+        {element: '#live-gate-card', popover: {title: UT('Live Monitoring', 'المراقبة المباشرة'),
+          description: UT('Unlock with the box serial or NFC card to see live temperature, history, and alerts.', 'افتح بالرقم التسلسلي أو بطاقة NFC لمشاهدة الحرارة المباشرة والسجل والتنبيهات.')},
+          onHighlightStarted: () => window.switchView('live')},
+        {element: '#bg-btn', popover: {title: UT('Make it yours', 'اجعله بأسلوبك'),
+          description: UT('Pick a background style — aurora, network, snow, or fireflies.', 'اختر نمط الخلفية — شفق أو شبكة أو ثلج أو يراعات.')},
+          onHighlightStarted: () => window.switchView('device')}
+      ]
+    });
+    d.drive();
+  } catch (e) {}
+};
+
+/* one-time tour prompt */
+try {
+  if (!localStorage.getItem('tourSeen')){
+    setTimeout(() => {
+      const p = document.createElement('div');
+      p.id = 'tour-prompt';
+      p.innerHTML = '<span>' + UT('First time here? Take a 30-second tour.', 'أول مرة هنا؟ خذ جولة سريعة.') + '</span>' +
+        '<button class="tp-go">' + UT('Start', 'ابدأ') + '</button><button class="tp-x" aria-label="Dismiss">✕</button>';
+      document.body.appendChild(p);
+      p.querySelector('.tp-go').addEventListener('click', () => { p.remove(); window.openTour(); });
+      p.querySelector('.tp-x').addEventListener('click', () => p.remove());
+      localStorage.setItem('tourSeen', '1');
+    }, 3000);
+  }
+} catch (e) {}
+
+/* initial glossary pass after the page settles */
+if (document.readyState === 'complete') window.glossaryRefresh();
+else window.addEventListener('load', () => window.glossaryRefresh());
 </script>
 
 <!-- ══════════════════ 3D BOX VIEWER — Three.js scene + React control bar ══════════════════ -->
