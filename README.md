@@ -11,6 +11,29 @@ Once GitHub Pages is enabled, the manual is available at:
 
 ## Features
 
+- **Command palette & tour** — Ctrl+K opens a command palette (jump to any section,
+  toggle theme/language, print, start the guided tour); Driver.js gives first-time
+  visitors a 30-second tour; glossary terms show tooltip definitions on hover;
+  the sidebar search is typo-tolerant (Fuse.js) with a ranked results panel.
+- **Pro monitoring dashboard** — ECharts temperature history with zoom/pan and a
+  2–8°C safe band, a live gauge, an hourly out-of-range strip, excursion events,
+  CSV export, and alerts (toast + beep + browser notification) on state changes.
+- **Scroll-driven 3D** — the box rotates and opens its lid as you scroll past it
+  (GSAP ScrollTrigger + Lenis smooth scrolling), and a topbar gear lets you pick
+  the animated background style (aurora, network, snow, fireflies, off).
+- **Animated main menu** — the site opens on a centered, fully animated menu
+  (aurora background, staggered entrance) with three doors: The Device, User
+  Manual, and Live Monitoring. The topbar brand button returns to it.
+- **Three sections** — **The Device** (cover, interactive 3D model, description,
+  diagrams, specs, photo gallery), **User Manual** (the full document with sidebar
+  navigation and search), and **Live Monitoring** — a full dashboard behind the
+  serial/NFC gate: stat tiles (current temp, cold-chain state, max since cold,
+  last update), a temperature chart with a 2–8°C safe band and 1h/6h/24h ranges,
+  min/avg/max, an excursion-event log, and CSV export.
+- **Interactive 3D model** — a Three.js scene of the box (drag/zoom, open lid, exploded
+  view, X-ray, click-a-part inspector) with a React control bar. It renders a built-in
+  procedural model; drop a real scan/CAD export at `models/box.glb` and it loads instead.
+  (Three.js and React load from CDNs, so the 3D viewer needs a network connection.)
 - **Single-file app** — `index.html` is fully self-contained (inline CSS + JS); no build step.
 - **Bilingual** — English and Arabic with true `dir="rtl"` right-to-left support,
   including translated table content.
@@ -26,8 +49,10 @@ Once GitHub Pages is enabled, the manual is available at:
 
 | File            | Purpose                                            |
 | --------------- | -------------------------------------------------- |
-| `index.html`    | The complete user manual (the deployed site)       |
+| `index.html`    | The complete site — manual, device, live tabs      |
 | `manifest.json` | PWA manifest (name, icons, theme, start URL)       |
+| `photos/`       | Optional device photos (`device-01.jpg` … `device-06.jpg`) shown in The Device tab; the gallery hides itself while the folder is empty |
+| `models/box.glb` | Optional real 3D model; replaces the built-in procedural box in the 3D viewer |
 
 ## Local preview
 

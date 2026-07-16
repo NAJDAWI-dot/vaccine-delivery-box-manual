@@ -12,6 +12,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,600;0,6..72,700;1,6..72,600&family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css">
 <script>
 /* set theme before first paint: saved choice, else OS preference */
 (function(){
@@ -20,6 +23,28 @@
   document.documentElement.dataset.theme=dark?'dark':'light';
   if((localStorage.getItem('lang')||'en')==='ar')document.documentElement.dir='rtl';
 })();
+</script>
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+  "react":"https://esm.sh/react@18.3.1",
+  "react-dom/client":"https://esm.sh/react-dom@18.3.1/client",
+  "htm":"https://esm.sh/htm@3.1.1",
+  "motion":"https://cdn.jsdelivr.net/npm/motion@11.18.2/+esm",
+  "gsap":"https://cdn.jsdelivr.net/npm/gsap@3.12.7/+esm",
+  "gsap/ScrollTrigger":"https://cdn.jsdelivr.net/npm/gsap@3.12.7/ScrollTrigger.js/+esm",
+  "split-type":"https://cdn.jsdelivr.net/npm/split-type@0.3.4/+esm",
+  "lenis":"https://cdn.jsdelivr.net/npm/lenis@1.1.20/+esm",
+  "@tsparticles/engine":"https://cdn.jsdelivr.net/npm/@tsparticles/engine@3.7.1/+esm",
+  "@tsparticles/slim":"https://cdn.jsdelivr.net/npm/@tsparticles/slim@3.7.1/+esm",
+  "echarts":"https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.esm.min.js",
+  "notyf":"https://cdn.jsdelivr.net/npm/notyf@3.10.0/+esm",
+  "fuse.js":"https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs",
+  "ninja-keys":"https://cdn.jsdelivr.net/npm/ninja-keys@1.2.2/+esm",
+  "tippy.js":"https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/+esm",
+  "driver.js":"https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.mjs"
+}}
 </script>
 <style>
 /* ╔═══════════════════════════════════════════════════════════════╗
@@ -117,15 +142,42 @@ html[data-theme="dark"]{
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
+html{background:var(--bg)}
 body{
   font-family:var(--font-body);
-  background:var(--bg);
+  background:transparent;
   color:var(--text);
   min-height:100vh;
   line-height:1.7;
   font-size:var(--fs-base);
   -webkit-font-smoothing:antialiased;
 }
+
+/* ── AMBIENT ANIMATED BACKGROUND (site-wide, behind all content) ── */
+#bg-anim{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.bga-grad{position:absolute;inset:-60%;opacity:.5;
+  background:conic-gradient(from 0deg at 50% 50%,
+    transparent 0deg,
+    color-mix(in srgb,var(--primary-2) 7%,transparent) 70deg,
+    transparent 140deg,
+    color-mix(in srgb,var(--brand-accent) 5%,transparent) 220deg,
+    transparent 300deg)}
+.bga-grid{position:absolute;inset:-40px;opacity:.5;
+  background-image:radial-gradient(color-mix(in srgb,var(--primary-2) 18%,transparent) 1px,transparent 1.5px);
+  background-size:34px 34px}
+.bga-blob{position:absolute;border-radius:50%;filter:blur(60px);
+  background:radial-gradient(circle at 35% 35%,color-mix(in srgb,var(--primary-2) 20%,transparent),transparent 70%)}
+.bga-blob.alt{background:radial-gradient(circle at 35% 35%,color-mix(in srgb,var(--brand-accent) 14%,transparent),transparent 70%)}
+.bga-flake{position:absolute;border-radius:50%;background:color-mix(in srgb,var(--primary-2) 45%,transparent)}
+html[data-theme="dark"] .bga-grad{opacity:.7}
+html[data-theme="dark"] .bga-grid{opacity:.35}
+@media (prefers-reduced-motion:no-preference){
+  .bga-grad{animation:bgaSpin 90s linear infinite}
+  @keyframes bgaSpin{to{transform:rotate(360deg)}}
+  .bga-grid{animation:bgaDrift 60s linear infinite}
+  @keyframes bgaDrift{to{transform:translate(34px,34px)}}
+}
+@media print{#bg-anim{display:none!important}}
 body.ar{line-height:1.85}
 
 h1,h2,h3{text-wrap:balance}
@@ -141,9 +193,280 @@ p{text-wrap:pretty}
 :focus-visible{outline:3px solid var(--ring);outline-offset:2px;border-radius:4px}
 a,button,input,[tabindex]{outline-color:var(--ring)}
 
+/* ── TOP BAR + TABS ── */
+#topbar{
+  position:fixed;top:0;inset-inline:0;height:56px;z-index:calc(var(--z-banner) + 40);
+  background:var(--brand);border-bottom:1px solid var(--on-brand-border);
+  display:flex;align-items:stretch;gap:var(--sp-4);padding:0 var(--sp-4)
+}
+.tb-brand{appearance:none;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:10px;color:#fff;font-family:var(--font-display);font-weight:600;font-size:1.0625rem;white-space:nowrap;min-width:0;padding:0}
+.tb-brand img{height:26px;filter:brightness(0) invert(1);flex:none}
+.tb-bg{position:relative;display:flex;align-items:center;margin-inline-start:2px}
+#bg-btn{appearance:none;background:none;border:none;color:var(--on-brand-muted);cursor:pointer;width:38px;height:38px;border-radius:var(--r-sm);display:inline-flex;align-items:center;justify-content:center;align-self:center;transition:color .15s,background .15s}
+#bg-btn:hover{color:#fff;background:rgba(255,255,255,.1)}
+#bg-btn svg{width:18px;height:18px}
+#bg-menu{position:absolute;top:calc(100% + 10px);inset-inline-start:0;z-index:calc(var(--z-banner) + 60);background:var(--brand-2);border:1px solid var(--on-brand-border);border-radius:var(--r-md);box-shadow:var(--shadow-lg);padding:8px;min-width:160px;display:flex;flex-direction:column;gap:2px}
+#bg-menu[hidden]{display:none}
+.bgm-title{font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--on-brand-faint);padding:4px 10px 6px}
+#bg-menu button{appearance:none;background:none;border:none;color:var(--on-brand-muted);font-family:var(--font-body);font-size:var(--fs-sm);font-weight:600;text-align:start;padding:8px 10px;border-radius:var(--r-sm);cursor:pointer;transition:background .15s,color .15s}
+#bg-menu button:hover{background:rgba(255,255,255,.1);color:#fff}
+#bg-menu button.on{background:rgba(123,227,240,.18);color:var(--brand-accent)}
+@media (prefers-reduced-motion:reduce){.tb-bg{display:none}}
+#bg-ts{position:absolute;inset:0}
+#bg-ts canvas{position:absolute!important;inset:0;width:100%!important;height:100%!important}
+#bg-anim.bga-off .bga-grad,#bg-anim.bga-off .bga-grid,#bg-anim.bga-off .bga-blob,#bg-anim.bga-off .bga-flake{display:none}
+#bg-anim.bga-alt .bga-grid,#bg-anim.bga-alt .bga-blob,#bg-anim.bga-alt .bga-flake{display:none}
+#tabs{display:flex;gap:2px;margin-inline-start:auto;overflow-x:auto;scrollbar-width:none}
+#tabs::-webkit-scrollbar{display:none}
+.tab{
+  appearance:none;background:none;border:none;position:relative;
+  color:var(--on-brand-muted);font-family:var(--font-body);font-weight:600;font-size:var(--fs-md);
+  padding:0 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  transition:color .15s
+}
+.tab::after{content:'';position:absolute;bottom:0;left:12px;right:12px;height:3px;border-radius:2px 2px 0 0;background:var(--brand-accent);transform:scaleY(0);transform-origin:bottom}
+@media (prefers-reduced-motion:no-preference){.tab::after{transition:transform .25s cubic-bezier(.16,1,.3,1)}}
+.tab:hover{color:#fff}
+.tab[aria-selected="true"]{color:#fff}
+.tab[aria-selected="true"]::after{transform:scaleY(1)}
+.tab .live-dot{width:9px;height:9px;border-radius:50%;background:#22C55E;flex:none}
+@media (prefers-reduced-motion:no-preference){.tab .live-dot{animation:livePulse 1.8s ease-out infinite}}
+@media (prefers-reduced-motion:reduce){.tab{transition:none}}
+
+/* ── VIEWS ── */
+#view-device,#view-live{display:none}
+#view-live{max-width:var(--maxw);margin:0 auto;padding:calc(56px + var(--sp-7)) 56px var(--sp-8)}
+#view-device #cover{margin-top:56px}
+#view-device .view-inner{max-width:1080px;margin:0 auto;padding:var(--sp-7) 56px var(--sp-8)}
+body[data-view="device"] #view-device,
+body[data-view="live"] #view-live{display:block}
+body:not([data-view="manual"]) #sidebar,
+body:not([data-view="manual"]) #main,
+body:not([data-view="manual"]) .print-btn,
+body:not([data-view="manual"]) #menu-toggle,
+body:not([data-view="manual"]) #reading-progress,
+body:not([data-view="manual"]) #resume-banner{display:none!important}
+.view-head{margin-bottom:var(--sp-6);padding-bottom:var(--sp-4);border-bottom:2px solid var(--brand)}
+html[data-theme="dark"] .view-head{border-bottom-color:var(--border)}
+.view-head h2{font-family:var(--font-display);font-size:var(--fs-3xl);font-weight:700;color:var(--brand);line-height:1.12;margin-bottom:var(--sp-2)}
+html[data-theme="dark"] .view-head h2{color:var(--text)}
+.view-head p{font-size:var(--fs-base);color:var(--muted);max-width:72ch}
+#view-device h3{font-size:var(--fs-lg);font-weight:700;color:var(--text);margin:var(--sp-6) 0 var(--sp-3)}
+#view-device p{font-size:var(--fs-base);color:var(--muted);line-height:1.75;max-width:72ch;margin-bottom:var(--sp-4)}
+
+/* device photo gallery */
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--sp-4);margin:var(--sp-4) 0}
+.gallery figure{margin:0;border:1px solid var(--border-2);border-radius:var(--r-md);overflow:hidden;background:var(--surface)}
+.gallery img{width:100%;height:200px;object-fit:cover;display:block}
+.gallery figcaption{padding:10px 14px;font-size:var(--fs-sm);color:var(--muted)}
+
+/* device feature grid (borderless definition grid) */
+.dv-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--sp-4) var(--sp-6);margin:var(--sp-4) 0 var(--sp-5)}
+.dv-feature h4{font-size:var(--fs-base);font-weight:700;color:var(--text);margin-bottom:4px}
+.dv-feature h4::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--primary-2);margin-inline-end:10px;vertical-align:2px}
+.dv-feature p{font-size:var(--fs-md);color:var(--muted);margin:0;line-height:1.6}
+.dv-cta{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;border:none;border-radius:var(--r-sm);padding:12px 20px;font-family:var(--font-body);font-size:var(--fs-md);font-weight:600;cursor:pointer;margin-top:var(--sp-4);transition:background .2s}
+.dv-cta:hover{background:var(--primary-ink)}
+html[data-theme="dark"] .dv-cta:hover{background:var(--primary-2);color:#04222B}
+
+/* ── 3D VIEWER ── */
+#box3d-wrap{position:relative;border-radius:var(--r-lg);overflow:hidden;margin:var(--sp-5) 0 var(--sp-6);background:radial-gradient(120% 120% at 50% 0%,#123055 0%,#0C1F3A 55%,#081426 100%);border:1px solid var(--on-brand-border);min-height:440px}
+#box3d{position:absolute;inset:0;cursor:grab;touch-action:none}
+#box3d:active{cursor:grabbing}
+#box3d canvas{display:block}
+.b3-head{position:absolute;top:0;inset-inline:0;padding:16px 20px;pointer-events:none;z-index:2;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.b3-head h3{font-family:var(--font-display);font-size:var(--fs-lg);font-weight:600;color:#fff;margin:0}
+.b3-head span{font-size:var(--fs-xs);color:rgba(255,255,255,.62);font-family:var(--font-mono);letter-spacing:.4px}
+#box3d-ui{position:absolute;bottom:0;inset-inline:0;z-index:2;padding:14px 16px}
+.b3-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.b3-chip{appearance:none;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.24);color:#fff;border-radius:var(--r-pill);min-height:38px;padding:0 14px;font-family:var(--font-body);font-size:var(--fs-sm);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .18s,border-color .18s,transform .18s;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.b3-chip:hover{background:rgba(255,255,255,.2)}
+.b3-chip:active{transform:scale(.96)}
+.b3-chip.on{background:rgba(123,227,240,.24);border-color:var(--brand-accent);color:var(--brand-accent)}
+.b3-info{margin-inline-start:auto;max-width:300px;background:rgba(8,20,38,.72);border:1px solid rgba(255,255,255,.16);border-radius:var(--r-md);padding:10px 14px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.b3-info h5{font-size:var(--fs-sm);font-weight:700;color:var(--brand-accent);margin:0 0 2px}
+.b3-info p{font-size:var(--fs-xs);color:rgba(255,255,255,.82);margin:0;line-height:1.5}
+.b3-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.72);font-family:var(--font-mono);font-size:var(--fs-sm);letter-spacing:1px;z-index:1}
+@media (prefers-reduced-motion:no-preference){.b3-loading::after{content:'';width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:var(--brand-accent);border-radius:50%;margin-inline-start:10px;animation:b3spin .8s linear infinite}@keyframes b3spin{to{transform:rotate(360deg)}}}
+@media (prefers-reduced-motion:reduce){.b3-chip{transition:none}}
+@media (max-width:768px){#box3d-wrap{min-height:360px}.b3-info{max-width:100%;margin-inline-start:0}}
+
+/* ── MAIN MENU VIEW ── */
+#view-menu{display:none;position:relative;min-height:100vh;overflow:hidden;background:radial-gradient(120% 90% at 20% 10%,#123055 0%,#0F2A4A 45%,#081426 100%)}
+body[data-view="menu"] #view-menu{display:flex;align-items:center;justify-content:center}
+body[data-view="menu"] #topbar{display:none}
+.menu-aurora{position:absolute;inset:-20%;pointer-events:none;filter:blur(70px);opacity:.55}
+.menu-aurora::before,.menu-aurora::after{content:'';position:absolute;width:55%;height:55%;border-radius:50%}
+.menu-aurora::before{background:radial-gradient(circle,rgba(14,116,144,.6),transparent 65%);top:8%;left:6%}
+.menu-aurora::after{background:radial-gradient(circle,rgba(123,227,240,.3),transparent 65%);bottom:4%;right:8%}
+.menu-inner{position:relative;z-index:1;text-align:center;padding:64px 24px;max-width:1000px;width:100%}
+.menu-logo{height:60px;filter:brightness(0) invert(1);margin-bottom:18px}
+.menu-kicker{font-family:var(--font-mono);font-size:var(--fs-xs);letter-spacing:3px;text-transform:uppercase;color:var(--brand-accent);margin-bottom:14px}
+.menu-inner h1{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,3.8rem);color:#fff;font-weight:700;line-height:1.08;margin-bottom:12px}
+.menu-inner h1 em{font-style:italic;color:var(--brand-accent)}
+.menu-sub{color:var(--on-brand-muted);font-size:var(--fs-base);max-width:56ch;margin:0 auto 40px}
+.menu-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;text-align:start;perspective:900px}
+.menu-card{appearance:none;cursor:pointer;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:var(--r-lg);padding:24px 22px;color:#fff;font-family:var(--font-body);text-align:start;position:relative}
+.menu-card svg{width:26px;height:26px;color:var(--brand-accent);margin-bottom:12px}
+.menu-card h3{font-family:var(--font-display);font-size:var(--fs-lg);font-weight:600;margin-bottom:6px}
+.menu-card p{font-size:var(--fs-sm);color:var(--on-brand-muted);line-height:1.55;margin:0}
+.menu-card .mc-go{position:absolute;top:20px;inset-inline-end:18px;color:var(--brand-accent);font-size:18px;opacity:0}
+.menu-card:focus-visible .mc-go{opacity:1}
+.menu-foot{margin-top:44px;color:var(--on-brand-faint);font-size:var(--fs-xs);font-family:var(--font-mono);letter-spacing:1px}
+
+/* ── LIVE DASHBOARD ── */
+#view-live{max-width:1100px}
+.ld-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--sp-4);margin-bottom:var(--sp-4)}
+.ld-tile{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);padding:16px 18px;box-shadow:var(--shadow-sm)}
+.lt-label{font-size:var(--fs-xs);font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+.lt-value{font-family:var(--font-display);font-size:1.9rem;font-weight:700;color:var(--text);line-height:1.1}
+#lt-temp-val{color:var(--primary-ink);font-size:2.5rem}
+.lt-sub{font-size:var(--fs-xs);color:var(--faint);margin-top:5px;min-height:1.2em}
+.state-pill{display:inline-flex;align-items:center;gap:8px;border-radius:var(--r-pill);padding:7px 14px;font-size:var(--fs-sm);font-weight:700;border:1px solid;line-height:1}
+.state-pill.ok{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
+.state-pill.warn{background:var(--amber-bg);border-color:var(--amber-bd);color:var(--amber)}
+.state-pill.bad{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
+.state-pill.idle{background:var(--surface-3);border-color:var(--border-2);color:var(--faint)}
+.ld-main{display:grid;grid-template-columns:1fr;gap:var(--sp-4)}
+@media(min-width:980px){.ld-main{grid-template-columns:2fr 1fr}}
+.ld-chartcard,.ld-events{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--r-md);padding:18px;box-shadow:var(--shadow-sm)}
+.ld-chead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.ld-chead h4,.ld-events h4{font-size:var(--fs-base);font-weight:700;color:var(--text)}
+.range-chips{display:flex;gap:6px;margin-inline-start:auto}
+.range-chip{appearance:none;background:var(--surface-3);border:1px solid var(--border-2);border-radius:var(--r-pill);min-height:34px;padding:0 14px;font-family:var(--font-body);font-size:var(--fs-sm);font-weight:600;color:var(--muted);cursor:pointer;transition:background .18s,color .18s,border-color .18s}
+.range-chip:hover{border-color:var(--primary-2)}
+.range-chip.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.ld-chartwrap2{position:relative;height:300px}
+.ld-echart{position:absolute;inset:0}
+.lt-temp-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#lt-gauge{width:92px;height:92px;flex:none}
+#hour-strip{height:60px;margin-top:6px}
+.notyf__toast{border-radius:10px;font-family:var(--font-body)}
+.ld-cfoot{display:flex;gap:6px 16px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:var(--fs-sm);color:var(--muted)}
+.ld-cfoot b{color:var(--text);font-family:var(--font-mono);font-weight:600}
+.ld-export{margin-inline-start:auto;appearance:none;background:var(--surface-3);border:1px solid var(--border);border-radius:var(--r-sm);min-height:34px;padding:0 12px;font-family:var(--font-body);font-size:var(--fs-sm);font-weight:600;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s}
+.ld-export:hover{border-color:var(--primary-2);color:var(--primary-ink)}
+.ev-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.ev-item{display:flex;gap:10px;align-items:flex-start;font-size:var(--fs-sm);color:var(--muted);border-bottom:1px solid var(--border-2);padding-bottom:10px}
+.ev-item:last-child{border-bottom:none}
+.ev-dot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:5px}
+.ev-item.high .ev-dot{background:var(--red)}
+.ev-item.low .ev-dot{background:var(--primary-2)}
+.ev-item b{color:var(--text)}
+.ev-empty{display:flex;gap:8px;align-items:center;color:var(--green);font-size:var(--fs-sm);font-weight:600;margin-top:12px}
+@media(max-width:768px){.ld-chartwrap2{height:220px}}
+
+/* ── USABILITY LAYER (fuzzy search panel, glossary terms, palette, tour) ── */
+#search-results{position:absolute;inset-inline:12px;top:calc(100% - 4px);z-index:50;background:var(--brand-2);border:1px solid var(--on-brand-border);border-radius:var(--r-md);box-shadow:var(--shadow-lg);max-height:320px;overflow-y:auto;padding:6px}
+#search-results[hidden]{display:none}
+.search-wrap{position:relative}
+.sr-item{display:block;width:100%;text-align:start;appearance:none;background:none;border:none;border-radius:var(--r-sm);padding:8px 10px;cursor:pointer;color:var(--on-brand-muted);font-family:var(--font-body)}
+.sr-item .sr-t{font-size:var(--fs-sm);font-weight:600;color:#fff}
+.sr-item .sr-s{font-size:var(--fs-xs);color:var(--on-brand-faint)}
+.sr-item:hover,.sr-item.sel{background:rgba(123,227,240,.16)}
+.sr-empty{padding:8px 10px;font-size:var(--fs-xs);color:var(--on-brand-faint)}
+.gl-term{border-bottom:1px dotted var(--primary-2);cursor:help}
+.tippy-box[data-theme~='vdb']{background:var(--brand);color:#fff;font-family:var(--font-body);font-size:var(--fs-sm);border:1px solid var(--on-brand-border);border-radius:var(--r-md);padding:2px 4px}
+.tippy-box[data-theme~='vdb'] .tippy-arrow{color:var(--brand)}
+ninja-keys{--ninja-accent-color:var(--primary-2);--ninja-font-family:var(--font-body);--ninja-modal-background:var(--surface);--ninja-text-color:var(--text);--ninja-secondary-text-color:var(--faint);--ninja-selected-background:var(--surface-2);--ninja-key-border-radius:6px;--ninja-z-index:9999}
+.driver-popover{background:var(--surface);color:var(--text);font-family:var(--font-body);border-radius:var(--r-md)}
+.driver-popover-title{font-family:var(--font-display);color:var(--brand)}
+html[data-theme="dark"] .driver-popover-title{color:var(--text)}
+#tour-prompt{position:fixed;bottom:24px;inset-inline-start:24px;z-index:var(--z-banner);background:var(--brand);color:#fff;border:1px solid var(--on-brand-border);border-radius:var(--r-md);box-shadow:var(--shadow-lg);padding:14px 16px;display:flex;gap:12px;align-items:center;font-size:var(--fs-sm);max-width:320px}
+#tour-prompt button{appearance:none;border-radius:var(--r-sm);min-height:36px;padding:0 14px;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:var(--fs-sm)}
+#tour-prompt .tp-go{background:var(--primary-2);border:none;color:#04222B}
+#tour-prompt .tp-x{background:none;border:1px solid var(--on-brand-border);color:var(--on-brand-muted)}
+@media print{#tour-prompt,#search-results{display:none!important}}
+
+/* ── ANIMATE-UI STYLE LAYER (elements created/driven by the motion module) ── */
+#tabs{position:relative}
+#tab-ind{position:absolute;bottom:0;height:3px;border-radius:2px 2px 0 0;background:var(--brand-accent);pointer-events:none}
+#tabs.has-ind .tab::after{display:none}
+.ripple{position:absolute;border-radius:50%;pointer-events:none;background:currentColor;opacity:.25;transform:scale(0);animation:rippleGo .55s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes rippleGo{to{transform:scale(3.2);opacity:0}}
+.type-caret::after{content:'▍';color:var(--brand-accent);animation:caretBlink 1s steps(1) infinite;margin-inline-start:2px}
+@keyframes caretBlink{50%{opacity:0}}
+.bubble{position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle at 30% 30%,rgba(123,227,240,.22),rgba(14,116,144,.06) 70%);filter:blur(1px)}
+.menu-card::after,.ld-tile::after{content:'';position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity .3s;background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(123,227,240,.16),transparent 60%);pointer-events:none}
+.menu-card:hover::after{opacity:1}
+.ld-tile{position:relative;overflow:hidden}
+.ld-tile:hover::after{opacity:1}
+html[data-theme="light"] .ld-tile::after{background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),rgba(8,145,178,.10),transparent 60%)}
+
+/* ── MOTION PACK (all gated) ── */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .55s cubic-bezier(.16,1,.3,1),transform .55s cubic-bezier(.16,1,.3,1)}
+.rv.rv-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:no-preference){
+  /* view enter transition (runs whenever a view becomes displayed) */
+  #main,#view-device,#view-live{animation:viewIn .5s cubic-bezier(.16,1,.3,1)}
+  @keyframes viewIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  /* cover masthead entrance */
+  #cover .doc-id{animation:riseIn .6s cubic-bezier(.16,1,.3,1) backwards}
+  #cover .sub{animation:riseIn .7s cubic-bezier(.16,1,.3,1) .14s backwards}
+  #cover .cover-htu{animation:riseIn .8s cubic-bezier(.16,1,.3,1) .1s backwards}
+  .cover-meta .meta-card{animation:riseIn .6s cubic-bezier(.16,1,.3,1) backwards}
+  .cover-meta .meta-card:nth-child(1){animation-delay:.2s}
+  .cover-meta .meta-card:nth-child(2){animation-delay:.26s}
+  .cover-meta .meta-card:nth-child(3){animation-delay:.32s}
+  .cover-meta .meta-card:nth-child(4){animation-delay:.38s}
+  .cover-meta .meta-card:nth-child(5){animation-delay:.44s}
+  .cover-meta .meta-card:nth-child(6){animation-delay:.5s}
+  @keyframes riseIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  /* cover extras: sliding accent edge, floating logo, meta hover */
+  #cover::after{animation:edgeSlide 6s linear infinite}
+  @keyframes edgeSlide{from{background-position:0% 0}to{background-position:200% 0}}
+  .cover-htu img{animation:htuFloat 5s ease-in-out infinite}
+  @keyframes htuFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .meta-card{transition:border-color .25s,background .25s,transform .25s cubic-bezier(.16,1,.3,1)}
+  .meta-card:hover{border-inline-start-color:var(--brand-accent);background:rgba(255,255,255,.05);transform:translateX(4px)}
+  [dir="rtl"] .meta-card:hover{transform:translateX(-4px)}
+  .doc-id{overflow:hidden}
+  /* hover micro-interactions */
+  .spec-item,.dv-feature,.led-card,.qr-panel,.gallery figure{transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s cubic-bezier(.16,1,.3,1)}
+  .spec-item:hover,.led-card:hover,.qr-panel:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+  .gallery figure{overflow:hidden}
+  .gallery figure:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+  .gallery img{transition:transform .45s cubic-bezier(.16,1,.3,1)}
+  .gallery figure:hover img{transform:scale(1.05)}
+  .dv-cta,.timer-start,#live-serial-btn,.print-btn{transition:background .2s,transform .18s}
+  .dv-cta:active,.timer-start:active,#live-serial-btn:active,.print-btn:active{transform:scale(.97)}
+  .nav-item{transition:background .15s,color .15s,padding-inline-start .2s cubic-bezier(.16,1,.3,1)}
+  .nav-item:hover{padding-inline-start:22px}
+  /* main menu */
+  .menu-aurora::before{animation:aur1 16s ease-in-out infinite alternate}
+  .menu-aurora::after{animation:aur2 20s ease-in-out infinite alternate}
+  @keyframes aur1{from{transform:translate(0,0) scale(1)}to{transform:translate(14%,10%) scale(1.15)}}
+  @keyframes aur2{from{transform:translate(0,0) scale(1.1)}to{transform:translate(-12%,-8%) scale(.95)}}
+  .menu-logo{animation:riseIn .7s cubic-bezier(.16,1,.3,1) backwards}
+  .menu-kicker{animation:riseIn .7s .05s cubic-bezier(.16,1,.3,1) backwards}
+  .menu-sub{animation:riseIn .8s .2s cubic-bezier(.16,1,.3,1) backwards}
+  .menu-cards .menu-card{animation:riseIn .7s cubic-bezier(.16,1,.3,1) backwards}
+  .menu-cards .menu-card:nth-child(1){animation-delay:.32s}
+  .menu-cards .menu-card:nth-child(2){animation-delay:.42s}
+  .menu-cards .menu-card:nth-child(3){animation-delay:.52s}
+  .menu-foot{animation:riseIn .8s .64s cubic-bezier(.16,1,.3,1) backwards}
+  .menu-card{transition:transform .25s cubic-bezier(.16,1,.3,1),background .2s,border-color .2s,box-shadow .25s}
+  .menu-card:hover{transform:translateY(-5px);background:rgba(255,255,255,.1);border-color:var(--brand-accent);box-shadow:0 18px 50px rgba(0,0,0,.35)}
+  .menu-card .mc-go{transition:opacity .2s,transform .25s cubic-bezier(.16,1,.3,1);transform:translateX(-6px)}
+  [dir="rtl"] .menu-card .mc-go{transform:translateX(6px)}
+  .menu-card:hover .mc-go{opacity:1;transform:none}
+  /* live dashboard */
+  .lt-value.pop{animation:vpop .35s cubic-bezier(.16,1,.3,1)}
+  @keyframes vpop{0%{transform:scale(.92)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+  .ev-item{animation:riseIn .4s cubic-bezier(.16,1,.3,1) backwards}
+  .ev-item:nth-child(2){animation-delay:.06s}
+  .ev-item:nth-child(3){animation-delay:.12s}
+  .ev-item:nth-child(4){animation-delay:.18s}
+  .ld-tile{transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s}
+  .ld-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+}
+
+/* live view panel */
+#view-live .live-card{max-width:620px;margin-inline:auto}
+
 /* ── SIDEBAR (brand navy) ── */
 #sidebar{
-  width:var(--sidebar-w);height:100vh;position:fixed;top:0;inset-inline-start:0;z-index:var(--z-nav);
+  width:var(--sidebar-w);height:calc(100vh - 56px);position:fixed;top:56px;inset-inline-start:0;z-index:var(--z-nav);
   background:var(--brand);color:var(--on-brand);display:flex;flex-direction:column;overflow:hidden;
   border-inline-end:1px solid var(--on-brand-border);transition:transform .3s
 }
@@ -199,17 +522,19 @@ html[data-theme="dark"] .sb-badge{color:#04222B}
 .sb-foot{padding:14px 18px;border-top:1px solid var(--on-brand-border);font-size:var(--fs-xs);color:var(--on-brand-muted);line-height:1.6}
 
 /* ── MAIN ── */
-#main{margin-inline-start:var(--sidebar-w);position:relative;z-index:1}
+#main{margin-inline-start:var(--sidebar-w);margin-top:56px;position:relative;z-index:1}
 
 /* ── READING PROGRESS ── */
-#reading-progress{position:fixed;top:0;inset-inline-start:0;height:3px;background:var(--primary-2);width:0%;z-index:calc(var(--z-modal) + 50);pointer-events:none}
+#reading-progress{position:fixed;top:56px;inset-inline-start:0;height:3px;background:var(--primary-2);width:0%;z-index:calc(var(--z-modal) + 50);pointer-events:none}
 
 /* ── COVER / MASTHEAD ── */
 #cover{
-  background:var(--brand);
-  color:var(--on-brand);padding:var(--sp-8) 56px;position:relative;
-  border-bottom:4px solid var(--primary-2)
+  background:radial-gradient(120% 100% at 15% 0%,#123055 0%,var(--brand) 55%,#0A1D36 100%);
+  color:var(--on-brand);padding:var(--sp-8) 56px;position:relative;overflow:hidden
 }
+#cover::after{content:'';position:absolute;bottom:0;inset-inline:0;height:4px;background:linear-gradient(90deg,var(--primary-2),var(--brand-accent),var(--primary-2));background-size:200% 100%}
+#cover .cover-top,#cover .cover-meta{position:relative;z-index:1;max-width:1080px;margin-inline:auto}
+#cover .menu-aurora{opacity:.4}
 .cover-top{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp-6);margin-bottom:var(--sp-6)}
 .cover-text{flex:1}
 .cover-htu{display:flex;flex-direction:column;align-items:center;gap:var(--sp-2);flex-shrink:0}
@@ -221,10 +546,10 @@ html[data-theme="dark"] .sb-badge{color:#04222B}
   padding-bottom:var(--sp-3);margin-bottom:var(--sp-5);display:flex;align-items:center;gap:10px;flex-wrap:wrap
 }
 .doc-id .dot-pulse{width:7px;height:7px;border-radius:50%;background:var(--brand-accent);flex:none}
-#cover h1{font-family:var(--font-display);font-size:clamp(2.125rem,4.5vw,3.5rem);color:#fff;line-height:1.08;margin-bottom:var(--sp-4);font-weight:700;letter-spacing:-.01em}
-#cover h1 em{font-style:italic;color:var(--brand-accent)}
+.cover-title{font-family:var(--font-display);font-size:clamp(2.125rem,4.5vw,3.5rem);color:#fff;line-height:1.08;margin-bottom:var(--sp-4);font-weight:700;letter-spacing:-.01em}
+.cover-title em{font-style:italic;color:var(--brand-accent)}
 #cover .sub{font-size:var(--fs-base);color:var(--on-brand-muted);max-width:58ch;margin-bottom:0;line-height:1.65}
-.cover-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:var(--sp-3);max-width:760px}
+.cover-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:var(--sp-3)}
 .meta-card{border-inline-start:1px solid var(--on-brand-border);padding:var(--sp-1) var(--sp-4)}
 .meta-card .ml{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--brand-accent);font-weight:700;margin-bottom:4px;font-family:var(--font-mono)}
 .meta-card .mv{font-size:var(--fs-sm);color:#fff;line-height:1.5}
@@ -424,35 +749,9 @@ html[data-theme="dark"] .calc-val{color:var(--text)}
 html[data-theme="dark"] .print-btn:hover{background:var(--primary-2);color:#04222B}
 @media (prefers-reduced-motion:reduce){.print-btn{transition:none}}
 
-/* ── LIVE MONITORING (button + modal) ── */
-#live-btn{position:fixed;top:14px;inset-inline-end:24px;z-index:var(--z-banner);display:inline-flex;align-items:center;gap:9px;background:var(--brand);color:#fff;border:1px solid var(--on-brand-border);border-radius:var(--r-pill);padding:0 18px;min-height:44px;font-family:var(--font-body);font-size:var(--fs-md);font-weight:600;cursor:pointer;box-shadow:var(--shadow-md);transition:background .2s,transform .15s}
-#live-btn:hover{background:var(--brand-2)}
-#live-btn:active{transform:scale(.97)}
-#live-btn .live-dot{width:10px;height:10px;border-radius:50%;background:#22C55E;flex:none}
-@media (prefers-reduced-motion:no-preference){#live-btn .live-dot{animation:livePulse 1.8s ease-out infinite}}
+/* ── LIVE MONITORING (tab panel) ── */
 @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}70%{box-shadow:0 0 0 9px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
-@media print{#live-btn{display:none!important}}
-@media (max-width:640px){#live-btn{top:10px;inset-inline-end:14px;padding:0 13px;font-size:var(--fs-xs);min-height:38px}}
-
-#live-modal{position:fixed;inset:0;z-index:var(--z-modal);display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,15,28,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
-#live-modal.open{display:flex}
-@media (prefers-reduced-motion:no-preference){#live-modal.open .live-card{animation:livePop .22s ease-out}}
-@keyframes livePop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
-.live-card{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);width:100%;max-width:600px;max-height:92vh;overflow:auto;padding:22px 24px}
-.live-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);margin-bottom:4px}
-.live-head h2{font-family:var(--font-display);font-size:var(--fs-xl);font-weight:600;color:var(--text);display:flex;align-items:center;gap:9px}
-.live-head h2 svg{width:22px;height:22px;color:var(--primary-2)}
-#live-close{background:var(--surface-3);border:1px solid var(--border-2);color:var(--text);width:40px;height:40px;min-width:40px;border-radius:var(--r-md);cursor:pointer;font-size:22px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
-#live-close:hover{background:var(--border-2)}
-.live-statusrow{display:flex;align-items:center;gap:10px;font-size:var(--fs-sm);font-weight:600;color:var(--faint);margin-bottom:var(--sp-4)}
-.live-statusrow .live-sub{font-weight:400}
-.live-temp{font-family:var(--font-display);font-size:4rem;font-weight:700;line-height:1;color:var(--primary-ink);letter-spacing:-.01em}
-.live-flags{font-size:var(--fs-md);color:var(--muted);min-height:1.3em;margin:10px 0 2px;display:flex;flex-wrap:wrap;gap:6px 16px}
-.live-flag{display:inline-flex;align-items:center;gap:6px}
-.live-flag.warn{color:var(--red);font-weight:700}
-.live-flag.ok{color:var(--green);font-weight:700}
-.live-chartwrap{position:relative;height:220px;margin-top:14px;border-top:1px solid var(--border-2);padding-top:var(--sp-4)}
-.live-updated{font-size:var(--fs-xs);color:var(--faint);margin-top:var(--sp-3)}
+.live-card{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);width:100%;padding:22px 24px}
 
 /* unlock gate */
 #live-gate{padding:4px 0 2px}
@@ -479,7 +778,7 @@ html[data-theme="dark"] #live-serial-btn:hover{background:var(--primary-2);color
 .live-gate-msg.ok{color:var(--green)}
 
 /* ── MOBILE TOGGLE ── */
-#menu-toggle{display:none;position:fixed;top:14px;inset-inline-start:14px;z-index:var(--z-banner);background:var(--brand);border:1px solid var(--on-brand-border);color:#fff;width:48px;height:48px;border-radius:var(--r-md);cursor:pointer;align-items:center;justify-content:center;box-shadow:var(--shadow-md)}
+#menu-toggle{display:none;position:fixed;top:66px;inset-inline-start:14px;z-index:var(--z-banner);background:var(--brand);border:1px solid var(--on-brand-border);color:#fff;width:48px;height:48px;border-radius:var(--r-md);cursor:pointer;align-items:center;justify-content:center;box-shadow:var(--shadow-md)}
 #menu-toggle svg{width:22px;height:22px}
 
 /* ── FOOTER ── */
@@ -487,7 +786,7 @@ html[data-theme="dark"] #live-serial-btn:hover{background:var(--primary-2);color
 #page-footer strong{color:#fff}
 
 /* ── RESUME / OFFLINE BANNERS ── */
-#resume-banner{position:fixed;top:3px;inset-inline-start:var(--sidebar-w);inset-inline-end:0;background:var(--primary);color:#fff;padding:9px 20px;font-size:var(--fs-md);display:none;align-items:center;justify-content:space-between;z-index:var(--z-banner);font-family:var(--font-body);gap:10px}
+#resume-banner{position:fixed;top:59px;inset-inline-start:var(--sidebar-w);inset-inline-end:0;background:var(--primary);color:#fff;padding:9px 20px;font-size:var(--fs-md);display:none;align-items:center;justify-content:space-between;z-index:var(--z-banner);font-family:var(--font-body);gap:10px}
 .rb-btn{background:rgba(255,255,255,.22);border:none;color:#fff;padding:7px 14px;border-radius:var(--r-sm);cursor:pointer;font-family:var(--font-body);font-size:var(--fs-sm);min-height:36px}
 .rb-btn:hover{background:rgba(255,255,255,.34)}
 .rb-close{background:none;border:none;color:rgba(255,255,255,.85);cursor:pointer;font-size:20px;padding:0 6px;line-height:1;min-width:32px;min-height:32px}
@@ -525,6 +824,10 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
   #main{margin-inline-start:0}
   #menu-toggle{display:inline-flex}
   #resume-banner{inset-inline:0}
+  .tb-brand span{display:none}
+  .tab{padding:0 10px;font-size:var(--fs-sm)}
+  #view-live{padding:calc(56px + var(--sp-5)) 20px var(--sp-7)}
+  #view-device .view-inner{padding:var(--sp-5) 20px var(--sp-7)}
   .content-section,#cover{padding:40px 20px 32px}
   .sec-div{padding:0 20px}
   .cover-top{flex-direction:column-reverse;gap:18px}
@@ -537,7 +840,8 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 
 /* ── PRINT ── */
 @media print{
-  #sidebar,.print-btn,#menu-toggle,#reading-progress,#resume-banner,#offline-banner,#live-modal{display:none!important}
+  #sidebar,.print-btn,#menu-toggle,#reading-progress,#resume-banner,#offline-banner,#topbar{display:none!important}
+  #main{margin-top:0!important}
   #main{margin:0!important}
   body{background:#fff;color:#000}
   .content-section{page-break-inside:avoid}
@@ -549,25 +853,201 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 ::-webkit-scrollbar-thumb:hover{background:var(--faint)}
 </style>
 </head>
-<body>
+<body data-view="menu">
 <a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ambient animated background — sits behind every view -->
+<div id="bg-anim" aria-hidden="true"><div class="bga-grad"></div><div class="bga-grid"></div><div id="bg-ts"></div></div>
+
+<!-- ══════════════════ TOP BAR + TABS ══════════════════ -->
+<header id="topbar">
+  <button class="tb-brand" onclick="switchView('menu')" aria-label="Back to main menu">
+    <img src="https://htu.edu.jo/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHTU%20White%20Logo.8126eecd.svg&w=384&q=75" alt="HTU" onerror="this.style.display='none'">
+    <span data-i18n="tb-title">Vaccine Delivery Box</span>
+  </button>
+  <div class="tb-bg">
+    <button id="bg-btn" onclick="toggleBgMenu()" aria-haspopup="true" aria-expanded="false" aria-label="Background style" title="Background style"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    <div id="bg-menu" hidden>
+      <div class="bgm-title" data-i18n="bg-title">Background</div>
+      <button data-bg="aurora" onclick="setBgStyle('aurora')" data-i18n="bg-aurora">Aurora</button>
+      <button data-bg="net" onclick="setBgStyle('net')" data-i18n="bg-net">Network</button>
+      <button data-bg="snow" onclick="setBgStyle('snow')" data-i18n="bg-snow">Snow</button>
+      <button data-bg="fireflies" onclick="setBgStyle('fireflies')" data-i18n="bg-fireflies">Fireflies</button>
+      <button data-bg="off" onclick="setBgStyle('off')" data-i18n="bg-off">Off</button>
+    </div>
+  </div>
+  <nav id="tabs" role="tablist" aria-label="Site sections">
+    <button class="tab" id="tab-device" role="tab" aria-selected="true" aria-controls="view-device" onclick="switchView('device')" data-i18n="tab-device">The Device</button>
+    <button class="tab" id="tab-manual" role="tab" aria-selected="false" aria-controls="main" onclick="switchView('manual')" data-i18n="tab-manual">User Manual</button>
+    <button class="tab" id="tab-live" role="tab" aria-selected="false" aria-controls="view-live" onclick="switchView('live')"><span class="live-dot" aria-hidden="true"></span><span data-i18n="live-btn">Live Monitoring</span></button>
+  </nav>
+</header>
 
 <div id="reading-progress"></div>
 <div id="resume-banner"></div>
 <div id="offline-banner" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg><span>Offline — manual available from cache</span></div>
 <button id="menu-toggle" onclick="this.setAttribute('aria-expanded',document.getElementById('sidebar').classList.toggle('open'))" aria-expanded="false" aria-controls="sidebar" aria-label="Open navigation menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
 
-<!-- ══════════════════ LIVE MONITORING ══════════════════ -->
-<button id="live-btn" onclick="openLiveMonitor()" aria-haspopup="dialog" aria-controls="live-modal" aria-label="Open live temperature monitoring"><span class="live-dot" aria-hidden="true"></span><span data-i18n="live-btn">Live Monitoring</span></button>
-
-<div id="live-modal" role="dialog" aria-modal="true" aria-labelledby="live-title" aria-hidden="true" onclick="if(event.target===this)closeLiveMonitor()">
-  <div class="live-card">
-    <div class="live-head">
-      <h2 id="live-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z"/></svg><span data-i18n="live-title">Live Temperature Monitoring</span></h2>
-      <button id="live-close" onclick="closeLiveMonitor()" aria-label="Close live monitoring" title="Close">&times;</button>
+<!-- ══════════════════ VIEW: MAIN MENU ══════════════════ -->
+<section id="view-menu" aria-label="Main menu">
+  <div class="menu-aurora" aria-hidden="true"></div>
+  <div class="menu-inner">
+    <img class="menu-logo" src="https://htu.edu.jo/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHTU%20White%20Logo.8126eecd.svg&w=384&q=75" alt="HTU" onerror="this.style.display='none'">
+    <div class="menu-kicker" data-i18n="menu-kicker">HTU · MPEP 2026</div>
+    <h1 id="menu-h1">Enhanced Reliability<br><em>Vaccine Delivery Box</em></h1>
+    <p class="menu-sub" data-i18n="menu-sub">A smart cold box for Jordan's healthcare cold chain — explore the device, read the manual, or watch its temperature live.</p>
+    <div class="menu-cards">
+      <button class="menu-card" onclick="switchView('device')">
+        <span class="mc-go" aria-hidden="true">→</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <h3 data-i18n="tab-device">The Device</h3>
+        <p data-i18n="menu-c1">Interactive 3D model, photos, and how the box keeps vaccines safe.</p>
+      </button>
+      <button class="menu-card" onclick="switchView('manual')">
+        <span class="mc-go" aria-hidden="true">→</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <h3 data-i18n="tab-manual">User Manual</h3>
+        <p data-i18n="menu-c2">Setup, operating procedures, emergencies, troubleshooting — bilingual.</p>
+      </button>
+      <button class="menu-card" onclick="switchView('live')">
+        <span class="mc-go" aria-hidden="true">→</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <h3 data-i18n="live-btn">Live Monitoring</h3>
+        <p data-i18n="menu-c3">Real-time temperature dashboard — unlock with serial or NFC card.</p>
+      </button>
     </div>
+    <div class="menu-foot" data-i18n="menu-foot">User Manual v1.0 · May 2026 · Al Hussein Technical University</div>
+  </div>
+</section>
 
-    <!-- AUTH GATE — shown until access is verified -->
+<!-- ══════════════════ VIEW: THE DEVICE ══════════════════ -->
+<section id="view-device" role="tabpanel" aria-labelledby="tab-device">
+<!-- ─── COVER ─── -->
+<section id="cover">
+  <div class="menu-aurora" aria-hidden="true"></div>
+  <div class="cover-top">
+    <div class="cover-text">
+      <div class="doc-id"><div class="dot-pulse" aria-hidden="true"></div><span data-i18n="doc-id">User Manual · Version 1.0 · May 2026</span></div>
+      <h2 class="cover-title" id="cover-h1">Enhanced Reliability<br><em>Vaccine Delivery Box</em></h2>
+      <p class="sub">Smart Dual-Thermoelectric Cold Box with RFID Locking, Real-Time Temperature Monitoring, and Emergency Supercapacitor Backup — Designed for Jordan's Healthcare Cold Chain</p>
+    </div>
+    <div class="cover-htu">
+      <img src="https://htu.edu.jo/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHTU%20White%20Logo.8126eecd.svg&w=384&q=75" alt="HTU Logo" onerror="this.style.display='none'">
+      <span>Al Hussein Technical University</span>
+    </div>
+  </div>
+  <div class="cover-meta">
+    <div class="meta-card"><div class="ml">Project</div><div class="mv">MPEP — Engineering Project Management</div></div>
+    <div class="meta-card"><div class="ml">Team</div><div class="mv">Hashem Najdawi · Ibrahim Hosban · Jood Alabbadi · Yasmina Marwan</div></div>
+    <div class="meta-card"><div class="ml">Instructors</div><div class="mv">Eng. Leen Sarhan · Eng. Malak Alghadi</div></div>
+    <div class="meta-card"><div class="ml">Institution</div><div class="mv">Hussein Technical University — HTU</div></div>
+    <div class="meta-card"><div class="ml">Version</div><div class="mv">1.0 — May 2026</div></div>
+    <div class="meta-card"><div class="ml">Audience</div><div class="mv">Healthcare Staff & Authorized Operators</div></div>
+  </div>
+</section>
+<div class="view-inner">
+
+  <!-- 3D MODEL VIEWER — procedural box; drop models/box.glb next to index.html to show a real model instead -->
+  <div id="box3d-wrap">
+    <div class="b3-head"><h3 data-i18n="dv-3d">Explore the Box in 3D</h3><span data-i18n="dv-3d-hint">drag · zoom · click a part</span></div>
+    <div id="box3d" aria-label="Interactive 3D model of the vaccine delivery box" role="img"></div>
+    <div class="b3-loading" id="box3d-loading">LOADING 3D</div>
+    <div id="box3d-ui"></div>
+  </div>
+
+  <p data-i18n="dv-intro">A smart, field-serviceable cold box built by HTU engineering students to carry vaccines safely through the last mile of Jordan's healthcare cold chain.</p>
+
+  <p data-i18n="dv-desc">The box pairs an HDPE shell and polyurethane insulation with two layers of cooling — dual Peltier modules feeding a copper heat-pipe loop, buffered by phase-change coolant packs — and adds an RFID lock, a three-LED status panel, and continuous temperature logging. A supercapacitor keeps the electronics alive if the battery fails mid-trip.</p>
+
+  <div class="illus-panel light">
+    <div class="illus-content">
+      <h4 data-i18n="dv-arch">Device Architecture</h4>
+      <p data-i18n="dv-arch-p">All key components in a single integrated enclosure — LED panel, RFID reader, PCM lid pockets, TEC cooling wall, battery and supercapacitor bay.</p>
+    </div>
+    <div class="illus-svg">
+      <svg width="280" height="160" viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="60" y="50" width="160" height="100" rx="10" fill="#E0F2FE" stroke="#1A5C9A" stroke-width="2"/>
+        <rect x="60" y="30" width="160" height="24" rx="6" fill="#BAE6FD" stroke="#1A5C9A" stroke-width="2"/>
+        <line x1="60" y1="50" x2="220" y2="50" stroke="#1A5C9A" stroke-width="1" stroke-dasharray="4 3"/>
+        <circle cx="90" cy="70" r="5" fill="#22C55E"/>
+        <circle cx="106" cy="70" r="5" fill="#F59E0B"/>
+        <circle cx="122" cy="70" r="5" fill="#EF4444"/>
+        <text x="82" y="83" fill="#1A5C9A" font-size="7" font-family="Noto Sans Mono,monospace">LEDs</text>
+        <rect x="145" y="62" width="28" height="18" rx="3" fill="none" stroke="#1A5C9A" stroke-width="1.5"/>
+        <text x="148" y="73" fill="#1A5C9A" font-size="6.5" font-family="Noto Sans Mono,monospace">RFID</text>
+        <line x1="220" y1="75" x2="226" y2="75" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
+        <line x1="220" y1="82" x2="226" y2="82" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
+        <line x1="220" y1="89" x2="226" y2="89" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
+        <line x1="220" y1="96" x2="226" y2="96" stroke="#1A5C9A" stroke-width="2" stroke-linecap="round"/>
+        <rect x="75" y="98" width="130" height="42" rx="5" fill="rgba(14,165,233,0.1)" stroke="rgba(14,165,233,0.3)" stroke-width="1" stroke-dasharray="3 2"/>
+        <rect x="88" y="105" width="10" height="28" rx="3" fill="#0EA5E9" opacity="0.7"/>
+        <rect x="103" y="105" width="10" height="28" rx="3" fill="#0EA5E9" opacity="0.7"/>
+        <rect x="118" y="105" width="10" height="28" rx="3" fill="#0EA5E9" opacity="0.7"/>
+        <rect x="133" y="105" width="10" height="28" rx="3" fill="#0EA5E9" opacity="0.5"/>
+        <rect x="148" y="105" width="10" height="28" rx="3" fill="#0EA5E9" opacity="0.5"/>
+        <rect x="75" y="33" width="55" height="16" rx="4" fill="#BAE6FD" stroke="#0EA5E9" stroke-width="1"/>
+        <text x="102" y="44" fill="#1A5C9A" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">PCM</text>
+        <rect x="138" y="33" width="55" height="16" rx="4" fill="#BAE6FD" stroke="#0EA5E9" stroke-width="1"/>
+        <text x="165" y="44" fill="#1A5C9A" font-size="7" font-family="Noto Sans Mono,monospace" text-anchor="middle">PCM</text>
+        <rect x="30" y="85" width="24" height="40" rx="4" fill="#E0F2FE" stroke="#1A5C9A" stroke-width="1.5"/>
+        <rect x="36" y="81" width="12" height="6" rx="2" fill="#1A5C9A"/>
+        <text x="42" y="116" fill="#1A5C9A" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="middle">BATT</text>
+        <rect x="30" y="55" width="24" height="22" rx="4" fill="#EDE9FE" stroke="#5B21B6" stroke-width="1.5"/>
+        <text x="42" y="69" fill="#5B21B6" font-size="6" font-family="Noto Sans Mono,monospace" text-anchor="middle">SCAP</text>
+        <rect x="62" y="56" width="6" height="88" rx="2" fill="rgba(186,230,253,0.88)" stroke="#0EA5E9" stroke-width="1"/>
+        <rect x="52" y="62" width="8" height="60" rx="2" fill="rgba(14,165,233,0.45)" stroke="#0EA5E9" stroke-width="1"/>
+      </svg>
+    </div>
+  </div>
+
+  <div id="dv-gallery-sec">
+    <h3 data-i18n="dv-gallery">Photo Gallery</h3>
+    <div class="gallery" id="dv-gallery">
+      <!-- Drop photos into a photos/ folder next to index.html; missing files hide themselves. -->
+      <figure><img src="photos/device-01.jpg" alt="Vaccine delivery box — exterior" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph1">Exterior — HDPE shell and lid</figcaption></figure>
+      <figure><img src="photos/device-02.jpg" alt="Interior foam compartment with vaccine slots" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph2">Interior — foam vaccine slots</figcaption></figure>
+      <figure><img src="photos/device-03.jpg" alt="LED status panel and RFID reader" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph3">LED panel and RFID reader</figcaption></figure>
+      <figure><img src="photos/device-04.jpg" alt="Cooling assembly — Peltier modules and heat sinks" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph4">Cooling assembly</figcaption></figure>
+      <figure><img src="photos/device-05.jpg" alt="Electronics bay — microcontroller and power management" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph5">Electronics and power bay</figcaption></figure>
+      <figure><img src="photos/device-06.jpg" alt="Box in the field during a delivery trip" loading="lazy" onerror="this.closest('figure').hidden=true;dvGalleryCheck()"><figcaption data-i18n="dv-ph6">In the field</figcaption></figure>
+    </div>
+  </div>
+
+  <h3 data-i18n="dv-how">How It Keeps Vaccines Safe</h3>
+  <div class="dv-features">
+    <div class="dv-feature"><h4 data-i18n="dv-f1">Dual Peltier active cooling</h4><p data-i18n="dv-f1p">Two TEC1-12706 thermoelectric modules, PWM-regulated and wired in parallel for redundancy.</p></div>
+    <div class="dv-feature"><h4 data-i18n="dv-f2">Copper heat-pipe distribution</h4><p data-i18n="dv-f2p">A passive two-phase loop spreads cooling across the whole compartment — no pump, no moving parts.</p></div>
+    <div class="dv-feature"><h4 data-i18n="dv-f3">PCM thermal buffer</h4><p data-i18n="dv-f3p">Lid-mounted phase-change packs absorb heat spikes and keep the box cold through power loss.</p></div>
+    <div class="dv-feature"><h4 data-i18n="dv-f4">Supercapacitor backup</h4><p data-i18n="dv-f4p">15–30 minutes of emergency power switches in automatically if the battery fails.</p></div>
+    <div class="dv-feature"><h4 data-i18n="dv-f5">RFID smart lock</h4><p data-i18n="dv-f5p">Dual latches open only for registered cards and stay locked after a temperature excursion.</p></div>
+    <div class="dv-feature"><h4 data-i18n="dv-f6">Continuous logging</h4><p data-i18n="dv-f6p">Temperature, battery voltage, and access events recorded every 5 minutes for 30 days.</p></div>
+  </div>
+
+  <h3 data-i18n="dv-specs">Key Specifications</h3>
+  <div class="specs-grid">
+    <div class="spec-item"><div class="spec-label">Target Internal Temperature</div><div class="spec-val">2°C – 8°C</div></div>
+    <div class="spec-item"><div class="spec-label">Operating Ambient Range</div><div class="spec-val">−10°C to +50°C</div></div>
+    <div class="spec-item"><div class="spec-label">Primary Cooling</div><div class="spec-val">2× TEC1-12706 + copper heat pipe loop (passive two-phase)</div></div>
+    <div class="spec-item"><div class="spec-label">Emergency Backup</div><div class="spec-val">Supercapacitor — 15–30 min runtime</div></div>
+    <div class="spec-item"><div class="spec-label">RFID Module</div><div class="spec-val">RC522 — 13.56 MHz, ISO 14443A</div></div>
+    <div class="spec-item"><div class="spec-label">Log Interval</div><div class="spec-val">5 minutes (continuous)</div></div>
+    <div class="spec-item"><div class="spec-label">Outer Shell</div><div class="spec-val">High-Density Polyethylene (HDPE)</div></div>
+    <div class="spec-item"><div class="spec-label">Materials Cost</div><div class="spec-val">117.60 JOD (full BOM)</div></div>
+  </div>
+
+  <button class="dv-cta" onclick="switchView('manual')" data-i18n="dv-cta">Read the full user manual →</button>
+</div>
+</section>
+
+<!-- ══════════════════ VIEW: LIVE MONITORING ══════════════════ -->
+<section id="view-live" role="tabpanel" aria-labelledby="tab-live">
+  <div class="view-head">
+    <h2 data-i18n="live-title">Live Temperature Monitoring</h2>
+    <p data-i18n="live-sub2">Real-time readings streamed from the box every 30 seconds.</p>
+  </div>
+  <div class="live-card" id="live-gate-card">
+
+    <!-- UNLOCK GATE — shown until access is verified -->
     <div id="live-gate">
       <p class="live-gate-intro" data-i18n="live-gate-intro">Unlock the live dashboard with your box's serial number or its NFC card.</p>
       <div class="live-auth-block">
@@ -585,22 +1065,51 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
       <p id="live-gate-msg" class="live-gate-msg" role="alert" aria-live="assertive"></p>
     </div>
 
-    <!-- MONITOR — revealed after successful authentication -->
-    <div id="live-content" hidden>
-      <div class="live-statusrow"><span id="live-status">connecting…</span><span class="live-sub" data-i18n="live-sub">Vaccine box · live feed</span></div>
-      <div class="live-temp" id="live-temp">--.- °C</div>
-      <div class="live-flags" id="live-flags"></div>
-      <div class="live-chartwrap"><canvas id="live-chart"></canvas></div>
-      <div class="live-updated" id="live-updated"></div>
+  </div>
+
+  <!-- DASHBOARD — revealed after successful authentication -->
+  <div id="live-content" hidden>
+    <div class="ld-tiles">
+      <div class="ld-tile"><div class="lt-label" data-i18n="lt-temp">Current temperature</div><div class="lt-temp-row"><div><div class="lt-value" id="lt-temp-val">--.-°C</div><div class="lt-sub" id="lt-conn">—</div></div><div id="lt-gauge" aria-hidden="true"></div></div></div>
+      <div class="ld-tile"><div class="lt-label" data-i18n="lt-state">Cold-chain state</div><div id="lt-state"><span class="state-pill idle">—</span></div><div class="lt-sub" id="lt-state-sub"></div></div>
+      <div class="ld-tile"><div class="lt-label" data-i18n="lt-max">Max since cold</div><div class="lt-value" id="lt-max">—</div><div class="lt-sub" data-i18n="lt-max-sub">highest reading since cold-chain start</div></div>
+      <div class="ld-tile"><div class="lt-label" data-i18n="lt-upd">Last update</div><div class="lt-value" id="lt-upd">—</div><div class="lt-sub" id="lt-upd-abs"></div></div>
+    </div>
+    <div class="ld-main">
+      <div class="ld-chartcard">
+        <div class="ld-chead">
+          <h4 data-i18n="lt-chart">Temperature — live history</h4>
+          <div class="range-chips" role="group" aria-label="Time range">
+            <button class="range-chip on" data-range="120">1h</button>
+            <button class="range-chip" data-range="720">6h</button>
+            <button class="range-chip" data-range="2880">24h</button>
+          </div>
+          <button class="range-chip" id="alerts-btn" hidden>🔔 <span data-i18n="lt-alerts">Enable alerts</span></button>
+        </div>
+        <div class="ld-chartwrap2"><div id="live-chart" class="ld-echart" aria-label="Temperature history chart" role="img"></div></div>
+        <div class="ld-cfoot">
+          <span data-i18n="lt-min">Min</span> <b id="lt-min">—</b>
+          <span data-i18n="lt-avg">Avg</span> <b id="lt-avg">—</b>
+          <span data-i18n="lt-maxw">Max</span> <b id="lt-maxw">—</b>
+          <button class="ld-export" id="ld-export" data-i18n="lt-csv">Download CSV</button>
+        </div>
+      </div>
+      <div class="ld-events">
+        <h4 data-i18n="lt-events">Excursion events</h4>
+        <div id="ev-out"></div>
+        <div class="lt-label" style="margin-top:16px" data-i18n="lt-hours">Out-of-range minutes by hour</div>
+        <div id="hour-strip" aria-hidden="true"></div>
+      </div>
     </div>
   </div>
-</div>
+</section>
 
 <!-- ══════════════════ SIDEBAR ══════════════════ -->
 <nav id="sidebar">
   <div class="search-wrap">
     <input id="search-input" type="search" placeholder="Search manual… (Ctrl+K)" autocomplete="off" aria-label="Search the manual">
     <div class="search-count" id="search-count"></div>
+    <div id="search-results" hidden></div>
   </div>
   <div class="sb-controls">
     <button class="ctrl-btn" id="lang-btn" onclick="toggleLang()" aria-label="Switch language — Arabic or English"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n="lang-btn">AR</span></button>
@@ -622,7 +1131,6 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
   <div class="sidebar-scroll">
   <div class="nav-group">
     <div class="nav-label" data-i18n="grp-overview">Overview</div>
-    <a href="#cover" class="nav-item" data-i18n="nav-cover">Cover Page</a>
     <a href="#s1" class="nav-item" data-i18n="nav-s1">1. Introduction</a>
   </div>
   <div class="nav-group">
@@ -662,29 +1170,6 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 
 <!-- ══════════════════ MAIN ══════════════════ -->
 <main id="main">
-
-<!-- ─── COVER ─── -->
-<section id="cover">
-  <div class="cover-top">
-    <div class="cover-text">
-      <div class="doc-id"><div class="dot-pulse" aria-hidden="true"></div><span data-i18n="doc-id">User Manual · Version 1.0 · May 2026</span></div>
-      <h1 id="cover-h1">Enhanced Reliability<br><em>Vaccine Delivery Box</em></h1>
-      <p class="sub">Smart Dual-Thermoelectric Cold Box with RFID Locking, Real-Time Temperature Monitoring, and Emergency Supercapacitor Backup — Designed for Jordan's Healthcare Cold Chain</p>
-    </div>
-    <div class="cover-htu">
-      <img src="https://htu.edu.jo/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FHTU%20White%20Logo.8126eecd.svg&w=384&q=75" alt="HTU Logo" onerror="this.style.display='none'">
-      <span>Al Hussein Technical University</span>
-    </div>
-  </div>
-  <div class="cover-meta">
-    <div class="meta-card"><div class="ml">Project</div><div class="mv">MPEP — Engineering Project Management</div></div>
-    <div class="meta-card"><div class="ml">Team</div><div class="mv">Hashem Najdawi · Ibrahim Hosban · Jood Alabbadi · Yasmina Marwan</div></div>
-    <div class="meta-card"><div class="ml">Instructors</div><div class="mv">Eng. Leen Sarhan · Eng. Malak Alghadi</div></div>
-    <div class="meta-card"><div class="ml">Institution</div><div class="mv">Hussein Technical University — HTU</div></div>
-    <div class="meta-card"><div class="ml">Version</div><div class="mv">1.0 — May 2026</div></div>
-    <div class="meta-card"><div class="ml">Audience</div><div class="mv">Healthcare Staff & Authorized Operators</div></div>
-  </div>
-</section>
 
 <!-- ─── S1: INTRODUCTION ─── -->
 <section id="s1" class="content-section reveal">
@@ -1836,6 +2321,50 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 <button class="print-btn" onclick="window.print()" aria-label="Print or save as PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span data-i18n="print-btn">Print / Save as PDF</span></button>
 
 <script>
+/* ── VIEWS (tabs) ── */
+function switchView(v){
+  if(v!=='device'&&v!=='live'&&v!=='menu')v='manual';
+  document.body.dataset.view=v;
+  ['manual','device','live'].forEach(function(k){
+    const t=document.getElementById('tab-'+k);
+    if(t)t.setAttribute('aria-selected',k===v?'true':'false');
+  });
+  try{sessionStorage.setItem('view',v);}catch(e){}
+  const sk=document.querySelector('.skip-link');
+  if(sk)sk.href=v==='manual'?'#main':'#view-'+v;
+  if(window.__lenis)window.__lenis.scrollTo(0,{immediate:true});else window.scrollTo(0,0);
+  if(v==='live'&&window.liveViewOpened)window.liveViewOpened();
+  if(v==='device'&&window.deviceViewOpened)window.deviceViewOpened();
+}
+/* ── BACKGROUND STYLE PICKER ── */
+function toggleBgMenu(){
+  const m=document.getElementById('bg-menu'),b=document.getElementById('bg-btn');
+  if(!m)return;
+  const open=m.hidden;
+  m.hidden=!open;
+  if(b)b.setAttribute('aria-expanded',open?'true':'false');
+}
+function setBgStyle(s){
+  try{localStorage.setItem('bgStyle',s);}catch(e){}
+  if(window.__applyBgStyle)window.__applyBgStyle(s);
+  const m=document.getElementById('bg-menu');if(m)m.hidden=true;
+  const b=document.getElementById('bg-btn');if(b)b.setAttribute('aria-expanded','false');
+}
+document.addEventListener('click',function(e){
+  const m=document.getElementById('bg-menu');
+  if(m&&!m.hidden&&!e.target.closest('.tb-bg')){m.hidden=true;const b=document.getElementById('bg-btn');if(b)b.setAttribute('aria-expanded','false');}
+});
+
+/* hide the gallery section entirely when no photos exist yet */
+function dvGalleryCheck(){
+  const g=document.getElementById('dv-gallery');
+  if(!g)return;
+  const figs=g.querySelectorAll('figure');
+  let allHidden=true;
+  figs.forEach(function(f){if(!f.hidden)allHidden=false;});
+  if(allHidden)document.getElementById('dv-gallery-sec').hidden=true;
+}
+
 /* ── CHECKLIST ── */
 function toggleCheck(el){
   const on=el.classList.toggle('checked');
@@ -1854,7 +2383,20 @@ const navObs=new IntersectionObserver(entries=>entries.forEach(e=>{
     if(e.target.id!=='cover')localStorage.setItem('lastSection',e.target.id);
   }
 }),{threshold:.2,rootMargin:'-60px 0px -60% 0px'});
-document.querySelectorAll('section[id]').forEach(s=>navObs.observe(s));
+document.querySelectorAll('#main section[id]').forEach(s=>navObs.observe(s));
+
+/* ── SCROLL REVEALS (motion-gated; content fully visible without JS) ── */
+if(matchMedia('(prefers-reduced-motion: no-preference)').matches){
+  const rEls=document.querySelectorAll('.illus-panel,.led-card,.callout,.spec-item,.gallery figure,.dv-feature,.table-wrap,.qr-panel,.timer-widget,.calc-widget,.wizard-card,.ld-tile,.ld-chartcard,.ld-events');
+  const rObs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('rv-in');rObs.unobserve(e.target);}
+  }),{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+  rEls.forEach(function(el){
+    const sibs=el.parentElement?[...el.parentElement.children]:[el];
+    el.style.transitionDelay=Math.min(sibs.indexOf(el),5)*60+'ms';
+    el.classList.add('rv');rObs.observe(el);
+  });
+}
 document.querySelectorAll('.nav-item').forEach(l=>l.addEventListener('click',()=>document.getElementById('sidebar').classList.remove('open')));
 
 /* ── READING PROGRESS ── */
@@ -1879,7 +2421,38 @@ const translations={
     'calc_title':'Battery Runtime Estimator','calc_charge':'Battery charge:','calc_ambient':'Ambient temperature:','calc_pwm':'Cooler power level (PWM):',
     'wiz-back':'← Back','wiz-reset':'Start over','wiz-solution-label':'SOLUTION','wiz-table-show':'Show full table ▼','wiz-table-hide':'Hide full table ▲',
     'live-btn':'Live Monitoring','live-title':'Live Temperature Monitoring','live-sub':'Vaccine box · live feed',
-    'live-gate-intro':'Unlock the live dashboard with your box\'s serial number or its NFC card.','live-serial-label':'Device serial number','live-unlock':'Unlock','live-or':'or','live-nfc':'Tap NFC card'
+    'live-gate-intro':'Unlock the live dashboard with your box\'s serial number or its NFC card.','live-serial-label':'Device serial number','live-unlock':'Unlock','live-or':'or','live-nfc':'Tap NFC card',
+    'tb-title':'Vaccine Delivery Box','tab-manual':'User Manual','tab-device':'The Device',
+    'live-sub2':'Real-time readings streamed from the box every 30 seconds.',
+    'dv-title':'The Device',
+    'dv-intro':'A smart, field-serviceable cold box built by HTU engineering students to carry vaccines safely through the last mile of Jordan\'s healthcare cold chain.',
+    'dv-desc':'The box pairs an HDPE shell and polyurethane insulation with two layers of cooling — dual Peltier modules feeding a copper heat-pipe loop, buffered by phase-change coolant packs — and adds an RFID lock, a three-LED status panel, and continuous temperature logging. A supercapacitor keeps the electronics alive if the battery fails mid-trip.',
+    'dv-arch':'Device Architecture',
+    'dv-arch-p':'All key components in a single integrated enclosure — LED panel, RFID reader, PCM lid pockets, TEC cooling wall, battery and supercapacitor bay.',
+    'dv-gallery':'Photo Gallery',
+    'dv-ph1':'Exterior — HDPE shell and lid','dv-ph2':'Interior — foam vaccine slots','dv-ph3':'LED panel and RFID reader','dv-ph4':'Cooling assembly','dv-ph5':'Electronics and power bay','dv-ph6':'In the field',
+    'dv-how':'How It Keeps Vaccines Safe',
+    'dv-f1':'Dual Peltier active cooling','dv-f1p':'Two TEC1-12706 thermoelectric modules, PWM-regulated and wired in parallel for redundancy.',
+    'dv-f2':'Copper heat-pipe distribution','dv-f2p':'A passive two-phase loop spreads cooling across the whole compartment — no pump, no moving parts.',
+    'dv-f3':'PCM thermal buffer','dv-f3p':'Lid-mounted phase-change packs absorb heat spikes and keep the box cold through power loss.',
+    'dv-f4':'Supercapacitor backup','dv-f4p':'15–30 minutes of emergency power switches in automatically if the battery fails.',
+    'dv-f5':'RFID smart lock','dv-f5p':'Dual latches open only for registered cards and stay locked after a temperature excursion.',
+    'dv-f6':'Continuous logging','dv-f6p':'Temperature, battery voltage, and access events recorded every 5 minutes for 30 days.',
+    'dv-specs':'Key Specifications',
+    'dv-3d':'Explore the Box in 3D','dv-3d-hint':'drag · zoom · click a part',
+    'dv-cta':'Read the full user manual →',
+    'menu-kicker':'HTU · MPEP 2026',
+    'menu-sub':'A smart cold box for Jordan\'s healthcare cold chain — explore the device, read the manual, or watch its temperature live.',
+    'menu-c1':'Interactive 3D model, photos, and how the box keeps vaccines safe.',
+    'menu-c2':'Setup, operating procedures, emergencies, troubleshooting — bilingual.',
+    'menu-c3':'Real-time temperature dashboard — unlock with serial or NFC card.',
+    'menu-foot':'User Manual v1.0 · May 2026 · Al Hussein Technical University',
+    'lt-temp':'Current temperature','lt-state':'Cold-chain state','lt-max':'Max since cold',
+    'lt-max-sub':'highest reading since cold-chain start','lt-upd':'Last update',
+    'lt-chart':'Temperature — live history','lt-min':'Min','lt-avg':'Avg','lt-maxw':'Max',
+    'lt-csv':'Download CSV','lt-events':'Excursion events',
+    'lt-alerts':'Enable alerts','lt-hours':'Out-of-range minutes by hour',
+    'bg-title':'Background','bg-aurora':'Aurora','bg-net':'Network','bg-snow':'Snow','bg-fireflies':'Fireflies','bg-off':'Off'
   },
   ar:{
     'nav-cover':'الغلاف','nav-s1':'١. مقدمة','nav-s2':'٢. تحذيرات السلامة','nav-s3':'٣. نظرة عامة','nav-s4':'٤. البدء','nav-s5':'٥. إجراءات التشغيل','nav-s6':'٦. نظام التبريد','nav-s7':'٧. قفل RFID','nav-s8':'٨. إجراءات الطوارئ','nav-s9':'٩. الصيانة','nav-s10':'١٠. تسجيل البيانات','nav-s11':'١١. استكشاف الأعطال','nav-s12':'١٢. المواصفات','nav-s13':'١٣. الامتثال التنظيمي','nav-s14':'١٤. المرجع السريع','nav-appA':'أ. سجل الرحلة','nav-appB':'ب. قائمة المواد','nav-appC':'ج. المسرد',
@@ -1893,7 +2466,38 @@ const translations={
     'calc_title':'حاسبة وقت تشغيل البطارية','calc_charge':'شحن البطارية:','calc_ambient':'درجة الحرارة المحيطة:','calc_pwm':'مستوى طاقة التبريد (PWM):',
     'wiz-back':'رجوع ←','wiz-reset':'ابدأ من جديد','wiz-solution-label':'الحل','wiz-table-show':'عرض الجدول الكامل ▼','wiz-table-hide':'إخفاء الجدول ▲',
     'live-btn':'المراقبة المباشرة','live-title':'مراقبة درجة الحرارة المباشرة','live-sub':'صندوق اللقاح · بث مباشر',
-    'live-gate-intro':'افتح لوحة المراقبة المباشرة بالرقم التسلسلي لصندوقك أو ببطاقة NFC الخاصة به.','live-serial-label':'الرقم التسلسلي للجهاز','live-unlock':'فتح','live-or':'أو','live-nfc':'مسح بطاقة NFC'
+    'live-gate-intro':'افتح لوحة المراقبة المباشرة بالرقم التسلسلي لصندوقك أو ببطاقة NFC الخاصة به.','live-serial-label':'الرقم التسلسلي للجهاز','live-unlock':'فتح','live-or':'أو','live-nfc':'مسح بطاقة NFC',
+    'tb-title':'صندوق توصيل اللقاحات','tab-manual':'دليل المستخدم','tab-device':'الجهاز',
+    'live-sub2':'قراءات فورية تُبث من الصندوق كل 30 ثانية.',
+    'dv-title':'الجهاز',
+    'dv-intro':'صندوق بارد ذكي قابل للصيانة الميدانية، صممه طلاب الهندسة في جامعة الحسين التقنية لنقل اللقاحات بأمان عبر المرحلة الأخيرة من السلسلة الباردة الصحية في الأردن.',
+    'dv-desc':'يجمع الصندوق بين هيكل HDPE وعزل البولي يوريثان وطبقتين من التبريد — وحدتا Peltier تغذيان حلقة أنابيب حرارية نحاسية، بدعم من حزم مبرِّد متغير الطور — ويضيف قفل RFID ولوحة مؤشرات ثلاثية وتسجيلاً متواصلاً لدرجة الحرارة. ويُبقي مكثف فائق الإلكترونيات عاملة إذا تعطلت البطارية أثناء الرحلة.',
+    'dv-arch':'بنية الجهاز',
+    'dv-arch-p':'جميع المكونات الرئيسية في هيكل واحد متكامل — لوحة LED وقارئ RFID وجيوب PCM في الغطاء وجدار التبريد وحجرة البطارية والمكثف الفائق.',
+    'dv-gallery':'معرض الصور',
+    'dv-ph1':'الهيكل الخارجي — HDPE والغطاء','dv-ph2':'الداخل — فتحات الرغوة للقاحات','dv-ph3':'لوحة LED وقارئ RFID','dv-ph4':'مجموعة التبريد','dv-ph5':'حجرة الإلكترونيات والطاقة','dv-ph6':'في الميدان',
+    'dv-how':'كيف يحمي اللقاحات',
+    'dv-f1':'تبريد Peltier مزدوج نشط','dv-f1p':'وحدتا TEC1-12706 ثرموكهربائيتان بتنظيم PWM وتوصيل متوازٍ للتكرار الاحتياطي.',
+    'dv-f2':'توزيع بأنابيب حرارية نحاسية','dv-f2p':'حلقة سلبية ثنائية الطور توزع البرودة على الحجرة كلها — بلا مضخة وبلا أجزاء متحركة.',
+    'dv-f3':'عازل PCM الحراري','dv-f3p':'حزم متغيرة الطور في الغطاء تمتص ارتفاعات الحرارة وتحفظ البرودة عند انقطاع الطاقة.',
+    'dv-f4':'احتياط المكثف الفائق','dv-f4p':'15–30 دقيقة من الطاقة الطارئة تعمل تلقائياً إذا تعطلت البطارية.',
+    'dv-f5':'قفل RFID ذكي','dv-f5p':'مزلاجان لا يُفتحان إلا للبطاقات المسجلة ويبقيان مقفلين بعد أي انحراف حراري.',
+    'dv-f6':'تسجيل متواصل','dv-f6p':'تُسجَّل درجة الحرارة وجهد البطارية وأحداث الوصول كل 5 دقائق لمدة 30 يوماً.',
+    'dv-specs':'أبرز المواصفات',
+    'dv-3d':'استكشف الصندوق ثلاثي الأبعاد','dv-3d-hint':'اسحب · قرّب · انقر على جزء',
+    'dv-cta':'اقرأ دليل المستخدم الكامل ←',
+    'menu-kicker':'جامعة الحسين التقنية · MPEP 2026',
+    'menu-sub':'صندوق بارد ذكي للسلسلة الباردة الصحية في الأردن — استكشف الجهاز أو اقرأ الدليل أو راقب درجة حرارته مباشرة.',
+    'menu-c1':'نموذج ثلاثي الأبعاد تفاعلي وصور وكيف يحمي الصندوق اللقاحات.',
+    'menu-c2':'الإعداد وإجراءات التشغيل والطوارئ واستكشاف الأعطال — بلغتين.',
+    'menu-c3':'لوحة درجة حرارة فورية — تُفتح بالرقم التسلسلي أو بطاقة NFC.',
+    'menu-foot':'دليل المستخدم v1.0 · مايو 2026 · جامعة الحسين التقنية',
+    'lt-temp':'درجة الحرارة الحالية','lt-state':'حالة السلسلة الباردة','lt-max':'الأقصى منذ التبريد',
+    'lt-max-sub':'أعلى قراءة منذ بدء السلسلة الباردة','lt-upd':'آخر تحديث',
+    'lt-chart':'درجة الحرارة — السجل المباشر','lt-min':'الأدنى','lt-avg':'المتوسط','lt-maxw':'الأقصى',
+    'lt-csv':'تنزيل CSV','lt-events':'أحداث الانحراف',
+    'lt-alerts':'تفعيل التنبيهات','lt-hours':'دقائق خارج النطاق حسب الساعة',
+    'bg-title':'الخلفية','bg-aurora':'شفق','bg-net':'شبكة','bg-snow':'ثلج','bg-fireflies':'يراعات','bg-off':'إيقاف'
   }
 };
 
@@ -2371,10 +2975,16 @@ function applyLang(lang){
     if(t&&t[k]!==undefined)el.textContent=t[k];
   });
   applyTextTranslations(lang);
-  const h1=document.getElementById('cover-h1');
-  if(h1)h1.innerHTML=lang==='ar'
+  const titleHtml=lang==='ar'
     ?'صندوق توصيل اللقاحات<br><em>المحسَّن الموثوقية</em>'
     :'Enhanced Reliability<br><em>Vaccine Delivery Box</em>';
+  const h1=document.getElementById('cover-h1');
+  if(h1)h1.innerHTML=titleHtml;
+  const mh=document.getElementById('menu-h1');
+  if(mh)mh.innerHTML=titleHtml;
+  if(window.liveLangRefresh)window.liveLangRefresh();
+  if(window.heroSplitRefresh)window.heroSplitRefresh();
+  if(window.glossaryRefresh)window.glossaryRefresh();
   document.documentElement.lang=lang;
   document.documentElement.dir=lang==='ar'?'rtl':'ltr';
   document.body.classList.toggle('ar',lang==='ar');
@@ -2383,6 +2993,7 @@ function applyLang(lang){
   wizLang=lang;
   renderWizard();
   updateCalc();
+  if(window.box3dRefresh)window.box3dRefresh(lang);
 }
 function toggleLang(){
   currentLang=currentLang==='en'?'ar':'en';
@@ -2402,7 +3013,7 @@ function applyDark(){
     btn.classList.toggle('active',darkMode);
   }
 }
-function toggleDark(){darkMode=!darkMode;localStorage.setItem('theme',darkMode?'dark':'light');applyDark();}
+function toggleDark(){darkMode=!darkMode;localStorage.setItem('theme',darkMode?'dark':'light');applyDark();if(window.liveThemeRefresh)window.liveThemeRefresh();}
 
 /* ── FONT SIZE (root font-size; content sizes are rem-based) ── */
 const fontSizes=[14,16,18];
@@ -2485,7 +3096,12 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   }
   document.addEventListener('keydown',function(e){
-    if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();const i=document.getElementById('search-input');if(i)i.focus();}
+    if((e.ctrlKey||e.metaKey)&&e.key==='k'){
+      e.preventDefault();
+      if(document.querySelector('ninja-keys'))return; /* palette handles its own hotkey once loaded */
+      if(window.openPalette){window.openPalette();return;}
+      switchView('manual');const i=document.getElementById('search-input');if(i)i.focus();
+    }
   });
 });
 
@@ -2671,11 +3287,757 @@ document.addEventListener('DOMContentLoaded',function(){
   applyLang(currentLang);
   renderWizard();
   updateCalc();
+  let savedView=null;
+  try{savedView=sessionStorage.getItem('view');}catch(e){}
+  if(savedView&&savedView!=='menu')switchView(savedView);
 });
 
 
 
 
+</script>
+
+<!-- ══════════ ANIMATE-UI STYLE MOTION LAYER — Motion, the engine behind animate-ui.com ══════════ -->
+<script type="module">
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  const boot = async () => {
+    let animate;
+    try { ({animate} = await import('motion')); } catch (e) { return; }   // CDN missing → CSS animations still cover the site
+
+    /* 1 ── springy sliding tab indicator (Animate UI "tabs") */
+    const tabs = document.getElementById('tabs');
+    let ind = null;
+    function moveInd(instant){
+      if (!tabs) return;
+      const sel = tabs.querySelector('.tab[aria-selected="true"]');
+      if (!sel){ if (ind) ind.style.opacity = 0; return; }
+      if (!ind){
+        ind = document.createElement('div'); ind.id = 'tab-ind';
+        tabs.appendChild(ind); tabs.classList.add('has-ind');
+        instant = true;
+      }
+      ind.style.opacity = 1;
+      const x = sel.offsetLeft + 12, w = Math.max(0, sel.offsetWidth - 24);
+      if (instant){ ind.style.left = x + 'px'; ind.style.width = w + 'px'; return; }
+      animate(ind, {left: x + 'px', width: w + 'px'}, {type: 'spring', stiffness: 420, damping: 32});
+    }
+    if (tabs){
+      const _sv = window.switchView;
+      window.switchView = function(v){ _sv(v); requestAnimationFrame(() => moveInd(false)); };
+      new ResizeObserver(() => moveInd(true)).observe(tabs);
+      new MutationObserver(() => moveInd(false))
+        .observe(tabs, {subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['aria-selected']});
+      requestAnimationFrame(() => moveInd(true));
+    }
+
+    /* 2 ── ripple press feedback on every interactive control (Animate UI "ripple button") */
+    const RIPPLE = '.tab,.menu-card,.dv-cta,.b3-chip,.range-chip,.ld-export,.timer-start,#live-serial-btn,#live-nfc-btn,.wiz-btn,.wiz-back,.wiz-reset,.wiz-table-toggle,.ctrl-btn,.font-btn,.rb-btn,.print-btn,.cb';
+    document.addEventListener('pointerdown', (e) => {
+      const el = e.target.closest ? e.target.closest(RIPPLE) : null;
+      if (!el) return;
+      const cs = getComputedStyle(el);
+      if (cs.position === 'static') el.style.position = 'relative';
+      if (cs.overflow !== 'hidden') el.style.overflow = 'hidden';
+      const r = el.getBoundingClientRect();
+      const d = Math.max(r.width, r.height) * .9;
+      const s = document.createElement('span');
+      s.className = 'ripple';
+      s.style.width = s.style.height = d + 'px';
+      s.style.left = (e.clientX - r.left - d/2) + 'px';
+      s.style.top  = (e.clientY - r.top  - d/2) + 'px';
+      el.appendChild(s);
+      setTimeout(() => s.remove(), 600);
+    }, {passive: true});
+
+    /* 3 ── counting numbers for live values (Animate UI "counting number") */
+    window.motionCount = function(el, text){
+      const m = String(text).match(/^(-?\d+(?:\.\d+)?)(.*)$/);
+      if (!m){ el.textContent = text; delete el.dataset.mcv; return; }
+      const to = parseFloat(m[1]), suffix = m[2] || '', dec = (m[1].split('.')[1] || '').length;
+      const prev = parseFloat(el.dataset.mcv);
+      const from = isNaN(prev) ? to : prev;
+      el.dataset.mcv = to;
+      if (from === to){ el.textContent = text; return; }
+      animate(from, to, {duration: .8, ease: [.16, 1, .3, 1],
+        onUpdate: v => { el.textContent = v.toFixed(dec) + suffix; }});
+    };
+
+    /* 4 ── typewriter on the menu subtitle (Animate UI "typing text") */
+    const sub = document.querySelector('.menu-sub');
+    if (sub && document.body.dataset.view === 'menu'){
+      const full = sub.textContent;
+      sub.textContent = ''; sub.classList.add('type-caret');
+      let i = 0;
+      const iv = setInterval(() => {
+        i += 2; sub.textContent = full.slice(0, i);
+        if (i >= full.length){
+          clearInterval(iv); sub.textContent = full;
+          setTimeout(() => sub.classList.remove('type-caret'), 1800);
+        }
+      }, 22);
+    }
+
+    /* 5 ── rising bubble backgrounds on menu + cover (Animate UI "bubble background") */
+    function bubbles(hostSel, n){
+      const host = document.querySelector(hostSel);
+      if (!host) return;
+      for (let i = 0; i < n; i++){
+        const b = document.createElement('div');
+        b.className = 'bubble';
+        const size = 26 + Math.random() * 90;
+        b.style.width = b.style.height = size + 'px';
+        b.style.left = Math.random() * 100 + '%';
+        b.style.top = (55 + Math.random() * 55) + '%';
+        host.appendChild(b);
+        animate(b,
+          {y: [0, -(220 + Math.random() * 340)], x: [0, (Math.random() - .5) * 90], opacity: [0, .75, 0]},
+          {duration: 9 + Math.random() * 10, delay: Math.random() * 8, repeat: Infinity, ease: 'linear'});
+      }
+    }
+    bubbles('#view-menu', 12);
+    bubbles('#cover', 8);
+
+    /* 5b ── site-wide ambient background: drifting color blobs + floating cold sparks */
+    const bga = document.getElementById('bg-anim');
+    if (bga){
+      for (let i = 0; i < 6; i++){
+        const b = document.createElement('div');
+        b.className = 'bga-blob' + (i % 2 ? ' alt' : '');
+        const size = 280 + Math.random() * 380;
+        b.style.width = b.style.height = size + 'px';
+        b.style.left = (Math.random() * 100 - 10) + '%';
+        b.style.top  = (Math.random() * 100 - 10) + '%';
+        bga.appendChild(b);
+        animate(b,
+          {x: [0, (Math.random() - .5) * 360], y: [0, (Math.random() - .5) * 280], scale: [1, .8 + Math.random() * .5]},
+          {duration: 22 + Math.random() * 18, delay: Math.random() * -30,
+           repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut'});
+      }
+      for (let i = 0; i < 16; i++){
+        const f = document.createElement('div');
+        f.className = 'bga-flake';
+        const size = 2 + Math.random() * 4;
+        f.style.width = f.style.height = size + 'px';
+        f.style.left = Math.random() * 100 + '%';
+        f.style.top = (30 + Math.random() * 80) + '%';
+        bga.appendChild(f);
+        animate(f,
+          {y: [0, -(300 + Math.random() * 500)], x: [0, (Math.random() - .5) * 120], opacity: [0, .7, 0]},
+          {duration: 16 + Math.random() * 16, delay: Math.random() * -25, repeat: Infinity, ease: 'linear'});
+      }
+    }
+
+    /* 6 ── cursor spotlight + magnetic spring tilt (Animate UI hover cards) */
+    document.addEventListener('pointermove', (e) => {
+      const el = e.target.closest ? e.target.closest('.menu-card,.ld-tile') : null;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+      el.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+      if (el.classList.contains('menu-card')){
+        const dx = (e.clientX - r.left) / r.width - .5, dy = (e.clientY - r.top) / r.height - .5;
+        animate(el, {rotateX: (-dy * 5) + 'deg', rotateY: (dx * 6) + 'deg', y: -5},
+          {type: 'spring', stiffness: 300, damping: 26});
+      }
+    }, {passive: true});
+    document.addEventListener('pointerout', (e) => {
+      const el = e.target.closest ? e.target.closest('.menu-card') : null;
+      if (el && !(e.relatedTarget && el.contains(e.relatedTarget)))
+        animate(el, {rotateX: '0deg', rotateY: '0deg', y: 0}, {type: 'spring', stiffness: 220, damping: 20});
+    }, {passive: true});
+
+    /* 7 ── GSAP ScrollTrigger scroll-story + Lenis smooth scroll + SplitType hero text */
+    try {
+      const [gsapMod, stMod, splitMod, lenisMod] = await Promise.all([
+        import('gsap'), import('gsap/ScrollTrigger'), import('split-type'), import('lenis')
+      ]);
+      const gsap = gsapMod.gsap || gsapMod.default;
+      const ScrollTrigger = stMod.ScrollTrigger || stMod.default;
+      const SplitType = splitMod.default;
+      const Lenis = lenisMod.default;
+      gsap.registerPlugin(ScrollTrigger);
+
+      const lenis = new Lenis({duration: 1.05});
+      window.__lenis = lenis;
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((t) => lenis.raf(t * 1000));
+      gsap.ticker.lagSmoothing(0);
+
+      /* the 3D box turns and cracks its lid open as it scrolls past */
+      ScrollTrigger.create({
+        trigger: '#box3d-wrap', start: 'top 80%', end: 'bottom 10%', scrub: .5,
+        onUpdate: (st) => { if (window.box3dScrollProgress) window.box3dScrollProgress(st.progress); }
+      });
+
+      /* per-character hero entrances */
+      function splitHero(){
+        ['menu-h1', 'cover-h1'].forEach((id) => {
+          const el = document.getElementById(id); if (!el) return;
+          if (el._split){ try { if (el.querySelector('.word')) el._split.revert(); } catch (e) {} el._split = null; }
+          const ar = document.documentElement.lang === 'ar';
+          const s = new SplitType(el, {types: ar ? 'words' : 'words,chars'});
+          el._split = s;
+          const targets = ar ? s.words : s.chars;
+          if (targets && targets.length)
+            gsap.from(targets, {y: '0.55em', opacity: 0, duration: .7, ease: 'expo.out', stagger: .016});
+        });
+      }
+      window.heroSplitRefresh = splitHero;
+      splitHero();
+      const _sv2 = window.switchView;
+      window.switchView = function(v){ _sv2(v); if (v === 'menu' || v === 'device') requestAnimationFrame(splitHero); };
+    } catch (e) {}
+
+    /* 8 ── background style picker (tsParticles presets over the ambient layer) */
+    const bgaEl = document.getElementById('bg-anim');
+    let tsInst = null;
+    async function applyBgStyle(style){
+      document.querySelectorAll('#bg-menu [data-bg]').forEach(b => b.classList.toggle('on', b.dataset.bg === style));
+      if (tsInst){ try { tsInst.destroy(); } catch (e) {} tsInst = null; }
+      if (!bgaEl) return;
+      bgaEl.classList.toggle('bga-off', style === 'off');
+      bgaEl.classList.toggle('bga-alt', style !== 'aurora' && style !== 'off');
+      if (style === 'aurora' || style === 'off') return;
+      try {
+        const [{tsParticles}, {loadSlim}] = await Promise.all([
+          import('@tsparticles/engine'), import('@tsparticles/slim')
+        ]);
+        await loadSlim(tsParticles);
+        const col = getComputedStyle(document.body).getPropertyValue('--primary-2').trim() || '#0891B2';
+        const presets = {
+          net: {particles: {number: {value: 60}, color: {value: col},
+            links: {enable: true, color: col, opacity: .25, distance: 150},
+            move: {enable: true, speed: 1.1}, size: {value: 2}, opacity: {value: .45}}},
+          snow: {particles: {number: {value: 90}, color: {value: col},
+            move: {enable: true, direction: 'bottom', speed: 1},
+            size: {value: {min: 1, max: 4}}, opacity: {value: {min: .2, max: .6}},
+            wobble: {enable: true, distance: 8, speed: 6}}},
+          fireflies: {particles: {number: {value: 40}, color: {value: '#7BE3F0'},
+            move: {enable: true, speed: .6, random: true}, size: {value: {min: 1, max: 3}},
+            opacity: {value: {min: .1, max: .8}, animation: {enable: true, speed: 1.2, sync: false}}}}
+        };
+        tsInst = await tsParticles.load({element: document.getElementById('bg-ts'),
+          options: {fullScreen: {enable: false}, background: {color: 'transparent'},
+                    fpsLimit: 60, detectRetina: true, ...presets[style]}});
+      } catch (e) {}
+    }
+    window.__applyBgStyle = applyBgStyle;
+    let savedBg = 'aurora';
+    try { savedBg = localStorage.getItem('bgStyle') || 'aurora'; } catch (e) {}
+    applyBgStyle(savedBg);
+  };
+  /* run after applyLang has set the initial texts */
+  if (document.readyState === 'complete') boot();
+  else window.addEventListener('load', boot);
+}
+</script>
+
+<!-- ══════════ USABILITY LAYER — command palette, fuzzy search, glossary, guided tour ══════════ -->
+<script type="module">
+const $u = (i) => document.getElementById(i);
+const uAr = () => document.documentElement.lang === 'ar';
+const UT = (en, ar) => uAr() ? ar : en;
+
+/* ── search index shared by the palette and the fuzzy sidebar panel ── */
+let uIndex = null, fuse = null;
+async function buildIndex(){
+  if (uIndex) return uIndex;
+  uIndex = [];
+  document.querySelectorAll('#main section[id]').forEach((sec) => {
+    const h2 = sec.querySelector('h2');
+    const secTitle = (h2 ? h2.textContent : sec.id).trim();
+    uIndex.push({id: sec.id, title: secTitle, section: '', text: sec.textContent.replace(/\s+/g, ' ').slice(0, 4000)});
+    sec.querySelectorAll('h3').forEach((h3, i) => {
+      if (!h3.id) h3.id = sec.id + '-h3-' + i;
+      let text = '', n = h3.nextElementSibling;
+      while (n && n.tagName !== 'H3'){ text += ' ' + n.textContent; n = n.nextElementSibling; }
+      uIndex.push({id: h3.id, title: h3.textContent.trim(), section: secTitle, text: text.replace(/\s+/g, ' ').slice(0, 2000)});
+    });
+  });
+  try {
+    const {default: Fuse} = await import('fuse.js');
+    fuse = new Fuse(uIndex, {keys: [{name: 'title', weight: 2}, 'text'],
+      threshold: .38, ignoreLocation: true, minMatchCharLength: 2});
+  } catch (e) {}
+  return uIndex;
+}
+function gotoRecord(id){
+  window.switchView('manual');
+  const el = document.getElementById(id);
+  if (el) setTimeout(() => el.scrollIntoView({behavior: 'smooth', block: 'start'}), 80);
+  const sr = $u('search-results'); if (sr) sr.hidden = true;
+}
+
+/* ── fuzzy results panel under the sidebar search ── */
+(function(){
+  const inp = $u('search-input'), panel = $u('search-results');
+  if (!inp || !panel) return;
+  let sel = -1, items = [];
+  function render(res, q){
+    items = res;
+    sel = -1;
+    if (!q){ panel.hidden = true; return; }
+    panel.hidden = false;
+    panel.innerHTML = res.length
+      ? res.map((r, i) => '<button class="sr-item" data-i="' + i + '"><div class="sr-t">' + r.title +
+          '</div>' + (r.section ? '<div class="sr-s">' + r.section + '</div>' : '') + '</button>').join('')
+      : '<div class="sr-empty">' + UT('No sections match', 'لا أقسام مطابقة') + '</div>';
+    panel.querySelectorAll('.sr-item').forEach((b) =>
+      b.addEventListener('click', () => gotoRecord(items[+b.dataset.i].id)));
+  }
+  inp.addEventListener('input', async (e) => {
+    const q = e.target.value.trim();
+    if (!q){ panel.hidden = true; return; }
+    await buildIndex();
+    if (!fuse) return;
+    render(fuse.search(q, {limit: 8}).map((r) => r.item), q);
+  });
+  inp.addEventListener('keydown', (e) => {
+    if (panel.hidden || !items.length) return;
+    const btns = [...panel.querySelectorAll('.sr-item')];
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+      e.preventDefault(); e.stopImmediatePropagation();
+      sel = e.key === 'ArrowDown' ? Math.min(sel + 1, btns.length - 1) : Math.max(sel - 1, 0);
+      btns.forEach((b, i) => b.classList.toggle('sel', i === sel));
+      if (btns[sel]) btns[sel].scrollIntoView({block: 'nearest'});
+    } else if (e.key === 'Enter' && sel >= 0){
+      e.preventDefault(); e.stopImmediatePropagation();
+      gotoRecord(items[sel].id);
+    } else if (e.key === 'Escape'){ panel.hidden = true; }
+  }, {capture: true});
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrap')) panel.hidden = true;
+  });
+})();
+
+/* ── ninja-keys command palette (lazy on first Ctrl+K) ── */
+let nk = null;
+window.openPalette = async function(){
+  try {
+    await import('ninja-keys');
+    await buildIndex();
+    if (!nk){ nk = document.createElement('ninja-keys'); document.body.appendChild(nk); }
+    const acts = [
+      {id: 'v-device', title: UT('Open: The Device', 'افتح: الجهاز'), section: UT('Navigate', 'تنقل'), handler: () => window.switchView('device')},
+      {id: 'v-manual', title: UT('Open: User Manual', 'افتح: دليل المستخدم'), section: UT('Navigate', 'تنقل'), handler: () => window.switchView('manual')},
+      {id: 'v-live', title: UT('Open: Live Monitoring', 'افتح: المراقبة المباشرة'), section: UT('Navigate', 'تنقل'), handler: () => window.switchView('live')},
+      {id: 'v-menu', title: UT('Open: Main Menu', 'افتح: القائمة الرئيسية'), section: UT('Navigate', 'تنقل'), handler: () => window.switchView('menu')},
+      {id: 'a-search', title: UT('Search the manual', 'ابحث في الدليل'), section: UT('Actions', 'إجراءات'), handler: () => { window.switchView('manual'); setTimeout(() => { const i = $u('search-input'); if (i) i.focus(); }, 60); }},
+      {id: 'a-theme', title: UT('Toggle dark mode', 'بدّل الوضع الداكن'), section: UT('Actions', 'إجراءات'), handler: () => window.toggleDark()},
+      {id: 'a-lang', title: UT('عربي / English', 'English / عربي'), section: UT('Actions', 'إجراءات'), handler: () => window.toggleLang()},
+      {id: 'a-print', title: UT('Print / save as PDF', 'طباعة / حفظ PDF'), section: UT('Actions', 'إجراءات'), handler: () => window.print()},
+      {id: 'a-tour', title: UT('Take the guided tour', 'ابدأ الجولة الإرشادية'), section: UT('Actions', 'إجراءات'), handler: () => window.openTour()}
+    ];
+    const secs = uIndex.filter((r) => !r.section).map((r) => ({
+      id: 's-' + r.id, title: r.title, section: UT('Manual sections', 'أقسام الدليل'),
+      handler: () => gotoRecord(r.id)
+    }));
+    nk.data = acts.concat(secs);
+    nk.open();
+  } catch (e) {}
+};
+
+/* ── glossary tooltips (terms defined in Appendix C) ── */
+const GL_TERMS = ['TEC1-12706', 'Supercapacitor', 'Cold Chain', 'Peltier', 'PCM', 'RFID', 'BMS', 'HDPE', 'JFDA', 'WHO', 'EPI'];
+function termDef(term){
+  const items = document.querySelectorAll('#appC .gitem');
+  for (const it of items){
+    const t = it.querySelector('.gterm'), d = it.querySelector('.gdef');
+    if (t && d && (t.textContent.includes(term) || term.includes(t.textContent.trim()))) return d.textContent;
+  }
+  return '';
+}
+let tippyInstances = [];
+async function glossaryScan(){
+  tippyInstances.forEach((t) => { try { t.destroy(); } catch (e) {} });
+  tippyInstances = [];
+  const re = new RegExp('\\b(' + GL_TERMS.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b');
+  document.querySelectorAll('#main section[id]:not(#appC)').forEach((sec) => {
+    const seen = new Set();
+    const walker = document.createTreeWalker(sec, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) => {
+        const p = n.parentNode;
+        if (!p || p.closest('svg, mark, code, .gl-term, script, style, h2, .sec-num')) return NodeFilter.FILTER_REJECT;
+        return re.test(n.textContent) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    const nodes = []; let n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach((node) => {
+      const m = node.textContent.match(re);
+      if (!m || seen.has(m[1])) return;
+      seen.add(m[1]);
+      const i = m.index;
+      const span = document.createElement('span');
+      span.className = 'gl-term'; span.dataset.term = m[1];
+      span.textContent = m[1];
+      const after = node.splitText(i);
+      after.textContent = after.textContent.slice(m[1].length);
+      node.parentNode.insertBefore(span, after);
+    });
+  });
+  try {
+    const {default: tippy} = await import('tippy.js');
+    tippyInstances = tippy('.gl-term', {
+      theme: 'vdb', allowHTML: false, maxWidth: 300, delay: [120, 0],
+      content: (ref) => termDef(ref.dataset.term) || ref.dataset.term
+    });
+  } catch (e) {}
+}
+window.glossaryRefresh = function(){ setTimeout(glossaryScan, 120); };
+
+/* ── driver.js guided tour ── */
+window.openTour = async function(){
+  try {
+    const {driver} = await import('driver.js');
+    const d = driver({
+      showProgress: true,
+      nextBtnText: UT('Next', 'التالي'), prevBtnText: UT('Back', 'رجوع'), doneBtnText: UT('Done', 'تم'),
+      steps: [
+        {element: '#tabs', popover: {title: UT('Three sections', 'ثلاثة أقسام'),
+          description: UT('The Device, the full User Manual, and Live Monitoring — switch any time.', 'الجهاز ودليل المستخدم الكامل والمراقبة المباشرة — بدّل بينها في أي وقت.')},
+          onHighlightStarted: () => window.switchView('device')},
+        {element: '#box3d-wrap', popover: {title: UT('Explore the box in 3D', 'استكشف الصندوق ثلاثي الأبعاد'),
+          description: UT('Drag to rotate, open the lid, explode the parts, or click any part to identify it.', 'اسحب للتدوير وافتح الغطاء وفكك الأجزاء أو انقر على أي جزء للتعرف عليه.')}},
+        {element: '#search-input', popover: {title: UT('Search the manual', 'ابحث في الدليل'),
+          description: UT('Fuzzy search across all sections — press Ctrl+K anywhere for the command palette.', 'بحث ذكي في جميع الأقسام — اضغط Ctrl+K في أي مكان لفتح لوحة الأوامر.')},
+          onHighlightStarted: () => { window.switchView('manual'); document.getElementById('sidebar').classList.add('open'); }},
+        {element: '#live-gate-card', popover: {title: UT('Live Monitoring', 'المراقبة المباشرة'),
+          description: UT('Unlock with the box serial or NFC card to see live temperature, history, and alerts.', 'افتح بالرقم التسلسلي أو بطاقة NFC لمشاهدة الحرارة المباشرة والسجل والتنبيهات.')},
+          onHighlightStarted: () => window.switchView('live')},
+        {element: '#bg-btn', popover: {title: UT('Make it yours', 'اجعله بأسلوبك'),
+          description: UT('Pick a background style — aurora, network, snow, or fireflies.', 'اختر نمط الخلفية — شفق أو شبكة أو ثلج أو يراعات.')},
+          onHighlightStarted: () => window.switchView('device')}
+      ]
+    });
+    d.drive();
+  } catch (e) {}
+};
+
+/* one-time tour prompt */
+try {
+  if (!localStorage.getItem('tourSeen')){
+    setTimeout(() => {
+      const p = document.createElement('div');
+      p.id = 'tour-prompt';
+      p.innerHTML = '<span>' + UT('First time here? Take a 30-second tour.', 'أول مرة هنا؟ خذ جولة سريعة.') + '</span>' +
+        '<button class="tp-go">' + UT('Start', 'ابدأ') + '</button><button class="tp-x" aria-label="Dismiss">✕</button>';
+      document.body.appendChild(p);
+      p.querySelector('.tp-go').addEventListener('click', () => { p.remove(); window.openTour(); });
+      p.querySelector('.tp-x').addEventListener('click', () => p.remove());
+      localStorage.setItem('tourSeen', '1');
+    }, 3000);
+  }
+} catch (e) {}
+
+/* initial glossary pass after the page settles */
+if (document.readyState === 'complete') window.glossaryRefresh();
+else window.addEventListener('load', () => window.glossaryRefresh());
+</script>
+
+<!-- ══════════════════ 3D BOX VIEWER — Three.js scene + React control bar ══════════════════ -->
+<script type="module">
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let b3started = false;
+
+/* viewer UI labels (self-contained EN/AR) */
+const B3L = {
+  en:{lid:['Open lid','Close lid'],explode:['Exploded view','Assemble'],rotate:'Auto-rotate',wire:'X-ray',
+    pick:'Click any part of the box to identify it.',
+    parts:{
+      body:['HDPE Outer Shell','Impact-resistant shell, lined with polyurethane foam insulation.'],
+      lid:['Insulated Lid','Hinged lid carrying two PCM coolant packs in inner pockets.'],
+      vials:['Vaccine Compartment','Custom-cut foam slots hold the vials upright at 2°C–8°C.'],
+      leds:['LED Status Panel','Green, amber and red indicators show cold-chain state at a glance.'],
+      rfid:['RFID Reader','RC522 reader — registered cards release the dual latches.'],
+      vents:['Heat Vents','Reject heat from the Peltier hot side. Never obstruct them.'],
+      latch:['Locking Latches','Electronically controlled; they stay locked after an excursion.'],
+      cool:['Peltier Cooling Wall','Dual TEC1-12706 modules feed a copper heat-pipe loop.']
+    }},
+  ar:{lid:['افتح الغطاء','أغلق الغطاء'],explode:['عرض مفكك','تجميع'],rotate:'دوران تلقائي',wire:'أشعة سينية',
+    pick:'انقر على أي جزء من الصندوق للتعرف عليه.',
+    parts:{
+      body:['الهيكل الخارجي HDPE','هيكل مقاوم للصدمات مبطّن بعزل رغوة البولي يوريثان.'],
+      lid:['الغطاء المعزول','غطاء مفصلي يحمل حزمتي تبريد PCM في جيوب داخلية.'],
+      vials:['حجرة اللقاحات','فتحات رغوة مقصوصة خصيصاً تثبت الأمبولات عمودياً عند 2–8°C.'],
+      leds:['لوحة مؤشرات LED','مؤشرات خضراء وصفراء وحمراء تُظهر حالة السلسلة الباردة بلمحة.'],
+      rfid:['قارئ RFID','قارئ RC522 — البطاقات المسجلة تفتح المزلاجين.'],
+      vents:['فتحات الحرارة','تطرد حرارة الجانب الساخن لوحدات Peltier. لا تسدّها أبداً.'],
+      latch:['مزلاجا القفل','بتحكم إلكتروني؛ يبقيان مقفلين بعد أي انحراف حراري.'],
+      cool:['جدار تبريد Peltier','وحدتا TEC1-12706 تغذيان حلقة أنابيب حرارية نحاسية.']
+    }}
+};
+
+async function initBox3D(){
+  if (b3started) return; b3started = true;
+  const host = document.getElementById('box3d');
+  const wrap = document.getElementById('box3d-wrap');
+  const loading = document.getElementById('box3d-loading');
+  if (!host || !wrap) return;
+  try {
+    const [THREE, {OrbitControls}, {RoundedBoxGeometry}, React, {createRoot}, htmMod] = await Promise.all([
+      import('three'),
+      import('three/addons/controls/OrbitControls.js'),
+      import('three/addons/geometries/RoundedBoxGeometry.js'),
+      import('react'),
+      import('react-dom/client'),
+      import('htm')
+    ]);
+    const html = htmMod.default.bind(React.createElement);
+
+    /* ── renderer / scene / camera ── */
+    const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    host.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, 1, .1, 60);
+    camera.position.set(4.4, 2.7, 5.4);
+
+    scene.add(new THREE.HemisphereLight(0xbfd9e8, 0x0a1626, 1.1));
+    const key = new THREE.DirectionalLight(0xffffff, 2.2);
+    key.position.set(5, 8, 4); key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024);
+    key.shadow.camera.left = key.shadow.camera.bottom = -4;
+    key.shadow.camera.right = key.shadow.camera.top = 4;
+    scene.add(key);
+    const rim = new THREE.DirectionalLight(0x7be3f0, .8);
+    rim.position.set(-6, 3, -5); scene.add(rim);
+
+    const shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry(14, 14), new THREE.ShadowMaterial({opacity:.32}));
+    shadowPlane.rotation.x = -Math.PI/2; shadowPlane.position.y = -.78; shadowPlane.receiveShadow = true;
+    scene.add(shadowPlane);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; controls.dampingFactor = .06;
+    controls.target.set(0, .35, 0);
+    controls.minDistance = 3.2; controls.maxDistance = 12;
+    controls.maxPolarAngle = Math.PI * .52;
+    controls.autoRotate = !reduce; controls.autoRotateSpeed = 1.1;
+
+    /* ── materials ── */
+    const mShell = new THREE.MeshStandardMaterial({color:0xDCE7EC, roughness:.55, metalness:.05});
+    const mLid   = new THREE.MeshStandardMaterial({color:0xC9D8E0, roughness:.5,  metalness:.05});
+    const mNavy  = new THREE.MeshStandardMaterial({color:0x0F2A4A, roughness:.4,  metalness:.2});
+    const mCyan  = new THREE.MeshStandardMaterial({color:0x22D3EE, roughness:.35, metalness:.3});
+    const mDark  = new THREE.MeshStandardMaterial({color:0x11202E, roughness:.7});
+    const mVial  = new THREE.MeshStandardMaterial({color:0x7DD3E8, roughness:.15, metalness:.1, transparent:true, opacity:.85});
+    const mFoam  = new THREE.MeshStandardMaterial({color:0x33505F, roughness:.95});
+    const allMats = [mShell, mLid, mNavy, mCyan, mDark, mVial, mFoam];
+
+    /* ── procedural box model ── */
+    const boxGroup = new THREE.Group(); scene.add(boxGroup);
+    const parts = {};          // key -> {node, base, exp}
+    function part(key, node, exp){
+      node.userData.part = key;
+      node.traverse ? node.traverse(o => o.userData.part = key) : null;
+      parts[key] = {node, base: node.position.clone(), exp: new THREE.Vector3(...exp)};
+      boxGroup.add(node);
+    }
+    function mesh(geo, mat, x=0, y=0, z=0){
+      const m = new THREE.Mesh(geo, mat);
+      m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true;
+      return m;
+    }
+
+    /* body */
+    const body = new THREE.Group();
+    body.add(mesh(new RoundedBoxGeometry(2.5, 1.5, 1.7, 4, .08), mShell, 0, 0, 0));
+    const tray = mesh(new THREE.BoxGeometry(2.14, .05, 1.34), mFoam, 0, .74, 0); tray.userData.noXray = true;
+    body.add(tray);
+    part('body', body, [0, 0, 0]);
+
+    /* cooling wall (left) */
+    const cool = new THREE.Group();
+    cool.add(mesh(new THREE.BoxGeometry(.1, 1.0, 1.1), mCyan, -1.3, 0, 0));
+    for (let i = 0; i < 5; i++) cool.add(mesh(new THREE.BoxGeometry(.16, .05, 1.0), mNavy, -1.44, -.4 + i*.2, 0));
+    part('cool', cool, [-1.3, 0, 0]);
+
+    /* lid on a rear hinge pivot */
+    const lidPivot = new THREE.Group(); lidPivot.position.set(0, .75, -.85);
+    const lid = new THREE.Group();
+    lid.add(mesh(new RoundedBoxGeometry(2.5, .36, 1.7, 4, .08), mLid, 0, .18, .85));
+    lid.add(mesh(new RoundedBoxGeometry(.7, .12, .3, 2, .05), mNavy, 0, .42, .85));   // handle
+    lid.add(mesh(new THREE.BoxGeometry(.9, .1, .6), mDark, -.6, .02, .85));           // PCM pockets
+    lid.add(mesh(new THREE.BoxGeometry(.9, .1, .6), mDark, .6, .02, .85));
+    lidPivot.add(lid);
+    part('lid', lidPivot, [0, 1.35, 0]);
+
+    /* vaccine vials (visible when the lid opens) */
+    const vials = new THREE.Group();
+    for (let i = 0; i < 5; i++){
+      const v = mesh(new THREE.CylinderGeometry(.09, .09, .34, 20), mVial, -.72 + i*.36, .93, .12);
+      const cap = mesh(new THREE.CylinderGeometry(.055, .055, .08, 16), mNavy, -.72 + i*.36, 1.13, .12);
+      vials.add(v); vials.add(cap);
+    }
+    vials.visible = false;
+    part('vials', vials, [0, .55, 0]);
+
+    /* LED panel (front) */
+    const leds = new THREE.Group();
+    leds.add(mesh(new THREE.BoxGeometry(.62, .24, .05), mNavy, -.7, .35, .86));
+    const ledMats = [];
+    [0x22C55E, 0xF59E0B, 0xEF4444].forEach((c, i) => {
+      const lm = new THREE.MeshStandardMaterial({color:c, emissive:c, emissiveIntensity:i === 0 ? 1.4 : .12});
+      ledMats.push(lm);
+      leds.add(mesh(new THREE.SphereGeometry(.045, 16, 16), lm, -.86 + i*.16, .35, .9));
+    });
+    part('leds', leds, [0, .25, 1.15]);
+
+    /* RFID reader (right side) */
+    const rfid = new THREE.Group();
+    rfid.add(mesh(new THREE.BoxGeometry(.05, .5, .55), mNavy, 1.27, .1, 0));
+    const ring = mesh(new THREE.TorusGeometry(.14, .02, 12, 32), mCyan, 1.31, .1, 0);
+    ring.rotation.y = Math.PI/2; rfid.add(ring);
+    part('rfid', rfid, [1.25, 0, 0]);
+
+    /* heat vents (rear) */
+    const vents = new THREE.Group();
+    for (let i = 0; i < 6; i++) vents.add(mesh(new THREE.BoxGeometry(.28, .05, .04), mDark, -.75 + i*.3, -.15, -.87));
+    for (let i = 0; i < 6; i++) vents.add(mesh(new THREE.BoxGeometry(.28, .05, .04), mDark, -.75 + i*.3, -.32, -.87));
+    part('vents', vents, [0, 0, -1.15]);
+
+    /* latches (front) */
+    const latch = new THREE.Group();
+    latch.add(mesh(new RoundedBoxGeometry(.3, .34, .1, 2, .04), mNavy, -.75, .62, .84));
+    latch.add(mesh(new RoundedBoxGeometry(.3, .34, .1, 2, .04), mNavy, .75, .62, .84));
+    part('latch', latch, [0, -.1, 1.2]);
+
+    /* optional real model: models/box.glb replaces the procedural one */
+    import('three/addons/loaders/GLTFLoader.js').then(({GLTFLoader}) => {
+      new GLTFLoader().load('models/box.glb', (g) => {
+        boxGroup.visible = false;
+        const m = g.scene;
+        const bb = new THREE.Box3().setFromObject(m);
+        const size = bb.getSize(new THREE.Vector3()).length() || 1;
+        const scale = 3.4 / size; m.scale.setScalar(scale);
+        const c = bb.getCenter(new THREE.Vector3()).multiplyScalar(scale);
+        m.position.sub(c); m.position.y += .1;
+        m.traverse(o => { if (o.isMesh){ o.castShadow = true; o.receiveShadow = true; } });
+        scene.add(m);
+      }, undefined, () => {});      // no file → keep the procedural model
+    }).catch(() => {});
+
+    /* ── state + api (driven by the React bar) ── */
+    const state = {lid:false, explode:false, rotate:!reduce, wire:false, scrollYaw:0, scrollLid:0};
+    /* driven by GSAP ScrollTrigger: full turn + lid crack while scrolling past */
+    window.box3dScrollProgress = function(p){
+      state.scrollYaw = p * Math.PI * 2;
+      state.scrollLid = Math.max(0, p - .55) * 2;
+    };
+    const api = {
+      toggleLid(){ state.lid = !state.lid; return state.lid; },
+      toggleExplode(){ state.explode = !state.explode; return state.explode; },
+      setRotate(v){ state.rotate = v; controls.autoRotate = v; },
+      toggleWire(){
+        state.wire = !state.wire;
+        allMats.forEach(m => { m.wireframe = state.wire; m.transparent = state.wire || m === mVial; m.opacity = state.wire ? .55 : (m === mVial ? .85 : 1); m.needsUpdate = true; });
+        return state.wire;
+      }
+    };
+
+    /* ── part picking ── */
+    const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+    let downAt = null, flash = null;
+    renderer.domElement.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; });
+    renderer.domElement.addEventListener('pointerup', e => {
+      if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 6){ downAt = null; return; }
+      downAt = null;
+      const r = renderer.domElement.getBoundingClientRect();
+      ptr.set(((e.clientX - r.left)/r.width)*2 - 1, -((e.clientY - r.top)/r.height)*2 + 1);
+      ray.setFromCamera(ptr, camera);
+      const hit = ray.intersectObjects(boxGroup.children, true)[0];
+      const key = hit && hit.object.userData.part;
+      if (key && parts[key]){
+        flash = {node: parts[key].node, t: 0};
+        window.dispatchEvent(new CustomEvent('b3part', {detail:key}));
+      }
+    });
+
+    /* ── resize ── */
+    function resize(){
+      const w = host.clientWidth || wrap.clientWidth, h = wrap.clientHeight;
+      renderer.setSize(w, h); camera.aspect = w/h; camera.updateProjectionMatrix();
+    }
+    new ResizeObserver(resize).observe(wrap); resize();
+
+    /* ── loop ── */
+    const clock = new THREE.Clock();
+    const baseY = boxGroup.position.y;
+    renderer.setAnimationLoop(() => {
+      const t = clock.getElapsedTime();
+      controls.update();
+      /* lid hinge (manual toggle, explode, or scroll-story bias) */
+      const lidTarget = (state.lid || state.explode) ? -1.55 : -Math.min(1.1, state.scrollLid);
+      lidPivot.rotation.x += (lidTarget - lidPivot.rotation.x) * .08;
+      vials.visible = lidPivot.rotation.x < -.25 || state.explode;
+      /* scroll-story yaw */
+      boxGroup.rotation.y += (state.scrollYaw - boxGroup.rotation.y) * .1;
+      /* exploded view */
+      Object.values(parts).forEach(p => {
+        const target = state.explode ? p.base.clone().add(p.exp) : p.base;
+        p.node.position.lerp(target, .08);
+      });
+      /* green LED heartbeat + idle float */
+      ledMats[0].emissiveIntensity = reduce ? 1.4 : 1.1 + Math.sin(t*2.6)*.7;
+      if (!reduce) boxGroup.position.y = baseY + Math.sin(t*1.2)*.03;
+      /* picked-part pulse */
+      if (flash){
+        flash.t += .05;
+        const s = 1 + Math.sin(Math.min(flash.t, 1) * Math.PI) * .05;
+        flash.node.scale.setScalar(s);
+        if (flash.t >= 1){ flash.node.scale.setScalar(1); flash = null; }
+      }
+      renderer.render(scene, camera);
+    });
+
+    /* ── React control bar + part inspector ── */
+    const uiHost = document.getElementById('box3d-ui');
+    const root = createRoot(uiHost);
+    let currentLang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
+    function ControlBar({lang}){
+      const L = B3L[lang] || B3L.en;
+      const [lid, setLid]       = React.useState(state.lid);
+      const [expl, setExpl]     = React.useState(state.explode);
+      const [rot, setRot]       = React.useState(state.rotate);
+      const [wire, setWire]     = React.useState(state.wire);
+      const [pick, setPick]     = React.useState(null);
+      React.useEffect(() => {
+        const on = e => setPick(e.detail);
+        window.addEventListener('b3part', on);
+        return () => window.removeEventListener('b3part', on);
+      }, []);
+      const p = pick && L.parts[pick];
+      return html`
+        <div class="b3-bar">
+          <button class=${'b3-chip' + (lid ? ' on' : '')} onClick=${() => setLid(api.toggleLid())}>${L.lid[lid ? 1 : 0]}</button>
+          <button class=${'b3-chip' + (expl ? ' on' : '')} onClick=${() => setExpl(api.toggleExplode())}>${L.explode[expl ? 1 : 0]}</button>
+          <button class=${'b3-chip' + (rot ? ' on' : '')} aria-pressed=${rot} onClick=${() => { api.setRotate(!rot); setRot(!rot); }}>${L.rotate}</button>
+          <button class=${'b3-chip' + (wire ? ' on' : '')} aria-pressed=${wire} onClick=${() => setWire(api.toggleWire())}>${L.wire}</button>
+          <div class="b3-info" role="status">
+            ${p ? html`<h5>${p[0]}</h5><p>${p[1]}</p>` : html`<p>${L.pick}</p>`}
+          </div>
+        </div>`;
+    }
+    function renderBar(lang){ currentLang = lang; root.render(html`<${ControlBar} lang=${lang}/>`); }
+    window.box3dRefresh = renderBar;
+    renderBar(currentLang);
+
+    if (loading) loading.remove();
+  } catch (err) {
+    /* WebGL or CDN unavailable — hide the viewer, page still works */
+    if (wrap) wrap.style.display = 'none';
+    b3started = false;
+  }
+}
+
+window.deviceViewOpened = initBox3D;
+function b3boot(){ if (document.body.dataset.view === 'device') initBox3D(); }
+if (document.readyState === 'complete') b3boot();
+else window.addEventListener('load', b3boot);
 </script>
 
 <!-- ══════════════════ LIVE MONITORING — Firebase feed (lazy-loaded) ══════════════════ -->
@@ -2692,7 +4054,11 @@ document.addEventListener('DOMContentLoaded',function(){
   const T = (en, ar) => isAr() ? ar : en;
   const fmtTime = (ts) => ts ? new Date(ts * 1000).toLocaleString(isAr() ? 'ar' : undefined) : '—';
 
-  let started = false, chart = null, lastFocus = null;
+  const reduceM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let started = false, chart = null, gauge = null, strip = null, ec = null;
+  let fb = null, db = null, unsubHist = null, latest = null, pts = [], updTimer = null;
+  let notyf = null, prevBad = null, audioCtx = null;
+  const SAFE_LO = 2, SAFE_HI = 8;
 
   /* ── access control (client-side gate) ── */
   const VALID_SERIALS = ['1'];                    // accepted device serial number(s)
@@ -2707,78 +4073,268 @@ document.addEventListener('DOMContentLoaded',function(){
   NFC_UIDS.forEach(u => { UID_SET.add(toHex(u)); UID_SET.add(toHex(u.slice().reverse())); });
   const uidMatch = (s) => UID_SET.has(normHex(s));
 
-  /* Chart.js is a classic (non-module) script — inject + await it on first open */
-  function loadChart(){
-    return new Promise((res, rej) => {
-      if (window.Chart) return res();
-      const s = document.createElement('script');
-      s.src = "https://cdn.jsdelivr.net/npm/chart.js@4";
-      s.onload = () => res(); s.onerror = () => rej(new Error('chart'));
-      document.head.appendChild(s);
-    });
+  function tokens(){
+    const cs = getComputedStyle(document.body);
+    const g = (n, f) => cs.getPropertyValue(n).trim() || f;
+    return {accent:g('--primary-2','#0891B2'), grid:g('--border-2','#e2e8f0'),
+            ink:g('--faint','#4E6B7A'), green:g('--green','#166534')};
   }
 
   async function start(){
     if (started) return; started = true;
-    const [{ initializeApp }, { getDatabase, ref, onValue, query, orderByKey, limitToLast }] = await Promise.all([
+    const [{ initializeApp }, fbdb, ecMod] = await Promise.all([
       import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"),
       import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"),
-      loadChart()
+      import("echarts")
     ]);
-    const css = getComputedStyle(document.body);
-    const accent = css.getPropertyValue('--primary-2').trim() || '#0891B2';
-    const grid   = css.getPropertyValue('--border-2').trim() || '#e2e8f0';
+    fb = fbdb; ec = ecMod;
+    db = fb.getDatabase(initializeApp({ databaseURL: DB_URL }));
 
-    const db = getDatabase(initializeApp({ databaseURL: DB_URL }));
+    buildChart();
+    fb.onValue(fb.ref(db, "box/latest"), (snap) => { latest = snap.val(); renderLatest(); });
+    setRange(120);
 
-    /* ── live current reading ── */
-    onValue(ref(db, "box/latest"), (snap) => {
-      const d = snap.val(), st = $('live-status');
-      if (!d) { st.textContent = T('No data yet', 'لا توجد بيانات بعد'); st.style.color = 'var(--faint)'; return; }
+    document.querySelectorAll('.range-chip[data-range]').forEach(c => c.addEventListener('click', () => {
+      document.querySelectorAll('.range-chip[data-range]').forEach(x => x.classList.remove('on'));
+      c.classList.add('on');
+      setRange(+c.dataset.range);
+    }));
+    const ex = $('ld-export'); if (ex) ex.addEventListener('click', exportCsv);
+    if (!updTimer) updTimer = setInterval(renderUpdated, 5000);
 
-      $('live-temp').textContent = d.valid ? d.temp.toFixed(1) + ' °C' : T('ERROR', 'خطأ');
-
-      const ageSec = d.ts ? (Date.now() / 1000 - d.ts) : Infinity;   // we push every 30s
-      const online = ageSec < 90;
-      st.textContent = online ? '● ' + T('Online', 'متصل') : '○ ' + T('Offline', 'غير متصل');
-      st.style.color = online ? 'var(--green)' : 'var(--red)';
-
-      const flags = [];
-      if (d.corrupted) flags.push(['warn', '⚠ ' + T('Vaccines may be corrupted', 'قد تكون اللقاحات تالفة')]);
-      else if (d.ready) flags.push(['ok', T('Safe temperature reached', 'تم بلوغ درجة الحرارة الآمنة')]);
-      if (typeof d.maxTemp === 'number')
-        flags.push(['', T('Max since cold: ', 'أقصى درجة منذ التبريد: ') + d.maxTemp.toFixed(1) + ' °C']);
-      $('live-flags').innerHTML = flags.map(f => '<span class="live-flag ' + f[0] + '">' + f[1] + '</span>').join('');
-
-      $('live-updated').textContent = T('Last update: ', 'آخر تحديث: ') + fmtTime(d.ts);
-    });
-
-    /* ── history graph (last 120 points ≈ 1 hour at 30s) ── */
-    chart = new window.Chart($('live-chart'), {
-      type: 'line',
-      data: { labels: [], datasets: [{
-        data: [], borderColor: accent, backgroundColor: 'rgba(8,145,178,.10)',
-        borderWidth: 2, pointRadius: 0, tension: .25, fill: true
-      }]},
-      options: {
-        responsive: true, maintainAspectRatio: false, animation: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { ticks: { maxTicksLimit: 6, font: { size: 10 } }, grid: { color: grid } },
-          y: { title: { display: true, text: '°C' }, grid: { color: grid } }
-        }
+    /* browser-notification opt-in */
+    const ab = $('alerts-btn');
+    if (ab && 'Notification' in window){
+      if (Notification.permission === 'default'){
+        ab.hidden = false;
+        ab.addEventListener('click', async () => {
+          try { const p = await Notification.requestPermission(); if (p !== 'default') ab.hidden = true; } catch (e) {}
+        });
       }
-    });
+    }
+  }
 
-    onValue(query(ref(db, "box/history"), orderByKey(), limitToLast(120)), (snap) => {
-      const pts = [];
+  /* ── ECharts: temp line + native 2–8°C markArea band + dataZoom (wheel/pinch + slider) ── */
+  function chartOption(tk){
+    return {
+      animation: !reduceM,
+      grid: {left: 46, right: 16, top: 16, bottom: 66},
+      tooltip: {trigger: 'axis', valueFormatter: (v) => (+v).toFixed(2) + ' °C',
+        backgroundColor: 'var(--surface)', borderColor: 'var(--border-2)', textStyle: {color: 'var(--text)'}},
+      xAxis: {type: 'category', boundaryGap: false, data: [],
+        axisLabel: {fontSize: 10, color: tk.ink}, axisLine: {lineStyle: {color: tk.grid}}},
+      yAxis: {type: 'value', name: '°C', min: 0, max: (v) => Math.max(10, Math.ceil(v.max + 1)),
+        axisLabel: {color: tk.ink}, nameTextStyle: {color: tk.ink},
+        splitLine: {lineStyle: {color: tk.grid}}},
+      dataZoom: [{type: 'inside'}, {type: 'slider', height: 18, bottom: 30,
+        borderColor: tk.grid, textStyle: {color: tk.ink}}],
+      series: [{type: 'line', data: [], showSymbol: false, smooth: .25,
+        lineStyle: {width: 2, color: tk.accent}, areaStyle: {opacity: .08, color: tk.accent},
+        markArea: {silent: true, itemStyle: {color: 'rgba(34,197,94,.10)'},
+          data: [[{yAxis: SAFE_LO}, {yAxis: SAFE_HI}]]}}]
+    };
+  }
+  function gaugeOption(tk, val){
+    return {animation: !reduceM,
+      series: [{type: 'gauge', min: 0, max: 12, startAngle: 220, endAngle: -40,
+        axisLine: {lineStyle: {width: 7, color: [[SAFE_LO/12, '#38BDF8'], [SAFE_HI/12, tk.green], [1, '#EF4444']]}},
+        pointer: {width: 3, length: '62%', itemStyle: {color: tk.accent}},
+        axisTick: {show: false}, splitLine: {show: false}, axisLabel: {show: false},
+        detail: {show: false}, title: {show: false},
+        data: [{value: (typeof val === 'number') ? val : 0}]}]};
+  }
+  function buildChart(){
+    const tk = tokens();
+    chart = ec.init($('live-chart'));
+    chart.setOption(chartOption(tk));
+    const g = $('lt-gauge');
+    if (g){ gauge = ec.init(g); gauge.setOption(gaugeOption(tk, latest && latest.temp)); }
+    const hs = $('hour-strip');
+    if (hs){ strip = ec.init(hs); }
+    new ResizeObserver(() => { chart && chart.resize(); gauge && gauge.resize(); strip && strip.resize(); })
+      .observe($('live-chart'));
+  }
+
+  function setRange(n){
+    if (!fb) return;
+    if (unsubHist) unsubHist();
+    unsubHist = fb.onValue(fb.query(fb.ref(db, "box/history"), fb.orderByKey(), fb.limitToLast(n)), (snap) => {
+      pts = [];
       snap.forEach((c) => { const v = c.val(); pts.push({ t: v.ts, y: v.t }); });
-      chart.data.labels = pts.map(p => new Date(p.t * 1000)
-        .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-      chart.data.datasets[0].data = pts.map(p => p.y);
-      chart.update();
+      pts.sort((a, b) => a.t - b.t);
+      renderHistory(n);
     });
   }
+
+  function renderHistory(n){
+    if (!chart) return;
+    chart.setOption({
+      xAxis: {data: pts.map(p => new Date(p.t * 1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}))},
+      series: [{data: pts.map(p => p.y)}]
+    });
+    /* min / avg / max over the window */
+    const ys = pts.map(p => p.y).filter(y => typeof y === 'number');
+    const put = (id, v) => { const el = $(id); if (!el) return;
+      if (window.motionCount) window.motionCount(el, v); else el.textContent = v; };
+    if (ys.length){
+      put('lt-min', Math.min(...ys).toFixed(1) + '°C');
+      put('lt-maxw', Math.max(...ys).toFixed(1) + '°C');
+      put('lt-avg', (ys.reduce((a,b) => a+b, 0) / ys.length).toFixed(1) + '°C');
+    } else { put('lt-min','—'); put('lt-avg','—'); put('lt-maxw','—'); }
+    renderEvents();
+  }
+
+  /* ── excursion events derived from the loaded window ── */
+  function renderEvents(){
+    const out = $('ev-out'); if (!out) return;
+    const evs = [];
+    let cur = null, prevT = null;
+    pts.forEach(p => {
+      const bad = p.y < SAFE_LO || p.y > SAFE_HI;
+      /* a >10 min hole in the data ends any open segment — never bridge logging gaps */
+      if (cur && prevT !== null && p.t - prevT > 600){ evs.push(cur); cur = null; }
+      if (bad && !cur) cur = {start: p.t, end: p.t, peak: p.y};
+      else if (bad && cur){ cur.end = p.t; if (Math.abs(p.y - 5) > Math.abs(cur.peak - 5)) cur.peak = p.y; }
+      else if (!bad && cur){ evs.push(cur); cur = null; }
+      prevT = p.t;
+    });
+    if (cur) evs.push(cur);
+    renderHourStrip();
+    if (!evs.length){
+      out.innerHTML = '<div class="ev-empty">✓ ' + T('No excursions in this window', 'لا انحرافات في هذه الفترة') + '</div>';
+      return;
+    }
+    const fmt = (ts) => new Date(ts * 1000).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    const mins = (e) => Math.max(1, Math.round((e.end - e.start) / 60));
+    out.innerHTML = '<ul class="ev-list">' + evs.slice(-6).reverse().map(e => {
+      const type = e.peak > SAFE_HI ? 'high' : 'low';
+      const word = type === 'high' ? T('Above 8°C', 'فوق 8°C') : T('Below 2°C', 'تحت 2°C');
+      return '<li class="ev-item ' + type + '"><span class="ev-dot"></span><span><b>' + word + '</b> · ' +
+        T('peak ', 'ذروة ') + e.peak.toFixed(1) + '°C · ~' + mins(e) + T(' min', ' دقيقة') +
+        '<br>' + fmt(e.start) + ' – ' + fmt(e.end) + '</span></li>';
+    }).join('') + '</ul>';
+  }
+
+  /* ── hourly out-of-range strip (one-row heatmap over the loaded window) ── */
+  function renderHourStrip(){
+    if (!strip) return;
+    const tk = tokens();
+    const mins = new Array(24).fill(0);
+    pts.forEach(p => {
+      if (p.y < SAFE_LO || p.y > SAFE_HI) mins[new Date(p.t * 1000).getHours()] += .5;  // ~30s samples
+    });
+    strip.setOption({
+      animation: !reduceM,
+      grid: {left: 4, right: 4, top: 2, bottom: 18},
+      tooltip: {position: 'top', formatter: (pr) => pr.data[0] + ':00 — ' + Math.round(pr.data[2]) + T(' min', ' دقيقة')},
+      xAxis: {type: 'category', data: [...Array(24).keys()],
+        axisLabel: {fontSize: 8, color: tk.ink, interval: 3}, axisLine: {show: false}, axisTick: {show: false}},
+      yAxis: {type: 'category', data: [''], show: false},
+      visualMap: {min: 0, max: 30, show: false,
+        inRange: {color: ['rgba(127,127,127,.10)', '#F59E0B', '#EF4444']}},
+      series: [{type: 'heatmap', data: mins.map((m, h) => [h, 0, m]),
+        itemStyle: {borderRadius: 2, borderWidth: 1, borderColor: 'transparent'}}]
+    });
+  }
+
+  /* ── alerts: toast + beep + browser notification on state transition ── */
+  async function fireAlert(title, body){
+    try {
+      if (!notyf){
+        const {Notyf} = await import('notyf');
+        notyf = new Notyf({duration: 7000, dismissible: true,
+          position: {x: isAr() ? 'left' : 'right', y: 'top'}});
+      }
+      notyf.error(title + (body ? ' — ' + body : ''));
+    } catch (e) {}
+    try {
+      if (audioCtx){
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = 'sine'; o.frequency.value = 880;
+        g.gain.setValueAtTime(.0001, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(.25, audioCtx.currentTime + .02);
+        g.gain.exponentialRampToValueAtTime(.0001, audioCtx.currentTime + .9);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + 1);
+      }
+    } catch (e) {}
+    try {
+      if (document.hidden && 'Notification' in window && Notification.permission === 'granted')
+        new Notification('VDB — ' + title, {body: body || '', icon: undefined});
+    } catch (e) {}
+  }
+
+  /* ── stat tiles ── */
+  function pop(el){ if (reduceM || !el) return; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+  function renderLatest(){
+    const tv = $('lt-temp-val'), conn = $('lt-conn'), stateEl = $('lt-state'),
+          stateSub = $('lt-state-sub'), maxEl = $('lt-max');
+    if (!tv) return;
+    if (!latest){ tv.textContent = '--.-°C'; if (conn) conn.textContent = T('No data yet', 'لا توجد بيانات بعد'); return; }
+    const d = latest;
+    const newTxt = d.valid ? d.temp.toFixed(1) + '°C' : T('ERROR', 'خطأ');
+    if (tv.textContent !== newTxt){
+      if (window.motionCount) window.motionCount(tv, newTxt); else tv.textContent = newTxt;
+      pop(tv);
+    }
+    const ageSec = d.ts ? (Date.now()/1000 - d.ts) : Infinity;      // pushed every ~30s
+    const online = ageSec < 90;
+    if (conn){
+      conn.textContent = online ? '● ' + T('Online', 'متصل') : '○ ' + T('Offline — showing last reading', 'غير متصل — تُعرض آخر قراءة');
+      conn.style.color = online ? 'var(--green)' : 'var(--red)';
+    }
+    /* cold-chain state pill: reserved status colors + icon + label */
+    let cls = 'idle', icon = '…', label = T('Cooling down', 'قيد التبريد'), sub = '';
+    const inBand = d.valid && d.temp >= SAFE_LO && d.temp <= SAFE_HI;
+    if (d.corrupted){ cls = 'bad'; icon = '⚠'; label = T('Possible spoilage', 'احتمال تلف'); sub = T('Excursion recorded — do not deliver until cleared.', 'سُجّل انحراف — لا تُسلِّم قبل الموافقة.'); }
+    else if (d.valid && !inBand){ cls = 'warn'; icon = '!'; label = T('Out of range', 'خارج النطاق'); sub = T('Temperature outside 2–8°C right now.', 'الحرارة خارج 2–8°C الآن.'); }
+    else if (d.ready && inBand){ cls = 'ok'; icon = '✓'; label = T('Safe range', 'نطاق آمن'); sub = T('Holding 2–8°C.', 'ثابتة ضمن 2–8°C.'); }
+    if (stateEl) stateEl.innerHTML = '<span class="state-pill ' + cls + '">' + icon + ' ' + label + '</span>';
+    if (stateSub) stateSub.textContent = sub;
+    /* live gauge pointer */
+    if (gauge && d.valid) gauge.setOption({series: [{data: [{value: d.temp}]}]});
+    /* alert on transition into a bad state */
+    const badNow = !!d.corrupted || (d.valid && !inBand);
+    if (prevBad === false && badNow) fireAlert(label, sub);
+    prevBad = badNow;
+    if (maxEl){
+      const mt = (typeof d.maxTemp === 'number') ? d.maxTemp.toFixed(1) + '°C' : '—';
+      if (maxEl.textContent !== mt){
+        if (window.motionCount) window.motionCount(maxEl, mt); else maxEl.textContent = mt;
+        pop(maxEl);
+      }
+    }
+    renderUpdated();
+  }
+  function renderUpdated(){
+    const el = $('lt-upd'), abs = $('lt-upd-abs');
+    if (!el || !latest || !latest.ts) return;
+    const s = Math.max(0, Math.round(Date.now()/1000 - latest.ts));
+    el.textContent = s < 60 ? s + T('s ago', ' ث') : Math.round(s/60) + T('m ago', ' د');
+    el.style.color = s > 120 ? 'var(--red)' : '';
+    if (abs) abs.textContent = fmtTime(latest.ts);
+  }
+
+  /* ── CSV export of the loaded window ── */
+  function exportCsv(){
+    if (!pts.length) return;
+    const rows = ['timestamp,iso_time,temp_c'].concat(pts.map(p => p.t + ',' + new Date(p.t*1000).toISOString() + ',' + p.y));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([rows.join('\n')], {type:'text/csv'}));
+    a.download = 'vdb-temperature-log.csv';
+    a.click(); URL.revokeObjectURL(a.href);
+  }
+
+  /* re-theme charts when dark mode toggles; re-render texts on language switch */
+  window.liveThemeRefresh = function(){
+    if (!chart) return;
+    const tk = tokens();
+    chart.setOption(chartOption(tk));
+    renderHistory();
+    if (gauge) gauge.setOption(gaugeOption(tk, latest && latest.temp));
+    renderHourStrip();
+  };
+  window.liveLangRefresh = function(){ renderLatest(); if (pts.length) renderEvents(); };
 
   /* ── auth gate ── */
   function setGateMsg(text, kind){
@@ -2790,6 +4346,7 @@ document.addEventListener('DOMContentLoaded',function(){
   function showGate(){
     authed = false;
     $('live-gate').hidden = false;
+    const gc = $('live-gate-card'); if (gc) gc.hidden = false;
     $('live-content').hidden = true;
     setGateMsg('', '');
     const inp = $('live-serial');
@@ -2808,11 +4365,15 @@ document.addEventListener('DOMContentLoaded',function(){
   async function grantAccess(){
     authed = true;
     setGateMsg(T('Access granted', 'تم منح الوصول'), 'ok');
+    /* created inside the unlock gesture so alert beeps are allowed later */
+    try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
     $('live-gate').hidden = true;
+    const gc = $('live-gate-card'); if (gc) gc.hidden = true;
     $('live-content').hidden = false;
     try { await start(); }
     catch (e) {
-      const st = $('live-status');
+      started = false;
+      const st = $('lt-conn');
       if (st) { st.textContent = T('Failed to load live feed — check your connection', 'تعذّر تحميل البث المباشر — تحقق من اتصالك'); st.style.color = 'var(--red)'; }
     }
   }
@@ -2847,14 +4408,12 @@ document.addEventListener('DOMContentLoaded',function(){
     }
   };
 
-  window.openLiveMonitor = function(){
-    const m = $('live-modal'); if (!m) return;
-    lastFocus = document.activeElement;
-    m.classList.add('open'); m.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+  /* called by switchView('live') from the main script */
+  window.liveViewOpened = function(){
     if (authed){
-      $('live-gate').hidden = true; $('live-content').hidden = false;
-      const c = $('live-close'); if (c) c.focus();
+      $('live-gate').hidden = true;
+      const gc = $('live-gate-card'); if (gc) gc.hidden = true;
+      $('live-content').hidden = false;
       start().catch(() => {});
     } else {
       showGate();
@@ -2870,23 +4429,13 @@ document.addEventListener('DOMContentLoaded',function(){
       if (!v && location.hash.length > 1) v = new URLSearchParams(location.hash.slice(1)).get('nfc');
       if (v && uidMatch(v)){
         authed = true;
-        window.openLiveMonitor();
+        window.switchView('live');
         try { history.replaceState(null, '', location.pathname); } catch (e) {}   // strip token from URL
       }
     } catch (e) {}
   }
   checkUrlNfc();
-  window.closeLiveMonitor = function(){
-    const m = $('live-modal'); if (!m) return;
-    m.classList.remove('open'); m.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    if (lastFocus && lastFocus.focus) lastFocus.focus();
-  };
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      const m = $('live-modal');
-      if (m && m.classList.contains('open')) window.closeLiveMonitor();
-    }
     if (e.key === 'Enter' && e.target && e.target.id === 'live-serial') {
       e.preventDefault(); window.liveUnlockSerial();
     }
