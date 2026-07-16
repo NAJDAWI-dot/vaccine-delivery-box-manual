@@ -127,15 +127,42 @@ html[data-theme="dark"]{
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
+html{background:var(--bg)}
 body{
   font-family:var(--font-body);
-  background:var(--bg);
+  background:transparent;
   color:var(--text);
   min-height:100vh;
   line-height:1.7;
   font-size:var(--fs-base);
   -webkit-font-smoothing:antialiased;
 }
+
+/* ── AMBIENT ANIMATED BACKGROUND (site-wide, behind all content) ── */
+#bg-anim{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.bga-grad{position:absolute;inset:-60%;opacity:.5;
+  background:conic-gradient(from 0deg at 50% 50%,
+    transparent 0deg,
+    color-mix(in srgb,var(--primary-2) 7%,transparent) 70deg,
+    transparent 140deg,
+    color-mix(in srgb,var(--brand-accent) 5%,transparent) 220deg,
+    transparent 300deg)}
+.bga-grid{position:absolute;inset:-40px;opacity:.5;
+  background-image:radial-gradient(color-mix(in srgb,var(--primary-2) 18%,transparent) 1px,transparent 1.5px);
+  background-size:34px 34px}
+.bga-blob{position:absolute;border-radius:50%;filter:blur(60px);
+  background:radial-gradient(circle at 35% 35%,color-mix(in srgb,var(--primary-2) 20%,transparent),transparent 70%)}
+.bga-blob.alt{background:radial-gradient(circle at 35% 35%,color-mix(in srgb,var(--brand-accent) 14%,transparent),transparent 70%)}
+.bga-flake{position:absolute;border-radius:50%;background:color-mix(in srgb,var(--primary-2) 45%,transparent)}
+html[data-theme="dark"] .bga-grad{opacity:.7}
+html[data-theme="dark"] .bga-grid{opacity:.35}
+@media (prefers-reduced-motion:no-preference){
+  .bga-grad{animation:bgaSpin 90s linear infinite}
+  @keyframes bgaSpin{to{transform:rotate(360deg)}}
+  .bga-grid{animation:bgaDrift 60s linear infinite}
+  @keyframes bgaDrift{to{transform:translate(34px,34px)}}
+}
+@media print{#bg-anim{display:none!important}}
 body.ar{line-height:1.85}
 
 h1,h2,h3{text-wrap:balance}
@@ -773,6 +800,9 @@ body.ar .nav-label,body.ar .sb-badge,body.ar .doc-id,body.ar .callout-label,body
 </head>
 <body data-view="menu">
 <a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ambient animated background — sits behind every view -->
+<div id="bg-anim" aria-hidden="true"><div class="bga-grad"></div><div class="bga-grid"></div></div>
 
 <!-- ══════════════════ TOP BAR + TABS ══════════════════ -->
 <header id="topbar">
@@ -3266,6 +3296,36 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches){
     }
     bubbles('#view-menu', 12);
     bubbles('#cover', 8);
+
+    /* 5b ── site-wide ambient background: drifting color blobs + floating cold sparks */
+    const bga = document.getElementById('bg-anim');
+    if (bga){
+      for (let i = 0; i < 6; i++){
+        const b = document.createElement('div');
+        b.className = 'bga-blob' + (i % 2 ? ' alt' : '');
+        const size = 280 + Math.random() * 380;
+        b.style.width = b.style.height = size + 'px';
+        b.style.left = (Math.random() * 100 - 10) + '%';
+        b.style.top  = (Math.random() * 100 - 10) + '%';
+        bga.appendChild(b);
+        animate(b,
+          {x: [0, (Math.random() - .5) * 360], y: [0, (Math.random() - .5) * 280], scale: [1, .8 + Math.random() * .5]},
+          {duration: 22 + Math.random() * 18, delay: Math.random() * -30,
+           repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut'});
+      }
+      for (let i = 0; i < 16; i++){
+        const f = document.createElement('div');
+        f.className = 'bga-flake';
+        const size = 2 + Math.random() * 4;
+        f.style.width = f.style.height = size + 'px';
+        f.style.left = Math.random() * 100 + '%';
+        f.style.top = (30 + Math.random() * 80) + '%';
+        bga.appendChild(f);
+        animate(f,
+          {y: [0, -(300 + Math.random() * 500)], x: [0, (Math.random() - .5) * 120], opacity: [0, .7, 0]},
+          {duration: 16 + Math.random() * 16, delay: Math.random() * -25, repeat: Infinity, ease: 'linear'});
+      }
+    }
 
     /* 6 ── cursor spotlight + magnetic spring tilt (Animate UI hover cards) */
     document.addEventListener('pointermove', (e) => {
