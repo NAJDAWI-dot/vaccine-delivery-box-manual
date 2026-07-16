@@ -43,6 +43,10 @@ Fixed 56px navy topbar with three tabs (`role=tablist`): **User Manual** (`#main
 
 True `dir="rtl"` set on `<html>` by the language toggle (and pre-paint for saved Arabic). All layout CSS uses logical properties (`inset-inline-*`, `margin-inline-*`, `border-inline-start`, `text-align:start`); no hand-mirrored overrides. `body.ar` only zeroes letter-spacing on Latin-tracked labels.
 
+## Animate UI-style layer
+
+`motion` (motion.dev, the engine behind animate-ui.com, via importmap/jsdelivr) powers a site-wide interaction layer, recreating Animate UI's signature components without React/Tailwind: springy sliding tab indicator (`#tab-ind`, replaces the CSS underline when active), ripple press feedback on every control, counting numbers on dashboard values (`window.motionCount`), typewriter menu subtitle, rising bubble backgrounds on menu + cover, and cursor-spotlight + magnetic spring tilt on menu cards/dashboard tiles. The whole module is skipped under reduced-motion, and if the CDN fails the CSS motion pack still covers the site.
+
 ## Motion
 
 Reduced-motion honored on every animation — the full motion pack lives behind `prefers-reduced-motion: no-preference`. With motion allowed: view-enter transitions, staggered cover masthead entrance, scroll reveals (`.rv`/`.rv-in`, JS-added so content is always visible without JS), hover lifts/zooms, tab underline slide, LED pulses. With reduce: everything static, 3D auto-rotate and idle float off.
